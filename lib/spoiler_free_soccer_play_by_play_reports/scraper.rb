@@ -1,14 +1,12 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class Scraper
-        # store the data in this class as hashes: url, team1, team2
-        # does not make sense to store url as part of a Report object as Report object
-        # should be agnostic re: method of its  data's retrieval
+        SOURCE_BASE_URL = "https://www.sportsmole.co.uk"
 
         def self.report_list
             # source:
             # https://www.sportsmole.co.uk/football/live-commentary/
 
-            doc = Nokogiri::HTML(open("https://www.sportsmole.co.uk/football/live-commentary/"))
+            doc = Nokogiri::HTML(open(SOURCE_BASE_URL + "/football/live-commentary"))
             
             report_links = doc.search(".list_rep")
             hash_array = []
@@ -48,7 +46,11 @@ module SpoilerFreeSoccerPlayByPlayReports
                 # need to be accounted for, as well as any changes to the standard format
                 # this code works as of January 2018
 
-                hash_array << {:team1 => team_names[0], :team2 => team_names[1]}
+                hash_array << {
+                    :team1 => team_names[0], 
+                    :team2 => team_names[1],
+                    :detail_url => link.attribute("href").value
+                }
             end
 
             binding.pry
