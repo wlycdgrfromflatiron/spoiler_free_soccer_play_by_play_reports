@@ -58,8 +58,8 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts "CLI.report_list called with team_name: #{team_name}"
             puts ""
             
-            Scraper.report_list(team_name).each.with_index(1) do |report, index|
-                puts "#{index}. #{report[:name]}"
+            Report.list(team_name).each.with_index(1) do |report, index|
+                puts "#{index}. #{report.team1} vs. #{report.team2}"
             end
         end
 
