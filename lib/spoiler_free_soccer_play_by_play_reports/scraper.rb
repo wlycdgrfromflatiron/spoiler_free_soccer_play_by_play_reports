@@ -4,11 +4,14 @@ module SpoilerFreeSoccerPlayByPlayReports
             # source:
             # https://www.sportsmole.co.uk/football/live-commentary/
 
-            doc = Nokogiri::HTML(open("https://www.sportsmole.co.uk/football/live-commentary/page-4/"))
+            doc = Nokogiri::HTML(open("https://www.sportsmole.co.uk/football/live-commentary/"))
             
             report_links = doc.search(".list_rep")
             hash_array = []
 
+            # For each report summary thumbnail link, we must extract the names of the two teams
+            # from a title formatted like so:
+            # "Live Commentary: Celta Vigo 2-2 Real Madrid - as it happened"
             report_links.each do |link|
                 title = link.at(".list_rep_title div").text
                 title.strip!
@@ -18,37 +21,31 @@ module SpoilerFreeSoccerPlayByPlayReports
                 if !title.include?("Live Commentary: ")
                     next
                 end
+
                 title.gsub!("Live Commentary: ", "")
                 title.gsub!(" - as it happened", "")
-                team_names = title.split("-")
-                team_names[0] = team_names[0].gsub(/\s\d+$/, "")
-                team_names[1] = team_names[1].gsub(/^\d+\s/, "")
+
+                # having stripped the non-team-name bits from the front and end, we split on the score in the middle
+                # splitting on the dash alone or the dash plus the numbers produces some false positives, 
+                # so we also add the spaces
+                team_names = title.split(/\s\d+-\d+\s/)
 
                 # games that go to extra time or are resolved by penalties may have notes in parentheses
                 # either after or before the name of the second team; 
-                # these need to be stripped to extract the correct team name
+                # these need to be stripped further to extract the correct team name
                 # e.g.
                 # "Live Commentary: Manchester City 0-0 (4-1 on penalties) Wolverhampton Wanderers - as it happened"
                 # "Live Commentary: Leicester 1-1 Manchester City (Man City win 4-3 on penalties) - as it happened"
                 team_names[1] = team_names[1].gsub(/\s\(.*$/, "") # trailing parentheses
                 team_names[1] = team_names[1].gsub(/^\(.*\)\s/, "") # leading parentheses
 
+                # When testploring this code with Pry, check multiple pages at the live commentary URL
+                # to find examples of the above irregularities, and keep an eye out for any others that may
+                # need to be accounted for, as well as any changes to the standard format
+                # this code works as of January 2018
+
                 hash_array << {:team1 => team_names[0], :team2 => team_names[1]}
             end
-
-            # For each report summary thumbnail link, we must extract the names of the two teams
-            # from a title formatted like so:
-            # "Live Commentary: Celta Vigo 2-2 Real Madrid - as it happened"
-
-            # These are the steps we need to work through to accomplish this:
-            # extract title
-            # strip "Live Commentary: " from the beginning
-            # strip " - as it happened" from the end
-            # split on "-"
-            # strip "/ d*/" from end of left
-            # strip "/d* /" from beginning of right
-            # team1 => left, team2 => right
-            # team1 in Premier League? team2 in Premier League?
 
             binding.pry
 
