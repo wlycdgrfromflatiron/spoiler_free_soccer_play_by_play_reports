@@ -4,4 +4,7 @@ WLY_DEBUG = true
 require "bundler/setup"
 require "spoiler_free_soccer_play_by_play_reports"
 
+# secure a fresh one at Scraper::SOURCE_BASE_URL
+WLY_SAMPLE_BLURBS_URL = "/football/liverpool/fa-cup/live-commentary/live-commentary-liverpool-vs-everton_315586.html"
+
 Pry.start

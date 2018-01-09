@@ -26,7 +26,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.get_current_report_blurbs
-            SpoilerFreeSoccerPlayByPlayReports::Scraper.report_blurbs.each do |blurb_hash|
+            SpoilerFreeSoccerPlayByPlayReports::Scraper.report_blurbs(@@current_report.blurbs_url).each do |blurb_hash|
                 @@current_report.blurbs << SpoilerFreeSoccerPlayByPlayReports::Blurb.new(blurb_hash)
             end
         end

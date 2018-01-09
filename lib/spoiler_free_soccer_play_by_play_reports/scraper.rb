@@ -54,18 +54,25 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
 
             if WLY_DEBUG
-                binding.Pry
+                binding.pry
             end
  
             hash_array
         end 
 
-        # needs to be modified to take a url param
-        def self.report_blurbs
-            [
+        def self.report_blurbs(blurbs_url)
+            blurbs = [
                 {:label => "BLURB 1 LABEL", :text => "blurb one text"},
                 {:label => "BLURB 2 LABEL", :text => "blurb two text"}
             ]
+
+            doc = Nokogiri::HTML(open(SOURCE_BASE_URL + blurbs_url))
+
+            if WLY_DEBUG
+                binding.pry
+            end
+
+            blurbs
         end
     end
 end
