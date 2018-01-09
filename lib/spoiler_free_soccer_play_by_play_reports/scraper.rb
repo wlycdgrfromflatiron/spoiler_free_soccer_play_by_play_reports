@@ -1,5 +1,9 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class Scraper
+        # store the data in this class as hashes: url, team1, team2
+        # does not make sense to store url as part of a Report object as Report object
+        # should be agnostic re: method of its  data's retrieval
+
         def self.report_list
             # source:
             # https://www.sportsmole.co.uk/football/live-commentary/
