@@ -18,13 +18,13 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.get_report_abstracts
-            Scraper.report_list.each do |report_hash|
+            SpoilerFreeSoccerPlayByPlayReports::Scraper.report_list.each do |report_hash|
                 self.all << Report.new(report_hash[:team1], report_hash[:team2])
             end
         end
 
         def self.get_current_report_blurbs
-            Scraper.report_blurbs.each do |blurb_hash|
+            SpoilerFreeSoccerPlayByPlayReports::Scraper.report_blurbs.each do |blurb_hash|
                 @@current_report.blurbs << SpoilerFreeSoccerPlayByPlayReports::Blurb.new(blurb_hash)
             end
         end
