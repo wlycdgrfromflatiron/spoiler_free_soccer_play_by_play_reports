@@ -50,13 +50,6 @@ module SpoilerFreeSoccerPlayByPlayReports
             binding.pry
 
             hash_array
-
-=begin
-            [
-                {:team1 => "Chelsea", :team2 => "Arsenal"}, 
-                {:team1 => "Bournemouth", :team2 => "Swansea"}
-            ]
-=end
         end 
 
         # needs to be modified to take a url param
