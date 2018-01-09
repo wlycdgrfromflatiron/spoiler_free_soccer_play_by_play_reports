@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "spoiler_free_soccer_play_by_play_reports"
+
+SpoilerFreeSoccerPlayByPlayReports::CLI.new.start
