@@ -53,8 +53,8 @@ module SpoilerFreeSoccerPlayByPlayReports
                 }
             end
 
-            binding.pry
-
+            binding.Pry
+ 
             hash_array
         end 
 

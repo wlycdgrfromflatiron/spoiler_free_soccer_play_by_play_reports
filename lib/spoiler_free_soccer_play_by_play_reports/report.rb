@@ -1,15 +1,17 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class Report
-        attr_reader :team1, :team2, :blurbs
+        attr_reader :team1, :team2, :blurbs_url, :blurbs
 
         @@all = []
         @@current_list = []
         @@current_report= nil
         @@next_part_index = 0
 
-        def initialize(team1, team2)
-            @team1 = team1
-            @team2 = team2
+        def initialize(report_hash)
+            @team1 = report_hash[:team1] || "TEAM 1"
+            @team2 = report_hash[:team2] || "TEAM 2"
+            @blurbs_url = report_hash[:blurbs_url] || ""
+
             @blurbs = []
         end
 
@@ -19,7 +21,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.get_report_abstracts
             SpoilerFreeSoccerPlayByPlayReports::Scraper.report_list.each do |report_hash|
-                self.all << Report.new(report_hash[:team1], report_hash[:team2])
+                self.all << Report.new(report_hash)
             end
         end
 
