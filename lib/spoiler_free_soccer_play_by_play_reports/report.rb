@@ -1,6 +1,6 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class Report
-        attr_reader :team1, :team2, :parts
+        attr_reader :team1, :team2, :blurbs
 
         @@all = []
         @@current_list = []
@@ -10,7 +10,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         def initialize(team1, team2)
             @team1 = team1
             @team2 = team2
-            @parts = ['part1', 'part2', 'part3']
+            @blurbs = []
         end
 
         def self.all
@@ -20,6 +20,12 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.get_report_abstracts
             Scraper.report_list.each do |report_hash|
                 self.all << Report.new(report_hash[:team1], report_hash[:team2])
+            end
+        end
+
+        def self.get_current_report_blurbs
+            Scraper.report_blurbs.each do |blurb_hash|
+                @@current_report.blurbs << SpoilerFreeSoccerPlayByPlayReports::Blurb.new(blurb_hash)
             end
         end
 
@@ -45,21 +51,25 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.preamble(report_index)
             @@current_report = @@current_list[report_index - 1]
-            @@next_part_index = 0
+            @@next_blurb_index = 0
+
+            if @@current_report.blurbs.empty?
+                self.get_current_report_blurbs
+            end
 
             "REPORT OF THE MATCH BETWEEN #{@@current_report.team1} and #{@@current_report.team2}"
         end
 
-        def self.next_part
-            next_part = @@current_report.parts[@@next_part_index]
+        def self.next_blurb
+            next_blurb = @@current_report.blurbs[@@next_blurb_index]
 
-            @@next_part_index +=1
+            @@next_blurb_index +=1
 
-            next_part
+            next_blurb
         end
 
         def self.done
-            @@next_part_index >= @@current_report.parts.length
+            @@next_blurb_index >= @@current_report.blurbs.length
         end
 
         def self.conclusion

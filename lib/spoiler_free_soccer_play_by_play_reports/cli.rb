@@ -62,8 +62,10 @@ module SpoilerFreeSoccerPlayByPlayReports
                 input = gets.strip.downcase
 
                 if 'n' == input
+                    blurb = Report.next_blurb
                     puts ""
-                    puts Report.next_part
+                    puts "#{blurb.label}"
+                    puts "#{blurb.text}"
                     puts ""
                 end
             end
