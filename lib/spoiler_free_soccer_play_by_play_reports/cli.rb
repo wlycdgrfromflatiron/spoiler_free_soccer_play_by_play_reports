@@ -57,6 +57,10 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts ""
             puts "CLI.report_list called with team_name: #{team_name}"
             puts ""
+            
+            Scraper.report_list(team_name).each.with_index(1) do |report, index|
+                puts "#{index}. #{report[:name]}"
+            end
         end
 
         def self.invalid_input
