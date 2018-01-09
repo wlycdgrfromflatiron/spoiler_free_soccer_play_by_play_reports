@@ -51,6 +51,30 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts ""
             puts "CLI.report called with report_index: #{report_index}"
             puts ""
+
+            puts "Match Report Preamble for #{report_index}"
+            puts Report.preamble(report_index)
+
+            input = nil
+            while ('done' != input && !Report.done)
+                print "Type 'n' to continue, 'done' to return: "
+
+                input = gets.strip.downcase
+
+                if 'n' == input
+                    puts ""
+                    puts Report.next_part
+                    puts ""
+                end
+            end
+            
+            if 'done' == input
+                puts ""
+                puts "Returning to main menu early!"
+                puts ""
+            elsif Report.done
+                puts Report.conclusion
+            end
         end
 
         def self.report_list(team_name)
