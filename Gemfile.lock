@@ -1,0 +1,22 @@
+PATH
+  remote: .
+  specs:
+    spoiler_free_soccer_play_by_play_reports (0.1.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    minitest (5.8.5)
+    rake (10.5.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler (~> 1.16)
+  minitest (~> 5.0)
+  rake (~> 10.0)
+  spoiler_free_soccer_play_by_play_reports!
+
+BUNDLED WITH
+   1.16.1
