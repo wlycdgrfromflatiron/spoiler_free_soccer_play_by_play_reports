@@ -28,7 +28,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.prompt_loop
             input = nil
             while ('exit' != input && 'quit' != input)
-                puts 'Enter command: '
+                print 'Enter command: '
                 
                 input = gets.strip.downcase
 
