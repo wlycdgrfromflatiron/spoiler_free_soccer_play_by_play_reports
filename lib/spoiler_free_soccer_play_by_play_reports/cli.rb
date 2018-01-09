@@ -1,7 +1,13 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class CLI
         def self.start
-            puts "Hello world!"
+            self.welcome
+        end
+
+        def self.welcome
+            puts "" 
+            puts "~ Welcome Spoiler Free Soccer Play by Play Reports ~"
+            puts "(data provided by Sportsmole)"
         end
     end
 end
