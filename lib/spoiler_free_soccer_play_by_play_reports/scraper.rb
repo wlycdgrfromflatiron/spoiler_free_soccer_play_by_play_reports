@@ -1,6 +1,13 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class Scraper
-        def self.report_list()
+        def self.report_list
+            # source:
+            # https://www.sportsmole.co.uk/football/live-commentary/
+
+            doc = Nokogiri::HTML(open("https://www.sportsmole.co.uk/football/live-commentary/"))
+
+            binding.pry
+
             [
                 {:team1 => "Chelsea", :team2 => "Arsenal"}, 
                 {:team1 => "Bournemouth", :team2 => "Swansea"}
