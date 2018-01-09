@@ -53,7 +53,9 @@ module SpoilerFreeSoccerPlayByPlayReports
                 }
             end
 
-            binding.Pry
+            if WLY_DEBUG
+                binding.Pry
+            end
  
             hash_array
         end 
