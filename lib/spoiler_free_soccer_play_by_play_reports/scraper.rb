@@ -70,9 +70,18 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             preamble = {
                 :byline => doc.at(".article_byline a").text || "THE AUTHOR OF THIS REPORT UNKNOWN",
-                :filed => doc.at(".article_byline spam"). text || "FILING DATE UNKNOWN",
+                :filed => doc.at(".article_byline span").text || "FILING DATE UNKNOWN",
                 :updated => doc.at(".article_byline div.last_updated").text || "LAST UPDATED DATE UNKNOWN"
             }
+
+            scraped_blurbs = doc.search(".livecomm")
+
+            blurb_hashes_array = []
+            scraped_blurbs.each do |scraped_blurb|
+                blurb_hashes_array << {
+                    :label => scraped_blurb.at("a.period").text
+                }
+            end
 
             if WLY_DEBUG
                 binding.pry
