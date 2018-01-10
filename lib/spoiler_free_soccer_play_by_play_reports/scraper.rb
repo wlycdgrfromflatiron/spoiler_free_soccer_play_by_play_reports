@@ -69,8 +69,9 @@ module SpoilerFreeSoccerPlayByPlayReports
             doc = Nokogiri::HTML(open(SOURCE_BASE_URL + blurbs_url))
 
             preamble = {
-                :byline => doc.at(".article_byline a").text || "THE AUTHOR OF THIS REPORT",
-                :intro_text => "THE TEXT OF THE PREAMBLE"
+                :byline => doc.at(".article_byline a").text || "THE AUTHOR OF THIS REPORT UNKNOWN",
+                :filed => doc.at(".article_byline spam"). text || "FILING DATE UNKNOWN",
+                :updated => doc.at(".article_byline div.last_updated").text || "LAST UPDATED DATE UNKNOWN"
             }
 
             if WLY_DEBUG
