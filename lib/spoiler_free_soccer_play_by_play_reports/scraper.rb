@@ -49,7 +49,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 hash_array << {
                     :team1 => team_names[0], 
                     :team2 => team_names[1],
-                    :detail_url => link.attribute("href").value
+                    :blurbs_url => link.attribute("href").value
                 }
             end
 
