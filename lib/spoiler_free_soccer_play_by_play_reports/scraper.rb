@@ -61,11 +61,6 @@ module SpoilerFreeSoccerPlayByPlayReports
         end 
 
         def self.report_blurbs(blurbs_url)
-            blurbs = [
-                {:label => "BLURB 1 LABEL", :text => "blurb one text"},
-                {:label => "BLURB 2 LABEL", :text => "blurb two text"}
-            ]
-
             doc = Nokogiri::HTML(open(SOURCE_BASE_URL + blurbs_url))
 
             preamble = {
@@ -78,8 +73,12 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             blurb_hashes_array = []
             scraped_blurbs.each do |scraped_blurb|
+                blurb_text_span = scraped_blurb.at("span.post")
+                blurb_text = blurb_text_span.text
+
                 blurb_hashes_array << {
-                    :label => scraped_blurb.at("a.period").text
+                    :label => scraped_blurb.at("a.period").text,
+                    :text => blurb_text
                 }
             end
 
@@ -87,7 +86,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 binding.pry
             end
 
-            blurbs
+            blurb_hashes_array
         end
     end
 end
