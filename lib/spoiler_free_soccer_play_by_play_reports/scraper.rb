@@ -24,6 +24,12 @@ module SpoilerFreeSoccerPlayByPlayReports
                     next
                 end
 
+                # skip live commentaries for in-progress or soon-to-start matches, for which the title is of the form
+                # Live Commentary: Real Madrid vs. Numancia - kickoff at 8.30pm
+                if title.include?(" vs. ")
+                    next
+                end
+
                 title.gsub!("Live Commentary: ", "")
                 title.gsub!(" - as it happened", "")
 
