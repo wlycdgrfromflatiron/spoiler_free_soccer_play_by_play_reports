@@ -1,6 +1,19 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class Report
-        attr_reader :team1, :team2, :blurbs_url, :blurbs
+        # I am aware that this is not a true inner class but is rather merely namespaced,
+        # but it still feels cleaner than a hash or a non-namespaced class
+        class Byline
+            attr_accessor :author, :filed, :updated
+
+            def initialize(preamble_hash)
+                @author = preamble_hash[:author] || "AUTHOR UNKNONWN"
+                @filed = preamble_hash[:filed] || "FILING DATE UNKNOWN"
+                @updated = preamble_hash[:updated] || "LAST UPDATED DATE UNKNOWN"
+            end
+        end
+
+        attr_reader :team1, :team2, :details_url
+        attr_accessor :details_loaded, :byline, :blurbs
 
         @@all = []
         @@current_list = []
@@ -10,9 +23,11 @@ module SpoilerFreeSoccerPlayByPlayReports
         def initialize(report_hash)
             @team1 = report_hash[:team1] || "TEAM 1"
             @team2 = report_hash[:team2] || "TEAM 2"
-            @blurbs_url = report_hash[:blurbs_url] || ""
-
+            @details_url = report_hash[:details_url] || ""
+            
+            @byline = nil
             @blurbs = []
+            @details_loaded = false
         end
 
         def self.all
@@ -25,10 +40,16 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end
 
-        def self.get_current_report_blurbs
-            SpoilerFreeSoccerPlayByPlayReports::Scraper.report_blurbs(@@current_report.blurbs_url).each do |blurb_hash|
+        def self.load_current_report_details
+            report_details = SpoilerFreeSoccerPlayByPlayReports::Scraper.report_details(@@current_report.details_url)
+
+            @@current_report.byline = SpoilerFreeSoccerPlayByPlayReports::Report::Byline.new(report_details[:byline])
+
+            report_details[:blurbs].each do |blurb_hash|
                 @@current_report.blurbs << SpoilerFreeSoccerPlayByPlayReports::Blurb.new(blurb_hash)
             end
+
+            @@current_report.details_loaded = true
         end
 
         def self.reset
@@ -51,15 +72,15 @@ module SpoilerFreeSoccerPlayByPlayReports
             @@current_list
         end
 
-        def self.preamble(report_index)
+        def self.report(report_index)
             @@current_report = @@current_list[report_index - 1]
             @@next_blurb_index = 0
 
-            if @@current_report.blurbs.empty?
-                self.get_current_report_blurbs
+            if !@@current_report.details_loaded
+                self.load_current_report_details
             end
 
-            "REPORT OF THE MATCH BETWEEN #{@@current_report.team1} and #{@@current_report.team2}"
+            @@current_report
         end
 
         def self.next_blurb

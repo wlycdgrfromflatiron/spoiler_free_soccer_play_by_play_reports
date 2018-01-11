@@ -55,7 +55,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 hash_array << {
                     :team1 => team_names[0], 
                     :team2 => team_names[1],
-                    :blurbs_url => link.attribute("href").value
+                    :details_url => link.attribute("href").value
                 }
             end
 
@@ -66,18 +66,20 @@ module SpoilerFreeSoccerPlayByPlayReports
             hash_array
         end 
 
-        def self.report_blurbs(blurbs_url)
-            doc = Nokogiri::HTML(open(SOURCE_BASE_URL + blurbs_url))
+        def self.report_details(details_url)
+            doc = Nokogiri::HTML(open(SOURCE_BASE_URL + details_url))
 
-            preamble = {
-                :byline => doc.at(".article_byline a").text || "THE AUTHOR OF THIS REPORT UNKNOWN",
-                :filed => doc.at(".article_byline span").text || "FILING DATE UNKNOWN",
-                :updated => doc.at(".article_byline div.last_updated").text || "LAST UPDATED DATE UNKNOWN"
+            report_details = {}
+
+            report_details[:byline] = {
+                :author => doc.at(".article_byline a").text || nil,
+                :filed => doc.at(".article_byline span").text || nil,
+                :updated => doc.at(".article_byline div.last_updated").text || nil
             }
 
             scraped_blurbs = doc.search(".livecomm")
 
-            blurb_hashes_array = []
+            report_details[:blurbs] = []
             scraped_blurbs.each do |scraped_blurb|
                 blurb_text_span = scraped_blurb.at("span.post")
 
@@ -85,7 +87,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 
                 blurb_text.gsub!(/([?.!])([^?.!\s])/, "\\1\n\n\\2")
 
-                blurb_hashes_array << {
+                report_details[:blurbs] << {
                     :label => scraped_blurb.at("a.period").text,
                     :text => blurb_text
                 }
@@ -95,7 +97,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 binding.pry
             end
 
-            blurb_hashes_array
+            report_details
         end
     end
 end

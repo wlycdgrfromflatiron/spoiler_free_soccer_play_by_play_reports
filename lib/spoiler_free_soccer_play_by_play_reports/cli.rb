@@ -69,8 +69,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.report(report_index)
-            puts "Match Report Preamble for #{report_index}"
-            puts Report.preamble(report_index)
+            self.report_preamble(Report.report(report_index))
 
             puts ""
             puts "Controls:"
@@ -94,6 +93,17 @@ module SpoilerFreeSoccerPlayByPlayReports
             if Report.done
                 puts Report.conclusion
             end
+        end
+
+        def self.report_preamble(report)
+            puts ""
+            puts "MATCH REPORT"
+            puts "#{report.team1} VS. #{report.team2}"
+            puts ""
+            puts "Author: #{report.byline.author}"
+            puts "Filed: #{report.byline.filed}"
+            puts "Updated: #{report.byline.updated}"
+            puts ""
         end
 
         def self.report_list(team_name)
