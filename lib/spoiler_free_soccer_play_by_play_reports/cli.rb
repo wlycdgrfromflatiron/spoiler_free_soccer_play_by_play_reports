@@ -122,11 +122,17 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.report_list(team_name)
             reports = Report.list(team_name)
 
-            reports.each.with_index(1) do |report, index|
-                puts_indented("#{index}. #{report.team1} vs. #{report.team2}")
-            end
-
             if (reports.size > 0)
+                system "clear" or system "cls"
+
+                puts ""
+                puts_indented("AVAILABLE REPORTS FOR #{team_name}")
+                puts ""
+
+                reports.each.with_index(1) do |report, index|
+                    puts_indented("#{index}. #{report.team1} vs. #{report.team2}")
+                end
+
                 @@report_list_size = reports.size
                 @@report_list_filter = team_name
                 @@just_printed_report_list = true
@@ -149,13 +155,17 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 if input.to_i > 0
                     if input.to_i > @@report_list_size
-                        puts_indented("Invalid index. Please try again")
+                        puts_indented("Invalid report number! Please try again.")
                     else
                         self.report(input.to_i)
                         self.report_list(@@report_list_filter)
                     end
                 elsif input.match(/^h(elp)?\s*$/)
                     self.controls
+                elsif input.match(/^e(xit)?\s*$/)
+                    # do nothing
+                else
+                    puts_indented("To view a report, please enter its number.")
                 end
             end
         end

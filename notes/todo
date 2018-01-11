@@ -1,7 +1,10 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO 
 
-* UI: create function to indent text
+* FUNC: Added "Main" option to report list screen controls
+* FUNC: Show only relevant controls on report list screen (report #, Hlep, Main, Exit)
+* UI: Clear screen and reprint controls on return to main menu from report list screen
+* UI: Clear screen and reprint report list on return to report list view from report detail view
 * UI: Snazz welcome message
 
 * DEBUG: handle image blurbs correctly
@@ -50,5 +53,8 @@ DONE DONE DONE DONE DONE DONE DONE
 
 * DONE add correct preamble code
 
-* UI: clear terminal at launch
-* UI: print app title at launch, before "loading" message
+* DONE UI: clear terminal at launch
+* DONE UI: print app title at launch, before "loading" message
+* DONE UI: create function to indent text
+* DONE UI: Clear screen before printing a report list
+* DONE UI: Snazz & clean report list screen
