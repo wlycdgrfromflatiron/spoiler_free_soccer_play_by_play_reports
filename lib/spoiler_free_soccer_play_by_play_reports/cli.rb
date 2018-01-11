@@ -50,7 +50,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                     end
                 else
                     case input
-                    when 'l', 'l a', 'l all', 'list', 'list a', 'list all'
+                    when /^l(ist)?( a(ll)?)?$/
                         self.report_list('all')
                     when 'l arsenal', 'l chelsea'
                         self.report_list(input.gsub(/^\S+\s/, ""))
