@@ -5,6 +5,8 @@ module SpoilerFreeSoccerPlayByPlayReports
         DEFAULT_PUTS_INDENT = 5
         DEFAULT_PRINT_INDENT = 5
 
+        @@should_exit_program = false
+
         @@just_printed_report_list = false
         @@report_list_size = -1
         @@report_list_filter = "all"
@@ -57,10 +59,10 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.main_loop
             input = ""
-            while (!input.match(/^e(xit)?\s*$/))
+            while (!@@should_exit_program)
                 @@just_printed_report_list = false
 
-                print_indented "MAIN MENU: All | [team name] |  Help  |  Exit: "
+                print_indented "MAIN MENU: All | [team name] |  Help  | Exit: "
                 
                 input = gets.strip.downcase
 
@@ -70,7 +72,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 when /^h(elp)?\s*$/
                     self.controls
                 when /^e(xit)?\s*$/, "", /^\s*$/
-                    # do nothing
+                    @@should_exit_program = true
                 else
                     self.report_list(input)
                 end
@@ -147,9 +149,10 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.report_list_loop
             input = ""
-            while (!input.match(/^e(xit)?\s*$/))
+            should_return_to_team_list = false
+            while (!should_return_to_team_list)
                 puts ""
-                print_indented("REPORT LIST MENU: [report #] | Help  |  Exit: ")
+                print_indented("REPORT LIST MENU: [report #] | Back to team list | Help | Exit: ")
 
                 input = gets.strip.downcase
 
@@ -160,10 +163,13 @@ module SpoilerFreeSoccerPlayByPlayReports
                         self.report(input.to_i)
                         self.report_list(@@report_list_filter)
                     end
+                elsif input.match(/^b(ack)?\s*$/)
+                    should_return_to_team_list = true
                 elsif input.match(/^h(elp)?\s*$/)
                     self.controls
                 elsif input.match(/^e(xit)?\s*$/)
-                    # do nothing
+                    should_return_to_team_list = true
+                    @@should_exit_program = true
                 else
                     puts_indented("To view a report, please enter its number.")
                 end

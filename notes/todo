@@ -3,6 +3,8 @@ TODO TODO TODO TODO TODO TODO TODO
 
 * FUNC: Added "Main" option to report list screen controls
 * FUNC: Show only relevant controls on report list screen (report #, Hlep, Main, Exit)
+* FUNC: Print available team list on main menu
+* UI: upcase the OTHER teams in the team report list
 * UI: Clear screen and reprint controls on return to main menu from report list screen
 * UI: Clear screen and reprint report list on return to report list view from report detail view
 * UI: Snazz welcome message
