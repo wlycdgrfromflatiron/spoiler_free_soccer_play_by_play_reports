@@ -55,7 +55,24 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts "Match Report Preamble for #{report_index}"
             puts Report.preamble(report_index)
 
+            puts ""
+            puts "Spacebar: view next blurb"
+            puts "q: quit"
+            puts ""
+
             input = nil
+            while ('q' != input && !Report.done)
+                input = STDIN.getch
+
+                if ' ' == input
+                    blurb = Report.next_blurb
+                    puts ""
+                    puts "#{blurb.label}"
+                    puts "#{blurb.text}"
+                    puts ""
+                end
+            end
+=begin
             while ('done' != input && !Report.done)
                 print "Type 'n' to continue, 'done' to return: "
 
@@ -69,7 +86,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                     puts ""
                 end
             end
-            
+=end
             if 'done' == input
                 puts ""
                 puts "Returning to main menu early!"
