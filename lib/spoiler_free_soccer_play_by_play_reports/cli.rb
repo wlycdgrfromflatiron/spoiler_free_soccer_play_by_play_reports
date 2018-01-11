@@ -6,7 +6,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.start
             self.welcome
             self.controls
-            self.prompt_loop
+            self.main_loop
             self.goodbye
         end
 
@@ -22,7 +22,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts "Controls:"
             puts "All:          List all available reports."
             puts "[team name]:  List all available reports involving [team name]."
-            puts "[report #]:   View the corresponding report."
+            puts "[report #]:   View the corresponding report (available after printing a report list)."
             puts "Help:         See these instructions."
             puts "Exit, 'Quit': Quit the program."
             puts ""
@@ -30,26 +30,13 @@ module SpoilerFreeSoccerPlayByPlayReports
             @@just_printed_report_list = false
         end
 
-        def self.prompt_loop
+        def self.main_loop
             input = ""
             while (!input.match(/^e(xit)?\s*$/))
-                print "All | [team name] | [report #]  |  Help  |  Exit: "
+                print "All | [team name] |  Help  |  Exit: "
                 
                 input = gets.strip.downcase
 
-                if input.to_i > 0
-                    if (!@@just_printed_report_list)
-                        puts ""
-                        puts "Please print a report list, then choose a report."
-                        puts ""
-                    elsif (input.to_i > @@size_of_most_recently_printed_report_list)
-                        puts ""
-                        puts "Invalid report list index. Please try again."
-                        puts ""
-                    else 
-                        self.report(input.to_i)
-                    end
-                else
                     case input
                     when /^a(ll)?\s*$/
                         self.report_list('all')
@@ -60,7 +47,6 @@ module SpoilerFreeSoccerPlayByPlayReports
                     else
                         self.report_list(input)
                     end
-                end
             end
         end
 
