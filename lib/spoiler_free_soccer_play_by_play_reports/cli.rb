@@ -83,11 +83,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 end
             end
 
-            if 'done' == input
-                puts ""
-                puts "Returning to main menu early!"
-                puts ""
-            elsif Report.done
+            if Report.done
                 puts Report.conclusion
             end
 
