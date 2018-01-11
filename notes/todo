@@ -46,3 +46,6 @@ DONE DONE DONE DONE DONE DONE DONE
 * DONE let user know when a team name has not been found
 
 * DONE add correct preamble code
+
+* UI: clear terminal at launch
+* UI: print app title at launch, before "loading" message
