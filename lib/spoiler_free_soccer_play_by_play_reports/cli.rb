@@ -58,7 +58,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.main_loop
             input = ""
-            
+
             while (!@@should_exit_program)
                 print_indented "MAIN MENU: All | [team name] |  Help  | Exit: "
                 
@@ -119,6 +119,23 @@ module SpoilerFreeSoccerPlayByPlayReports
             reports = Report.list(team_name)
 
             if (reports.size > 0)
+                self.report_list_loop(reports, team_name)
+            else
+                puts ""
+                puts_indented("There are no reports available for a team called #{team_name}.")
+                puts_indented("However, the matcher is literal and (aside from being case-insensitive) stupid,")
+                puts_indented("so please double check your spelling, and/or use 'all' to list all reports just in case.")
+                puts ""
+            end
+        end
+
+        def self.report_list_loop(reports, team_name)
+            input = ""
+
+            info_readout = ""
+
+            should_return_to_team_list = false
+            while (!should_return_to_team_list)
                 system "clear" or system "cls"
 
                 puts ""
@@ -129,44 +146,33 @@ module SpoilerFreeSoccerPlayByPlayReports
                     puts_indented("#{index}. #{report.team1} vs. #{report.team2}")
                 end
 
-                @@report_list_size = reports.size
-                @@report_list_filter = team_name
+                if !info_readout.empty?
+                    puts ""
+                    "controls" == info_readout ? self.controls : puts_indented(info_readout)
+                end
+                
+                info_readout = info_readout.clear
 
-                self.report_list_loop
-            else
-                puts ""
-                puts_indented("There are no reports available for a team called #{team_name}.")
-                puts_indented("However, the matcher is literal and (aside from being case-insensitive) stupid,")
-                puts_indented("so please double check your spelling, and/or use 'all' to list all reports just in case.")
-                puts ""
-            end
-        end
-
-        def self.report_list_loop
-            input = ""
-            should_return_to_team_list = false
-            while (!should_return_to_team_list)
                 puts ""
                 print_indented("REPORT LIST MENU: [report #] | Back to team list | Help | Exit: ")
 
                 input = gets.strip.downcase
 
                 if input.to_i > 0
-                    if input.to_i > @@report_list_size
-                        puts_indented("Invalid report number! Please try again.")
+                    if input.to_i > reports.size
+                        info_readout = "Invalid report number! Please try again."
                     else
                         self.report(input.to_i)
-                        self.report_list(@@report_list_filter)
                     end
                 elsif input.match(/^b(ack)?\s*$/)
                     should_return_to_team_list = true
                 elsif input.match(/^h(elp)?\s*$/)
-                    self.controls
+                    info_readout = "controls"
                 elsif input.match(/^e(xit)?\s*$/)
                     should_return_to_team_list = true
                     @@should_exit_program = true
                 else
-                    puts_indented("To view a report, please enter its number.")
+                    info_readout = "To view a report, please enter its number."
                 end
             end
         end
