@@ -1,12 +1,18 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class CLI
+        extend WlyCuteConsole::ClassMethods
+
+        STANDARD_PUTS_INDENT = 5
+
         @@just_printed_report_list = false
         @@report_list_size = -1
         @@report_list_filter = "all"
 
         def self.start
+            set_puts_indent(STANDARD_PUTS_INDENT)
+
             system "clear" or system "cls"
-            
+
             self.welcome 
 
             self.loading
@@ -21,29 +27,29 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.loading
-            puts "Loading report list..."
+            puts_indented("Loading report list...")
         end
 
         def self.done_loading
-            puts "...Done"
+            puts_indented("...Done")
         end
 
         def self.welcome
             puts "" 
-            puts "~ Welcome Spoiler Free Soccer Play by Play Reports ~"
-            puts "(data provided by Sportsmole)"
+            puts_indented("~ Welcome Spoiler Free Soccer Play by Play Reports ~")
+            puts_indented("(data provided by Sportsmole)")
             puts "" 
         end
 
         def self.controls
             puts ""
-            puts "Controls:"
-            puts "All:          List all available reports."
-            puts "[team name]:  List all available reports involving [team name]."
-            puts "[report #]:   View the corresponding report (available after printing a report list)."
-            puts "[Spacebar]:   Show next report item (available on report detail screen)."
-            puts "Help:         See these instructions."
-            puts "Exit, 'Quit': Quit back to previous menu. If in main menu, quit."
+            puts "  Controls:"
+            puts "  All:          List all available reports."
+            puts "  [team name]:  List all available reports involving [team name]."
+            puts "  [report #]:   View the corresponding report (available after printing a report list)."
+            puts "  [Spacebar]:   Show next report item (available on report detail screen)."
+            puts "  Help:         See these instructions."
+            puts "  Exit, 'Quit': Quit back to previous menu. If in main menu, quit."
             puts ""
         end
 

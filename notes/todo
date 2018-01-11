@@ -1,6 +1,9 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO 
 
+* UI: create function to indent text
+* UI: Snazz welcome message
+
 * DEBUG: handle image blurbs correctly
 * DEBUG: handle tweet blurbs correctly
 * DEBUG: handle strings like "B.Silva" correctly (i.e. without making a paragraph break after the .)
