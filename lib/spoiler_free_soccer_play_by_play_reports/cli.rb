@@ -2,14 +2,14 @@ module SpoilerFreeSoccerPlayByPlayReports
     class CLI
         extend WlyCuteConsole::ClassMethods
 
-        STANDARD_PUTS_INDENT = 5
+        DEFAULT_PUTS_INDENT = 5
 
         @@just_printed_report_list = false
         @@report_list_size = -1
         @@report_list_filter = "all"
 
         def self.start
-            set_puts_indent(STANDARD_PUTS_INDENT)
+            set_default_puts_indent(DEFAULT_PUTS_INDENT)
 
             system "clear" or system "cls"
 

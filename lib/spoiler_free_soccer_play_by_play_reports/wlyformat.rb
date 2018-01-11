@@ -4,7 +4,7 @@ module WlyCuteConsole
 
         @@puts_indent = nil
 
-        def set_puts_indent(indent_value)
+        def set_default_puts_indent(indent_value)
             @@puts_indent = indent_value if indent_value.to_i > 0
         end
 
