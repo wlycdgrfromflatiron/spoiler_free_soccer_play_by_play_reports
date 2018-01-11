@@ -1,0 +1,48 @@
+__________________________________
+TODO TODO TODO TODO TODO TODO TODO 
+
+* DEBUG: handle image blurbs correctly
+* DEBUG: handle tweet blurbs correctly
+* DEBUG: handle strings like "B.Silva" correctly (i.e. without making a paragraph break after the .)
+* DEBUG: enforce correct (i.e. oldest-first) blurb sorting even if scraped blurbs are sorted newest-first
+
+* REFACTOR: Report.preamble and Report.conclusion; they should not get involved in building output strings
+* REFACTOR: add a decorator that accepts an array of string to puts out and puts an empty line before the first and after the last
+
+
+__________________________________
+DONE DONE DONE DONE DONE DONE DONE
+
+* DONE finish report_list implementation
+	* DONE scrape report detail page URL
+	* DONE create new instance variable on report to store it
+
+* DONE implement report_blurbs
+	* load page from URL passed to function from Report instance
+	* extract one blurb
+	* extract something-like-a-title from the blurb
+	* extract the text body from the blurb
+
+* DONE implement unbuffered input handling for report output (show next blurb on spacebar)
+
+* DONE integrate accepted inputs into main input prompt
+
+* DONE handle user entering report # before a report list has been printed correctly
+
+* DONE do not let user enter report index from main input handling loop
+
+* DONE after printing a report list, go into loop where you
+	* ask user for report number
+	* check whether it's valid
+	* if so, display report
+	* if not, show error message & instructions
+	* let user search again 
+
+* DONE add more team names:
+	* pull in all available reports
+	* add all team names in those reports to a team array
+	* 
+
+* DONE let user know when a team name has not been found
+
+* DONE add correct preamble code
