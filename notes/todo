@@ -1,7 +1,6 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO 
 
-* FUNC: Show only relevant controls on report list screen (report #, Hlep, Main, Exit)
 * FUNC: Print available team list on main menu
 * UI: upcase the OTHER teams in the team report list
 * UI: Clear screen and reprint controls on return to main menu from report list screen
@@ -60,3 +59,4 @@ DONE DONE DONE DONE DONE DONE DONE
 * DONE UI: Clear screen before printing a report list
 * DONE UI: Snazz & clean report list screen
 * DONE FUNC: Added ~"Back" option to report list screen controls
+* DONE FUNC: Show only relevant controls on report list screen (report #, Hlep, Main, Exit)
