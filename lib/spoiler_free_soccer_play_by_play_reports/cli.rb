@@ -5,10 +5,22 @@ module SpoilerFreeSoccerPlayByPlayReports
         @@report_list_filter = "all"
 
         def self.start
+            self.loading
+            Report.list('all')
+            self.done_loading
+
             self.welcome
             self.controls
             self.main_loop
             self.goodbye
+        end
+
+        def self.loading
+            puts "Loading report list..."
+        end
+
+        def self.done_loading
+            puts "...Done"
         end
 
         def self.welcome
