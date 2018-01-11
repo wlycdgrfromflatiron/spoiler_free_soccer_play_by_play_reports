@@ -26,7 +26,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts "[report #]:   View the corresponding report (available after printing a report list)."
             puts "[Spacebar]:   Show next report item (available on report detail screen)."
             puts "Help:         See these instructions."
-            puts "Exit, 'Quit': Quit back to main menu. If in main menu, quit."
+            puts "Exit, 'Quit': Quit back to previous menu. If in main menu, quit."
             puts ""
         end
 
@@ -35,7 +35,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             while (!input.match(/^e(xit)?\s*$/))
                 @@just_printed_report_list = false
 
-                print "All | [team name] |  Help  |  Exit: "
+                print "MAIN MENU: All | [team name] |  Help  |  Exit: "
                 
                 input = gets.strip.downcase
 
@@ -65,12 +65,13 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts Report.preamble(report_index)
 
             puts ""
-            puts "Spacebar: view next blurb"
-            puts "q: quit"
+            puts "Controls:"
+            puts "Spacebar:     Show next report item."
+            puts "e, q:         Exit back to report list menu. "
             puts ""
 
-            input = nil
-            while ('q' != input && !Report.done)
+            input = ""
+            while (!input.match(/[qe]/) && !Report.done)
                 input = STDIN.getch
 
                 if ' ' == input
@@ -113,7 +114,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.report_list_loop
             input = ""
             while (!input.match(/^e(xit)?\s*$/))
-                print "[report #] | Help  |  Exit: "
+                print "REPORT LIST MENU: [report #] | Help  |  Exit: "
 
                 input = gets.strip.downcase
 
