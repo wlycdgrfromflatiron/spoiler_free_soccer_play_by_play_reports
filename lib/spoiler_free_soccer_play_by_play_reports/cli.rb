@@ -20,19 +20,20 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.controls
             puts ""
             puts "Controls:"
-            puts "List [All | [team name]]: list the available reports for all teams or a specific team. Defaults to all."
-            puts "[report #]: View the corresponding report"
-            puts "'Help': See these instructions"
-            puts "'Exit', 'Quit': Quit the program"
+            puts "All:          List all available reports."
+            puts "[team name]:  List all available reports involving [team name]."
+            puts "[report #]:   View the corresponding report."
+            puts "Help:         See these instructions."
+            puts "Exit, 'Quit': Quit the program."
             puts ""
 
             @@just_printed_report_list = false
         end
 
         def self.prompt_loop
-            input = nil
-            while ('exit' != input && 'quit' != input && 'e' != input && 'q' != input)
-                print "List [All | [team name]]  ||  [report #]  ||  Help  ||  Exit: "
+            input = ""
+            while (!input.match(/^e(xit)?\s*$/))
+                print "All | [team name] | [report #]  |  Help  |  Exit: "
                 
                 input = gets.strip.downcase
 
@@ -50,16 +51,14 @@ module SpoilerFreeSoccerPlayByPlayReports
                     end
                 else
                     case input
-                    when /^l(ist)?( a(ll)?)?$/
+                    when /^a(ll)?\s*$/
                         self.report_list('all')
-                    when 'l arsenal', 'l chelsea'
-                        self.report_list(input.gsub(/^\S+\s/, ""))
-                    when 'h', 'help'
+                    when /^h(elp)?\s*$/
                         self.controls
-                    when 'e', 'exit'
+                    when /^e(xit)?\s*$/, "", /^\s*$/
                         # do nothing
-                    else 
-                        self.controls
+                    else
+                        self.report_list(input)
                     end
                 end
             end
