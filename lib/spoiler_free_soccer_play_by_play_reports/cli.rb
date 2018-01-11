@@ -103,9 +103,17 @@ module SpoilerFreeSoccerPlayByPlayReports
                 puts "#{index}. #{report.team1} vs. #{report.team2}"
             end
 
-            @@report_list_size = reports.size
-            @@report_list_filter = team_name
-            @@just_printed_report_list = true
+            if (reports.size > 0)
+                @@report_list_size = reports.size
+                @@report_list_filter = team_name
+                @@just_printed_report_list = true
+            else
+                puts ""
+                puts "There are no reports available for a team called #{team_name}."
+                puts "However, the matcher is literal and (aside from being case-insensitive) stupid," 
+                puts "so please double check your spelling, and/or use 'all' to list all reports just in case."
+                puts ""
+            end
         end
 
         def self.report_list_loop
