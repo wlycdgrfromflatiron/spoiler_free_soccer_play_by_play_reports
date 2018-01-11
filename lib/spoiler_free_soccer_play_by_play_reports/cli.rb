@@ -3,6 +3,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         extend WlyCuteConsole::ClassMethods
 
         DEFAULT_PUTS_INDENT = 5
+        DEFAULT_PRINT_INDENT = 5
 
         @@just_printed_report_list = false
         @@report_list_size = -1
@@ -10,6 +11,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.start
             set_default_puts_indent(DEFAULT_PUTS_INDENT)
+            set_default_print_indent(DEFAULT_PRINT_INDENT)
 
             system "clear" or system "cls"
 
@@ -43,13 +45,13 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.controls
             puts ""
-            puts "  Controls:"
-            puts "  All:          List all available reports."
-            puts "  [team name]:  List all available reports involving [team name]."
-            puts "  [report #]:   View the corresponding report (available after printing a report list)."
-            puts "  [Spacebar]:   Show next report item (available on report detail screen)."
-            puts "  Help:         See these instructions."
-            puts "  Exit, 'Quit': Quit back to previous menu. If in main menu, quit."
+            puts_indented("Controls:")
+            puts_indented("All:          List all available reports.")
+            puts_indented("[team name]:  List all available reports involving [team name].")
+            puts_indented("[report #]:   View the corresponding report (available after printing a report list).")
+            puts_indented("[Spacebar]:   Show next report item (available on report detail screen).")
+            puts_indented("Help:         See these instructions.")
+            puts_indented("Exit, 'Quit': Quit back to previous menu. If in main menu, quit.")
             puts ""
         end
 
@@ -58,7 +60,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             while (!input.match(/^e(xit)?\s*$/))
                 @@just_printed_report_list = false
 
-                print "MAIN MENU: All | [team name] |  Help  |  Exit: "
+                print_indented "MAIN MENU: All | [team name] |  Help  |  Exit: "
                 
                 input = gets.strip.downcase
 
@@ -83,9 +85,9 @@ module SpoilerFreeSoccerPlayByPlayReports
             self.report_preamble(Report.report(report_index))
 
             puts ""
-            puts "Controls:"
-            puts "Spacebar:     Show next report item."
-            puts "e, q:         Exit back to report list menu. "
+            puts_indented("Controls:")
+            puts_indented("Spacebar:     Show next report item.")
+            puts_indented("e, q:         Exit back to report list menu. ")
             puts ""
 
             input = ""
@@ -95,8 +97,8 @@ module SpoilerFreeSoccerPlayByPlayReports
                 if ' ' == input
                     blurb = Report.next_blurb
                     puts ""
-                    puts "#{blurb.label}"
-                    puts "#{blurb.text}"
+                    puts_indented("#{blurb.label}")
+                    puts_indented("#{blurb.text}")
                     puts ""
                 end
             end
@@ -108,12 +110,12 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.report_preamble(report)
             puts ""
-            puts "MATCH REPORT"
-            puts "#{report.team1} VS. #{report.team2}"
-            puts ""
-            puts "Author: #{report.byline.author}"
-            puts "Filed: #{report.byline.filed}"
-            puts "Updated: #{report.byline.updated}"
+            puts_indented("MATCH REPORT")
+            puts_indented("#{report.team1} VS. #{report.team2}")
+            puts_indented("")
+            puts_indented("Author: #{report.byline.author}")
+            puts_indented("Filed: #{report.byline.filed}")
+            puts_indented("Updated: #{report.byline.updated}")
             puts ""
         end
 
@@ -121,7 +123,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             reports = Report.list(team_name)
 
             reports.each.with_index(1) do |report, index|
-                puts "#{index}. #{report.team1} vs. #{report.team2}"
+                puts_indented("#{index}. #{report.team1} vs. #{report.team2}")
             end
 
             if (reports.size > 0)
@@ -130,9 +132,9 @@ module SpoilerFreeSoccerPlayByPlayReports
                 @@just_printed_report_list = true
             else
                 puts ""
-                puts "There are no reports available for a team called #{team_name}."
-                puts "However, the matcher is literal and (aside from being case-insensitive) stupid," 
-                puts "so please double check your spelling, and/or use 'all' to list all reports just in case."
+                puts_indented("There are no reports available for a team called #{team_name}.")
+                puts_indented("However, the matcher is literal and (aside from being case-insensitive) stupid,")
+                puts_indented("so please double check your spelling, and/or use 'all' to list all reports just in case.")
                 puts ""
             end
         end
@@ -140,13 +142,14 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.report_list_loop
             input = ""
             while (!input.match(/^e(xit)?\s*$/))
-                print "REPORT LIST MENU: [report #] | Help  |  Exit: "
+                puts ""
+                print_indented("REPORT LIST MENU: [report #] | Help  |  Exit: ")
 
                 input = gets.strip.downcase
 
                 if input.to_i > 0
                     if input.to_i > @@report_list_size
-                        puts "Invalid index. Please try again"
+                        puts_indented("Invalid index. Please try again")
                     else
                         self.report(input.to_i)
                         self.report_list(@@report_list_filter)
@@ -159,7 +162,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.goodbye
             puts ""
-            puts "Thanks for using this app. Goodbye!"
+            puts_indented("Thanks for using this app. Goodbye!")
             puts ""
         end
     end
