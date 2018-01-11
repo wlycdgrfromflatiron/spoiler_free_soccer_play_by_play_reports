@@ -86,9 +86,6 @@ module SpoilerFreeSoccerPlayByPlayReports
             if Report.done
                 puts Report.conclusion
             end
-
-            @@just_printed_report_list = false
-            @@size_of_most_recently_printed_report_list = -1
         end
 
         def self.report_list(team_name)
