@@ -129,12 +129,6 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end
 
-        def self.invalid_input
-            puts ""
-            puts "CLI.invalid_input called"
-            puts ""
-        end
-
         def self.goodbye
             puts ""
             puts "Thanks for using this app. Goodbye!"
