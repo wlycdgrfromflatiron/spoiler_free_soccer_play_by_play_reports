@@ -57,10 +57,6 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.report(report_index)
-            puts ""
-            puts "CLI.report called with report_index: #{report_index}"
-            puts ""
-
             puts "Match Report Preamble for #{report_index}"
             puts Report.preamble(report_index)
 
@@ -89,10 +85,6 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.report_list(team_name)
-            puts ""
-            puts "CLI.report_list called with team_name: #{team_name}"
-            puts ""
-            
             reports = Report.list(team_name)
 
             reports.each.with_index(1) do |report, index|
