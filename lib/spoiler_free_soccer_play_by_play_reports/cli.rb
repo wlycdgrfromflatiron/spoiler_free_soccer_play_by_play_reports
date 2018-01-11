@@ -17,18 +17,17 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.controls
             puts ""
             puts "Controls:"
-            puts "[club's name]: List avialable reports for that EPL club"
-            puts "'all': List available reports for all EPL clubs"
-            puts "[report list index]: View the corresponding report"
-            puts "'controls', 'help': See these instructions"
-            puts "'exit', 'quit': Quit the program"
+            puts "List [All | [team name]]: list the available reports for all teams or a specific team. Defaults to all."
+            puts "[report #]: View the corresponding report"
+            puts "'Help': See these instructions"
+            puts "'Exit', 'Quit': Quit the program"
             puts ""
         end
 
         def self.prompt_loop
             input = nil
-            while ('exit' != input && 'quit' != input)
-                print 'Enter command: '
+            while ('exit' != input && 'quit' != input && 'e' != input && 'q' != input)
+                print "List [All | [team name]]  ||  [report #]  ||  Help  ||  Exit: "
                 
                 input = gets.strip.downcase
 
@@ -36,12 +35,16 @@ module SpoilerFreeSoccerPlayByPlayReports
                     self.report(input.to_i)
                 else
                     case input
-                    when 'chelsea', 'arsenal', 'city', 'all'
-                        self.report_list(input)
-                    when 'controls', 'help'
+                    when 'l', 'l a', 'l all', 'list', 'list a', 'list all'
+                        self.report_list('all')
+                    when 'l arsenal', 'l chelsea'
+                        self.report_list(input.gsub(/^\S+\s/, ""))
+                    when 'h', 'help'
                         self.controls
+                    when 'e', 'exit'
+                        # do nothing
                     else 
-                        self.invalid_input
+                        self.controls
                     end
                 end
             end
