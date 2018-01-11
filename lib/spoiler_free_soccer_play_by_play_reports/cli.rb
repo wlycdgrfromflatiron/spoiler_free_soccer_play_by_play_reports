@@ -7,7 +7,6 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         @@should_exit_program = false
 
-        @@just_printed_report_list = false
         @@report_list_size = -1
         @@report_list_filter = "all"
 
@@ -59,9 +58,8 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.main_loop
             input = ""
+            
             while (!@@should_exit_program)
-                @@just_printed_report_list = false
-
                 print_indented "MAIN MENU: All | [team name] |  Help  | Exit: "
                 
                 input = gets.strip.downcase
@@ -75,10 +73,6 @@ module SpoilerFreeSoccerPlayByPlayReports
                     @@should_exit_program = true
                 else
                     self.report_list(input)
-                end
-
-                if @@just_printed_report_list && @@report_list_size > 0
-                    self.report_list_loop
                 end
             end
         end
@@ -137,7 +131,8 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 @@report_list_size = reports.size
                 @@report_list_filter = team_name
-                @@just_printed_report_list = true
+
+                self.report_list_loop
             else
                 puts ""
                 puts_indented("There are no reports available for a team called #{team_name}.")

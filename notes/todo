@@ -1,7 +1,6 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO 
 
-* FUNC: Added "Main" option to report list screen controls
 * FUNC: Show only relevant controls on report list screen (report #, Hlep, Main, Exit)
 * FUNC: Print available team list on main menu
 * UI: upcase the OTHER teams in the team report list
@@ -60,3 +59,4 @@ DONE DONE DONE DONE DONE DONE DONE
 * DONE UI: create function to indent text
 * DONE UI: Clear screen before printing a report list
 * DONE UI: Snazz & clean report list screen
+* DONE FUNC: Added ~"Back" option to report list screen controls
