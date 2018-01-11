@@ -90,21 +90,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                     puts ""
                 end
             end
-=begin
-            while ('done' != input && !Report.done)
-                print "Type 'n' to continue, 'done' to return: "
 
-                input = gets.strip.downcase
-
-                if 'n' == input
-                    blurb = Report.next_blurb
-                    puts ""
-                    puts "#{blurb.label}"
-                    puts "#{blurb.text}"
-                    puts ""
-                end
-            end
-=end
             if 'done' == input
                 puts ""
                 puts "Returning to main menu early!"
