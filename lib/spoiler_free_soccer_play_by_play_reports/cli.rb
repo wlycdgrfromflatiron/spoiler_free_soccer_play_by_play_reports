@@ -1,5 +1,8 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class CLI
+        @@just_printed_report_list = false
+        @@size_of_most_recently_printed_report_list = -1
+
         def self.start
             self.welcome
             self.controls
@@ -22,6 +25,8 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts "'Help': See these instructions"
             puts "'Exit', 'Quit': Quit the program"
             puts ""
+
+            @@just_printed_report_list = false
         end
 
         def self.prompt_loop
@@ -32,7 +37,17 @@ module SpoilerFreeSoccerPlayByPlayReports
                 input = gets.strip.downcase
 
                 if input.to_i > 0
-                    self.report(input.to_i)
+                    if (!@@just_printed_report_list)
+                        puts ""
+                        puts "Please print a report list, then choose a report."
+                        puts ""
+                    elsif (input.to_i > @@size_of_most_recently_printed_report_list)
+                        puts ""
+                        puts "Invalid report list index. Please try again."
+                        puts ""
+                    else 
+                        self.report(input.to_i)
+                    end
                 else
                     case input
                     when 'l', 'l a', 'l all', 'list', 'list a', 'list all'
@@ -97,6 +112,9 @@ module SpoilerFreeSoccerPlayByPlayReports
             elsif Report.done
                 puts Report.conclusion
             end
+
+            @@just_printed_report_list = false
+            @@size_of_most_recently_printed_report_list = -1
         end
 
         def self.report_list(team_name)
@@ -104,9 +122,13 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts "CLI.report_list called with team_name: #{team_name}"
             puts ""
             
-            Report.list(team_name).each.with_index(1) do |report, index|
+            reports = Report.list(team_name)
+            reports.each.with_index(1) do |report, index|
                 puts "#{index}. #{report.team1} vs. #{report.team2}"
             end
+
+            @@size_of_most_recently_printed_report_list = reports.size
+            @@just_printed_report_list = true
         end
 
         def self.invalid_input
