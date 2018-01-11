@@ -110,13 +110,8 @@ module SpoilerFreeSoccerPlayByPlayReports
                         self.report(input.to_i)
                         self.report_list(@@report_list_filter)
                     end
-                else
-                    case input
-                    when /^h(elp)?\s*$/
-                        self.controls
-                    when /^e(xit)?\s*$/, "", /^\s*$/
-                        # do nothing
-                    end
+                elsif input.match(/^h(elp)?\s*$/)
+                    self.controls
                 end
             end
         end
