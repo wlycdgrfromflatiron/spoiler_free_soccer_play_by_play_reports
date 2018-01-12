@@ -254,7 +254,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 
                 # User is trying to return to the main menu
                 elsif input.match(/^b(ack)?\s*$/)
-                    self.state(STATE_MAIN_MENU)
+                    self.state(@@previous_state)
                     in_this_state = false
 
                 # User is trying to exit the program
