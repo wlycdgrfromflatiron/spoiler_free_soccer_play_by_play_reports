@@ -169,6 +169,11 @@ module SpoilerFreeSoccerPlayByPlayReports
                 "AVAILABLE REPORTS FOR #{@@matches_list_team_name.upcase}" : 
                 "ALL AVAILABLE REPORTS"
 
+            match_strings = []
+            @@matches_list.each.with_index(1) do |match, index|
+                match_strings << "#{index}. #{match.team1} vs. #{match.team2}"
+            end
+
             while (in_this_state)
                 system "clear" or system "cls"
 
@@ -176,9 +181,26 @@ module SpoilerFreeSoccerPlayByPlayReports
                 puts_indented(header)
                 puts ""
 
-                @@matches_list.each.with_index(1) do |match, index|
-                    puts_indented("#{index}. #{match.team1} vs. #{match.team2}")
+                match_count = match_strings.size
+                half_way = match_count.even? ? match_count / 2 : (match_count+1) / 2
+                left_string = ""
+                column_width = 50
+
+                for i in 0...half_way
+                    left_string = match_strings[i]
+                    print_indented(left_string)
+                    print(" " * (column_width - left_string.size))
+                    print(match_strings[i+half_way])
+                    print("\n")
                 end
+                
+                print_indented(match_strings[half_way])
+                if match_count.even?
+                    print(" " * (column_width - match_strings[half_way].size))
+                    print(match_strings[-1])
+                end
+                puts ""
+                puts ""
 
                 self.error_message
 
