@@ -61,7 +61,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             status = {
                 :should_exit_program => false,
-                :error_readout => ""
+                :error_readout => nil
             }
 
             while (!status[:should_exit_program])
@@ -71,12 +71,12 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 self.main_menu_controls
 
-                if !status[:error_readout].empty?
+                if status[:error_readout]
                     puts ""
                     puts_indented(status[:error_readout])
                 end
                 
-                status[:error_readout] = status[:error_readout].clear
+                status[:error_readout] = nil
 
                 puts ""
                 print_indented("(M)atches | (T)eams | [team name] | (E)xit: ")
@@ -90,16 +90,31 @@ module SpoilerFreeSoccerPlayByPlayReports
                 elsif input.match(/^t(eams)?\s*?/)
                     status = self.teams_list_loop
                 else
-                    status = self.teams_list_loop(input)
+                    status = self.matches_list_loop(input)
                 end
             end
         end
 
-        def self.matches_list_loop
-            {
+        def self.matches_list_loop(team_name = nil)
+            reports = Report.matches(team_name)
+
+            status_report = {
                 :should_exit_program => false,
-                :error_readout => "Just returned from self.matches_list_loop"
+                :error_readout => nil
             }
+
+            if (reports.size > 0)
+                status_report[:error_readout] = "Just returned from self.matches_list_loop, having found #{reports.size} matches"
+            else
+                no_reports_1 = "There are no reports currently available"
+                no_reports_2 = team_name ? " for a team called #{team_name}." : "."
+                advice_1 = team_name ? "However, the matcher is literal and (aside from being case-insensitive) stupid." : ""
+                advice_2 = team_name ? "So, please double-check your spelling, and/or try (T)eams just in case." : ""
+
+                status_report[:error_readout] = "#{no_reports_1}#{no_reports_2}\n#{advice_1}\n#{advice_2}"
+            end
+
+            status_report
         end
 
         def self.teams_list_loop(team_name='all')

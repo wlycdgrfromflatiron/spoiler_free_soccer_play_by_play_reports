@@ -72,6 +72,22 @@ module SpoilerFreeSoccerPlayByPlayReports
             @@current_list
         end
 
+        def self.matches(team_name)
+            @@current_list.clear
+
+            if self.all.empty?
+                self.get_report_abstracts
+            end
+
+            @@current_list = self.all.select do |report|
+                !team_name ||
+                0 == team_name.casecmp(report.team1) ||
+                0 == team_name.casecmp(report.team2)
+            end
+
+            @@current_list
+        end
+
         def self.report(report_index)
             @@current_report = @@current_list[report_index - 1]
             @@next_blurb_index = 0
