@@ -1,7 +1,8 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO
 
-* FUNC: Implement matches list menu (in matches_list_loop)
+* DEBUG: apply team name filter correctly when generating report lists
+
 * FUNC: If there is only one report available for a team the user has picked, go directly to report detail view
 * UI: upcase the OTHER teams in the team report list
 * UI: Clear screen and reprint controls on return to main menu from report list screen
@@ -62,3 +63,5 @@ DONE DONE DONE DONE DONE DONE DONE
 * DONE FUNC: Added ~"Back" option to report list screen controls
 * DONE FUNC: Show only relevant controls on report list screen (report #, Hlep, Main, Exit)
 * DONE FUNC: on main menu, offer user the ability to print all Matches, print all Teams, and look up reports by [team name]
+
+* DONE FUNC: Implement matches list menu (in matches_list_loop)

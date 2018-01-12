@@ -44,7 +44,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts_indented("~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~")
             puts_indented("A service for reading live commentaries for completed soccer matches")
             puts_indented("in chronological order and without spoilers.")
-            puts_indented("(data source: Sportsmole)")
+            puts_indented("(data source: SPORTSMOLE.CO.UK)")
         end
 
         def self.main_menu_controls
@@ -123,7 +123,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 elsif input.match(/^m(atches)?\s*?/)
                     @@matches_list = Report.matches
                     if !@@matches_list.empty?
-                        this.state(STATE_MATCHES_LIST)
+                        self.state(STATE_MATCHES_LIST)
                         in_this_state = false
                     else
                         @@error_message = "No matches are currently available :("
@@ -133,7 +133,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 elsif input.match(/^t(eams)?\s*?/)
                     @@teams_list = Report.teams
                     if !@@teams_list.empty?
-                        this.state(STATE_TEAMS_LIST)
+                        self.state(STATE_TEAMS_LIST)
                         in_this_state = false
                     else
                         @@error_message = "No reports are currently available for any teams :("
