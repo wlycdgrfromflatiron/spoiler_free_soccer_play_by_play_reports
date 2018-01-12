@@ -173,6 +173,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             @@matches_list.each.with_index(1) do |match, index|
                 match_strings << "#{index}. #{match.team1} vs. #{match.team2}"
             end
+            match_list_string = column_print(match_strings)
 
             while (in_this_state)
                 system "clear" or system "cls"
@@ -181,20 +182,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 puts_indented(header)
                 puts ""
 
-                match_count = match_strings.size
-                half_way = match_count.even? ? match_count / 2 : (match_count+1) / 2 # 36
-                left_string = ""
-                column_width = 50
-
-                for i in 0...half_way
-                    left_string = match_strings[i]
-                    print_indented(left_string)
-                    if right_string = match_strings[i+half_way]
-                        print(" " * (column_width - left_string.size))
-                        print(right_string)
-                    end
-                    puts ""
-                end
+                puts match_list_string
                 puts ""
 
                 self.error_message
