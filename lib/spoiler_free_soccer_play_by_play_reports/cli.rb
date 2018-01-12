@@ -2,49 +2,45 @@ module SpoilerFreeSoccerPlayByPlayReports
     class CLI
         extend WlyCuteConsole::ClassMethods
 
+        # state tracking
+        STATE_MAIN_MENU = 1
+        STATE_MATCHES_LIST = 2
+        STATE_TEAMS_LIST = 3
+        STATE_REPORT = 4
+        @@state = nil
+
+        @@should_exit = false
+
+        @@matches_list = []
+        @@matches_list_team_name = nil
+        @@teams_list = []
+        @@report_index = nil
+
+        @@error_message = nil
+
+        # output formatting
         DEFAULT_PUTS_INDENT = 5
         DEFAULT_PRINT_INDENT = 5
-
-        @@report_list_size = -1
-        @@report_list_filter = "all"
 
         def self.start
             set_default_puts_indent(DEFAULT_PUTS_INDENT)
             set_default_print_indent(DEFAULT_PRINT_INDENT)
 
             system "clear" or system "cls"
-
             self.welcome 
-
-            self.loading
+            puts_indented("Loading report list...")
             Report.list('all')
 
-            self.main_menu_loop
+            @@state = STATE_MAIN_MENU
+            @@previous_state = nil
+            self.main_loop
 
             self.goodbye
         end
 
-        def self.loading
-            puts_indented("Loading report list...")
-        end
-
         def self.welcome
-            puts "" 
             puts_indented("~ Welcome Spoiler Free Soccer Play by Play Reports ~")
             puts_indented("(data provided by Sportsmole)")
-            puts "" 
-        end
-
-        def self.controls
-            puts ""
-            puts_indented("Controls:")
-            puts_indented("All:          List all available reports.")
-            puts_indented("[team name]:  List all available reports involving [team name].")
-            puts_indented("[report #]:   View the corresponding report (available after printing a report list).")
-            puts_indented("[Spacebar]:   Show next report item (available on report detail screen).")
-            puts_indented("Help:         See these instructions.")
-            puts_indented("Exit, 'Quit': Quit back to previous menu. If in main menu, quit.")
-            puts ""
         end
 
         def self.main_menu_controls
@@ -53,101 +49,257 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts_indented("(T)eams:          List all teams for which reports are available.")
             puts_indented("[team name]:      List all available reports for [team name].")
             puts_indented("(E)xit:           Exit the program.")
-            puts ""
+        end
+
+        def self.error_message
+            puts_indented(@@error_message) if @error_message
+            @@error_message = nil
+        end
+
+        def self.input_prompt
+            prompt_pieces = []
+            case @@state
+            when STATE_MAIN_MENU
+                prompt_pieces << "(M)atches" << "(T)eams" << "[team name]"
+            when STATE_MATCHES_LIST
+                prompt_pieces << "[match #]" << "(B)ack"
+            when STATE_TEAMS_LIST
+                prompt_pieces << "[team #]" << "(B)ack"
+            end
+            prompt_pieces << "(E)xit"
+
+            print_indented(prompt_pieces.join(" | ") + ": ")
+
+            gets.chomp
+        end
+
+        def self.state(new_state)
+            @@previous_state = @@state
+            @@state = new_state
+        end
+
+        def self.main_loop
+            while !@@should_exit
+                case @@state
+                when STATE_MAIN_MENU
+                    self.main_menu_loop
+                when STATE_MATCHES_LIST
+                    self.matches_list_loop
+                when STATE_TEAMS_LIST
+                    self.teams_list_loop
+                when STATE_REPORT
+                    self.update_report
+                end
+            end
         end
 
         def self.main_menu_loop
+            in_this_state = true
             input = ""
 
-            status = {
-                :should_exit_program => false,
-                :error_readout => nil
-            }
-
-            while (!status[:should_exit_program])
+            while (in_this_state)
                 system "clear" or system "cls"
 
+                puts ""
                 self.welcome
-
+                puts ""
                 self.main_menu_controls
+                puts ""
+                self.error_message
+            
+                print_indented("(M)atches | (T)eams | [team name] | (E)xit: ")
+                input = gets.strip
 
-                if status[:error_readout]
-                    puts ""
-                    puts_indented(status[:error_readout])
+                # User wants to quit
+                if input.match(/^e(xit)?\s*$/)
+                    @@should_exit = true
+                    in_this_state = false
+
+                # User wants to see a list of all matches
+                elsif input.match(/^m(atches)?\s*?/)
+                    @@matches_list = Report.matches
+                    if !@@matches_list.empty?
+                        this.state(STATE_MATCHES_LIST)
+                        in_this_state = false
+                    else
+                        @@error_message = "No matches are currently available :("
+                    end
+
+                # User wants to see a list of all teams
+                elsif input.match(/^t(eams)?\s*?/)
+                    @@teams_list = Report.teams
+                    if !@@teams_list.empty?
+                        this.state(STATE_TEAMS_LIST)
+                        in_this_state = false
+                    else
+                        @@error_message = "No reports are currently available for any teams :("
+                    end
+
+                # Or, user is trying to enter a team name...probably... - 
+                # but since any old gibberish COULD be a team name that we forgot or didn't know about,
+                # let's not risk filtering out what could be a valid search - 
+                # let's just trust the user and see if there are any matching reports for whatever they entered.
+                # If user is trolling, we just won't get any results, no big deal.
+                # (Heh, no doubt there's some terrible security hole I'm leaving open...)
+                else
+                    @@matches_list = Report.matches
+                    if !@@matches_list.empty?
+                        @@matches_list_team_name = input
+
+                        self.state(STATE_MATCHES_LIST)
+                        in_this_state = false
+                    else
+                        @@error_message = "No matches are available for #{team_name} :("\
+                            "\n...However, the parser is not the brightest."\
+                            "\nYou may want to double-check your spelling and/or try (T)eams just in case."
+                    end
                 end
-                
-                status[:error_readout] = nil
+            end
+        end
+
+        def self.matches_list_loop
+            in_this_state = true
+            input = ""
+
+            header = @@matches_list_team_name ? 
+                "AVAILABLE REPORTS FOR #{@@matches_list_team_name.upcase}" : 
+                "ALL AVAILABLE REPORTS"
+
+            while (in_this_state)
+                system "clear" or system "cls"
 
                 puts ""
-                print_indented("(M)atches | (T)eams | [team name] | (E)xit: ")
+                puts_indented(header)
+                puts ""
 
-                input = gets.strip.downcase
+                @@matches_list.each.with_index(1) do |match, index|
+                    puts_indented("#{index}. #{match.team1} vs. #{match.team2}")
+                end
 
-                if input.match(/^e(xit)?\s*$/)
-                    status[:should_exit_program] = true
-                elsif input.match(/^m(atches)?\s*?/)
-                    status = self.matches_list_loop
-                elsif input.match(/^t(eams)?\s*?/)
-                    status = self.teams_list_loop
+                self.error_message
+
+                print_indented("[report #] | (B)ack | (E)xit: ")
+                input = gets.chomp
+
+                # User is trying to select a report to view
+                if input.to_i > 0
+                    if input.to_i > @@matches_list.size
+                        @@error_message = "Invalid report number! Please try again."
+                    else
+                        @@report_index = input.to_i
+
+                        self.state(STATE_REPORT)
+                        in_this_state = false
+                    end
+                
+                # User is trying to return to the previous screen,
+                # which could be the main menu, or the teams list
+                elsif input.match(/^b(ack)?\s*$/)
+                    self.state(@@previous_state)
+                    in_this_state = false
+
+                # User is trying to exit the program
+                elsif input.match(/^e(xit)?\s*$/)
+                    @@should_exit = true
+                    in_this_state = false
+
+                # User has entered some goshdarn nonsense
                 else
-                    status = self.matches_list_loop(input)
+                    @@error_message = "To view a report, please enter its number."
                 end
             end
         end
 
-        def self.matches_list_loop(team_name = nil)
-            reports = Report.matches(team_name)
+        def self.teams_list_loop
+            in_this_state = true
+            input = ""
 
-            status_report = {
-                :should_exit_program => false,
-                :error_readout => nil
-            }
+            while (in_this_state)
+                system "clear" or system "cls"
 
-            if (reports.size > 0)
-                status_report[:error_readout] = "Just returned from self.matches_list_loop, having found #{reports.size} matches"
-            else
-                no_reports_1 = "There are no reports currently available"
-                no_reports_2 = team_name ? " for a team called #{team_name}." : "."
-                advice_1 = team_name ? "However, the matcher is literal and (aside from being case-insensitive) stupid." : ""
-                advice_2 = team_name ? "So, please double-check your spelling, and/or try (T)eams just in case." : ""
+                puts ""
+                puts_indented("TEAMS THAT HAVE REPORTS AVAILABLE:")
+                puts ""
 
-                status_report[:error_readout] = "#{no_reports_1}#{no_reports_2}\n#{advice_1}\n#{advice_2}"
+                @@teams_list.each.with_index(1) do |team_name, index|
+                    puts_indented("#{index}. #{team_name}")
+                end
+
+                self.error_message
+
+                print_indented("[team #] | (B)ack | (E)xit: ")
+                input = gets.chomp
+
+                # User is trying to select a team to see a list of available matches for
+                if input.to_i > 0
+                    if input.to_i > @@teams_list.size
+                        @@error_message = "Invalid index! Please try again."
+                    else
+                        team_name = @@teams_list[input.to_i - 1]
+                        @@matches_list = Report.matches(team_name)
+                        @@matches_list_team_name = team_name
+
+                        self.state(STATE_MATCHES_LIST)
+                        in_this_state = false
+                    end
+                
+                # User is trying to return to the main menu
+                elsif input.match(/^b(ack)?\s*$/)
+                    self.state(STATE_MAIN_MENU)
+                    in_this_state = false
+
+                # User is trying to exit the program
+                elsif input.match(/^e(xit)?\s*$/)
+                    @@should_exit = true
+                    in_this_state = false
+
+                # User has entered some jollyodd nonsense
+                else
+                    @@error_message = "To view the list of reports for a team, please enter its number."
+                end
             end
-
-            status_report
         end
 
-        def self.teams_list_loop(team_name='all')
-            {
-                :should_exit_program => false,
-                :error_readout => "Just returned from self.teams_list_loop"
-            }
-        end
-
-        def self.report(report_index)
-            self.report_preamble(Report.report(report_index))
+        def self.report_loop
+            report = Report.report(@@report_index)
+            
+            self.report_preamble(report)
 
             puts ""
             puts_indented("Controls:")
-            puts_indented("Spacebar:     Show next report item.")
-            puts_indented("e, q:         Exit back to report list menu. ")
+            puts_indented("[Spacebar]:      Show next report item.")
+            puts_indented("b:               Return to previous screen.")
+            puts_indented("q:               Exit the program.")
             puts ""
 
+            in_this_state = true
             input = ""
-            while (!input.match(/[qe]/) && !Report.done)
+            while (in_this_state !input.match(/[qe]/) && !Report.done)
                 input = STDIN.getch
 
+                # User wants to see the next blurb
                 if ' ' == input
                     blurb = Report.next_blurb
                     puts ""
                     puts_indented("#{blurb.label}")
                     puts_indented("#{blurb.text}")
                     puts ""
-                end
-            end
 
-            if Report.done
-                puts Report.conclusion
+                # User wants to go back to the previous screen
+                elsif input.match(/[bB]/)
+                    this.state(@@previous_state)
+                    in_this_state = false 
+
+                # User wants to quit the program
+                elsif input.match(/[qQ]/)
+                    @@should_exit = true
+                    in_this_state = false
+                end
+
+                if Report.done
+                    puts Report.conclusion
+                    in_this_state = false
+                end
             end
         end
 
@@ -162,68 +314,6 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts ""
         end
 
-        def self.report_list(team_name)
-            reports = Report.list(team_name)
-
-            if (reports.size > 0)
-                self.report_list_loop(reports, team_name)
-            else
-                puts ""
-                puts_indented("There are no reports available for a team called #{team_name}.")
-                puts_indented("However, the matcher is literal and (aside from being case-insensitive) stupid,")
-                puts_indented("so please double check your spelling, and/or use 'all' to list all reports just in case.")
-                puts ""
-            end
-        end
-
-        def self.report_list_loop(reports, team_name)
-            input = ""
-
-            info_readout = ""
-
-            should_return_to_team_list = false
-            while (!should_return_to_team_list)
-                system "clear" or system "cls"
-
-                puts ""
-                puts_indented("AVAILABLE REPORTS FOR #{team_name}")
-                puts ""
-
-                reports.each.with_index(1) do |report, index|
-                    puts_indented("#{index}. #{report.team1} vs. #{report.team2}")
-                end
-
-                if !info_readout.empty?
-                    puts ""
-                    "controls" == info_readout ? self.controls : puts_indented(info_readout)
-                end
-                
-                info_readout = info_readout.clear
-
-                puts ""
-                print_indented("REPORT LIST MENU: [report #] | Back to team list | Help | Exit: ")
-
-                input = gets.strip.downcase
-
-                if input.to_i > 0
-                    if input.to_i > reports.size
-                        info_readout = "Invalid report number! Please try again."
-                    else
-                        self.report(input.to_i)
-                    end
-                elsif input.match(/^b(ack)?\s*$/)
-                    should_return_to_team_list = true
-                elsif input.match(/^h(elp)?\s*$/)
-                    info_readout = "controls"
-                elsif input.match(/^e(xit)?\s*$/)
-                    should_return_to_team_list = true
-                    @@should_exit_program = true
-                else
-                    info_readout = "To view a report, please enter its number."
-                end
-            end
-        end
-
         def self.goodbye
             puts ""
             puts_indented("Thanks for using this app. Goodbye!")
@@ -231,4 +321,3 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
     end
 end
-  

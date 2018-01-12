@@ -16,6 +16,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         attr_accessor :details_loaded, :byline, :blurbs
 
         @@all = []
+        @@teams = []
         @@current_list = []
         @@current_report= nil
         @@next_part_index = 0
@@ -72,7 +73,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             @@current_list
         end
 
-        def self.matches(team_name)
+        def self.matches(team_name=nil)
             @@current_list.clear
 
             if self.all.empty?
@@ -86,6 +87,25 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
 
             @@current_list
+        end
+
+        def self.teams
+            if @@teams.empty?
+                if self.all.empty?
+                    self.get_report_abstracts
+                end
+
+                self.all.each do |report|
+                    @@teams << report.team1
+                    @@teams << report.team2
+                end
+
+                @@teams.uniq!
+
+                @@teams.sort!
+            end
+
+            @@teams
         end
 
         def self.report(report_index)
