@@ -41,8 +41,10 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.welcome
-            puts_indented("~ Welcome Spoiler Free Soccer Play by Play Reports ~")
-            puts_indented("(data provided by Sportsmole)")
+            puts_indented("~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~")
+            puts_indented("A service for reading live commentaries for completed soccer matches")
+            puts_indented("in chronological order and without spoilers.")
+            puts_indented("(data source: Sportsmole)")
         end
 
         def self.main_menu_controls
