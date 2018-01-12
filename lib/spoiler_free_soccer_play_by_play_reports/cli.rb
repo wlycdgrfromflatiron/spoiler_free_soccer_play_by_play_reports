@@ -27,7 +27,9 @@ module SpoilerFreeSoccerPlayByPlayReports
             set_default_print_indent(DEFAULT_PRINT_INDENT)
 
             system "clear" or system "cls"
-            self.welcome 
+            puts ""
+            self.welcome
+            puts ""
             puts_indented("Loading report list...")
             Report.list('all')
 
