@@ -182,24 +182,19 @@ module SpoilerFreeSoccerPlayByPlayReports
                 puts ""
 
                 match_count = match_strings.size
-                half_way = match_count.even? ? match_count / 2 : (match_count+1) / 2
+                half_way = match_count.even? ? match_count / 2 : (match_count+1) / 2 # 36
                 left_string = ""
                 column_width = 50
 
                 for i in 0...half_way
                     left_string = match_strings[i]
                     print_indented(left_string)
-                    print(" " * (column_width - left_string.size))
-                    print(match_strings[i+half_way])
-                    print("\n")
+                    if right_string = match_strings[i+half_way]
+                        print(" " * (column_width - left_string.size))
+                        print(right_string)
+                    end
+                    puts ""
                 end
-                
-                print_indented(match_strings[half_way])
-                if match_count.even?
-                    print(" " * (column_width - match_strings[half_way].size))
-                    print(match_strings[-1])
-                end
-                puts ""
                 puts ""
 
                 self.error_message
