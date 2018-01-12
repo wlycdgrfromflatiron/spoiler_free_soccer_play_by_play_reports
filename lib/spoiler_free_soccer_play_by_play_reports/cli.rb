@@ -5,8 +5,6 @@ module SpoilerFreeSoccerPlayByPlayReports
         DEFAULT_PUTS_INDENT = 5
         DEFAULT_PRINT_INDENT = 5
 
-        @@should_exit_program = false
-
         @@report_list_size = -1
         @@report_list_filter = "all"
 
@@ -20,21 +18,14 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             self.loading
             Report.list('all')
-            self.done_loading
 
-            self.controls
-
-            self.main_loop
+            self.main_menu_loop
 
             self.goodbye
         end
 
         def self.loading
             puts_indented("Loading report list...")
-        end
-
-        def self.done_loading
-            puts_indented("...Done")
         end
 
         def self.welcome
@@ -56,25 +47,66 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts ""
         end
 
-        def self.main_loop
+        def self.main_menu_controls
+            puts_indented("MAIN MENU CONTROLS:")
+            puts_indented("(M)atches:        List all matches for which reports are available.")
+            puts_indented("(T)eams:          List all teams for which reports are available.")
+            puts_indented("[team name]:      List all available reports for [team name].")
+            puts_indented("(E)xit:           Exit the program.")
+            puts ""
+        end
+
+        def self.main_menu_loop
             input = ""
 
-            while (!@@should_exit_program)
-                print_indented "MAIN MENU: All | [team name] |  Help  | Exit: "
+            status = {
+                :should_exit_program => false,
+                :error_readout => ""
+            }
+
+            while (!status[:should_exit_program])
+                system "clear" or system "cls"
+
+                self.welcome
+
+                self.main_menu_controls
+
+                if !status[:error_readout].empty?
+                    puts ""
+                    puts_indented(status[:error_readout])
+                end
                 
+                status[:error_readout] = status[:error_readout].clear
+
+                puts ""
+                print_indented("(M)atches | (T)eams | [team name] | (E)xit: ")
+
                 input = gets.strip.downcase
 
-                case input
-                when /^a(ll)?\s*$/
-                    self.report_list('all')
-                when /^h(elp)?\s*$/
-                    self.controls
-                when /^e(xit)?\s*$/, "", /^\s*$/
-                    @@should_exit_program = true
+                if input.match(/^e(xit)?\s*$/)
+                    status[:should_exit_program] = true
+                elsif input.match(/^m(atches)?\s*?/)
+                    status = self.matches_list_loop
+                elsif input.match(/^t(eams)?\s*?/)
+                    status = self.teams_list_loop
                 else
-                    self.report_list(input)
+                    status = self.teams_list_loop(input)
                 end
             end
+        end
+
+        def self.matches_list_loop
+            {
+                :should_exit_program => false,
+                :error_readout => "Just returned from self.matches_list_loop"
+            }
+        end
+
+        def self.teams_list_loop(team_name='all')
+            {
+                :should_exit_program => false,
+                :error_readout => "Just returned from self.teams_list_loop"
+            }
         end
 
         def self.report(report_index)
