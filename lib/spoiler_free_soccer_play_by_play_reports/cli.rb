@@ -23,7 +23,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         INDENT = "     "
 
         # regex strings
-        REGEX_EXIT = /^e(xit)?\s*$/
+        REGEX_EXIT = /^q(uit)?\s*$/
 
         # ENTRY POINT
         def self.start
@@ -75,7 +75,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             controls_string << "(M)atches:        List all matches for which reports are available.\n".prepend(INDENT)
             controls_string << "(T)eams:          List all teams for which reports are available.\n".prepend(INDENT)
             controls_string << "[team name]:      List all available reports for [team name].\n".prepend(INDENT)
-            controls_string << "(E)xit:           Exit the program.".prepend(INDENT)
+            controls_string << "(Q)uit:           Quit the program.".prepend(INDENT)
 
             while (!@@changing_state)
                 system "clear" or system "cls"
@@ -87,7 +87,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 puts self.error_string
                 puts ""
             
-                print "(M)atches | (T)eams | [team name] | (E)xit: ".prepend(INDENT)
+                print "(M)atches | (T)eams | [team name] | (Q)uit: ".prepend(INDENT)
                 @@input = gets.strip
 
                 if @@input.match(REGEX_EXIT)
@@ -144,7 +144,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 puts self.error_string
                 puts ""
 
-                print "[report #] | (B)ack | (E)xit: ".prepend(INDENT)
+                print "[report #] | (B)ack | (Q)uit: ".prepend(INDENT)
                 @@input = gets.chomp
 
                 # User is trying to select a report to view
@@ -180,7 +180,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 puts self.error_string
                 puts ""
 
-                print "[team #] | (B)ack | (E)xit: ".prepend(INDENT)
+                print "[team #] | (B)ack | (Q)uit: ".prepend(INDENT)
                 @@input = gets.chomp
 
                 if @@input.to_i > 0
@@ -214,7 +214,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts "Controls:".prepend(INDENT)
             puts "[Spacebar]:      Show next report item.".prepend(INDENT)
             puts "b:               Return to previous screen.".prepend(INDENT)
-            puts "q:               Exit the program.".prepend(INDENT)
+            puts "q:               Quit the program.".prepend(INDENT)
             puts ""
 
             blurb = nil

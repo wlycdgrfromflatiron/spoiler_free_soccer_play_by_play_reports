@@ -1,7 +1,6 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO
 
-* DEBUG: 'q' should quit on report page
 * DEBUG: 'back' on teams list should always go back to main menu
 * DEBUG: apply team name filter correctly when generating report lists
 
@@ -68,3 +67,4 @@ DONE DONE DONE DONE DONE DONE DONE
 
 * DONE FUNC: Implement matches list menu (in matches_list_loop)
 * DONE DEBUG: Print goodbye message
+* DONE DEBUG: 'q' should quit on report page
