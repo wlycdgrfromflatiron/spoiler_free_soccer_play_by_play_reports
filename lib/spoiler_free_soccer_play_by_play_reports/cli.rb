@@ -210,8 +210,6 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.report_loop
             report = Report.report(@@report_index)
 
-            system "clear" or system "cls"
-            
             # Byline
             byline_string = ""
             byline_string << "MATCH REPORT\n".prepend(INDENT)
@@ -220,9 +218,6 @@ module SpoilerFreeSoccerPlayByPlayReports
             byline_string << "Author: #{report.byline.author}\n".prepend(INDENT)
             byline_string << "Filed: #{report.byline.filed}\n".prepend(INDENT)
             byline_string << "#{report.byline.updated}\n".prepend(INDENT)
-            puts ""
-            puts byline_string
-            puts "" 
 
             # Controls
             controls_string = ""
@@ -231,6 +226,10 @@ module SpoilerFreeSoccerPlayByPlayReports
             controls_string << "m:               List all available match reports.\n".prepend(INDENT)
             controls_string << "t:               List all teams for which reports are available.\n".prepend(INDENT)
             controls_string << "q:               Quit the program.\n".prepend(INDENT)
+
+            system "clear" or system "cls"
+            puts ""
+            puts byline_string
             puts ""
             puts controls_string
             puts ""
