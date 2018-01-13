@@ -225,12 +225,14 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts "" 
 
             # Controls
+            controls_string = ""
+            controls_string << "Controls:\n".prepend(INDENT)
+            controls_string << "[Spacebar]:      Show next report item.\n".prepend(INDENT)
+            controls_string << "m:               List all available match reports.\n".prepend(INDENT)
+            controls_string << "t:               List all teams for which reports are available.\n".prepend(INDENT)
+            controls_string << "q:               Quit the program.\n".prepend(INDENT)
             puts ""
-            puts "Controls:".prepend(INDENT)
-            puts "[Spacebar]:      Show next report item.".prepend(INDENT)
-            puts "m:               List all available match reports.".prepend(INDENT)
-            puts "t:               List all teams for which reports are available.".prepend(INDENT)
-            puts "q:               Quit the program.".prepend(INDENT)
+            puts controls_string
             puts ""
 
             blurb = nil
