@@ -140,6 +140,9 @@ module SpoilerFreeSoccerPlayByPlayReports
                     end
                 elsif @@input.match(REGEX_TEAMS)
                     self.handle_teams_input
+                elsif @@matches_list_team_name && @@input.match(REGEX_MATCHES)
+                    @@matches_list_team_name = nil
+                    self.matches_list_loop
                 else 
                     self.handle_back_exit_and_misc
                 end
