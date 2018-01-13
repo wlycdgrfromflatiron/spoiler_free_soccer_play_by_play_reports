@@ -209,6 +209,8 @@ module SpoilerFreeSoccerPlayByPlayReports
         # REPORT LOOP
         def self.report_loop
             report = Report.report(@@report_index)
+
+            system "clear" or system "cls"
             
             # Byline
             byline_string = ""
