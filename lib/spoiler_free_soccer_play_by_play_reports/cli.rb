@@ -200,21 +200,8 @@ module SpoilerFreeSoccerPlayByPlayReports
                         self.state(STATE_REPORT)
                         in_this_state = false
                     end
-                
-                # User is trying to return to the previous screen,
-                # which could be the main menu, or the teams list
-                elsif input.match(/^b(ack)?\s*$/)
-                    self.state(@@previous_state)
-                    in_this_state = false
-
-                # User is trying to exit the program
-                elsif input.match(/^e(xit)?\s*$/)
-                    @@should_exit = true
-                    in_this_state = false
-
-                # User has entered some goshdarn nonsense
-                else
-                    @@error_message = "To view a report, please enter its number."
+                else 
+                    in_this_state = self.handle_back_exit_and_misc(input)
                 end
             end
         end
@@ -251,22 +238,31 @@ module SpoilerFreeSoccerPlayByPlayReports
                         self.state(STATE_MATCHES_LIST)
                         in_this_state = false
                     end
-                
-                # User is trying to return to the main menu
-                elsif input.match(/^b(ack)?\s*$/)
-                    self.state(@@previous_state)
-                    in_this_state = false
-
-                # User is trying to exit the program
-                elsif input.match(/^e(xit)?\s*$/)
-                    @@should_exit = true
-                    in_this_state = false
-
-                # User has entered some jollyodd nonsense
-                else
-                    @@error_message = "To view the list of reports for a team, please enter its number."
+                else 
+                    in_this_state = self.handle_back_exit_and_misc(input)
                 end
             end
+        end
+
+        def self.handle_back_exit_and_misc(input)
+            in_this_state = true 
+
+            # User is trying to return to previous screen
+            if input.match(/^b(ack)?\s*$/)
+                self.state(@@previous_state)
+                in_this_state = false
+
+            # User is trying to exit the program
+            elsif input.match(/^e(xit)?\s*$/)
+                @@should_exit = true
+                in_this_state = false
+
+            # User has entered some funsense
+            else
+                @@error_message = "To make a selection, enter its number."
+            end
+
+            in_this_state
         end
 
         def self.report_loop
@@ -293,7 +289,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                     puts_indented("#{blurb.label}")
                     puts_indented("#{blurb.text}")
                     puts ""
-
+                
                 # User wants to go back to the previous screen
                 elsif input.match(/[bB]/)
                     this.state(@@previous_state)
