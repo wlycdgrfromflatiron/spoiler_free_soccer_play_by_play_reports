@@ -23,6 +23,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         INDENT = "     "
 
         # regex strings
+        REGEX_MATCHES = /^m(atches)?\s*?/
         REGEX_QUIT = /^q(uit)?\s*$/
 
         # ENTRY POINT
@@ -93,7 +94,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 if @@input.match(REGEX_QUIT)
                     self.state(STATE_QUIT)
 
-                elsif @@input.match(/^m(atches)?\s*?/)
+                elsif @@input.match(REGEX_MATCHES)
                     if !Report.matches.empty?
                         self.state(STATE_MATCHES_LIST)
                         @@matches_list_team_name = nil
@@ -190,7 +191,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                         @@matches_list_team_name = Report.teams[@@input.to_i - 1]
                         self.state(STATE_MATCHES_LIST)
                     end
-                elsif @@input.match(/^m(atches)?\s*?/)
+                elsif @@input.match(REGEX_MATCHES)
                     if !Report.matches.empty?
                         self.state(STATE_MATCHES_LIST)
                         @@matches_list_team_name = nil
