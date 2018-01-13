@@ -1,8 +1,11 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO
 
-* UI: keep match report, byline, and controls visible
-* FUNC: keep controls visible on report page (in abbreviated form ?)
+* DEBUG: handle image blurbs correctly
+* DEBUG: handle tweet blurbs correctly
+* DEBUG: handle strings like "B.Silva" correctly (i.e. without making a paragraph break after the .)
+* DEBUG: enforce correct (i.e. oldest-first) blurb sorting even if scraped blurbs are sorted newest-first
+
 * UI: indent all lines of each blurb on report page
 * UI: implement sensible line breaks on report page
 
@@ -10,10 +13,9 @@ TODO TODO TODO TODO TODO TODO TODO
 
 * UI: upcase the OTHER teams in the team report list
 
-* DEBUG: handle image blurbs correctly
-* DEBUG: handle tweet blurbs correctly
-* DEBUG: handle strings like "B.Silva" correctly (i.e. without making a paragraph break after the .)
-* DEBUG: enforce correct (i.e. oldest-first) blurb sorting even if scraped blurbs are sorted newest-first
+
+
+
 
 * REFACTOR: Report.preamble and Report.conclusion; they should not get involved in building output strings
 * REFACTOR: add a decorator that accepts an array of string to puts out and puts an empty line before the first and after the last
@@ -82,3 +84,4 @@ DONE DONE DONE DONE DONE DONE DONE
 	* skip if not present
 
 * DONE UI: clear screen at start of report
+* REJECTED: decided to keep UI as is; finalized it. [UI: keep match report, byline, and controls visible]
