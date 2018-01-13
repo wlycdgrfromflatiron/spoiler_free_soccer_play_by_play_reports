@@ -119,6 +119,10 @@ module SpoilerFreeSoccerPlayByPlayReports
                 end
             )
 
+            input_prompt_string = "[report #] | ".prepend(INDENT)
+            input_prompt_string << (@@matches_list_team_name ? "all (M)atches | " : "")
+            input_prompt_string << "(T)eams | [team name] | (Q)uit: "
+
             while (STATE_MATCHES_LIST == @@state)
                 system "clear" or system "cls"
                 puts ""
@@ -129,7 +133,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 puts self.error_string
                 puts ""
 
-                print "[report #] | (B)ack | (Q)uit: ".prepend(INDENT)
+                print input_prompt_string
                 @@input = gets.chomp
 
                 # User is trying to select a report to view
