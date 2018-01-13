@@ -24,6 +24,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         # regex strings
         REGEX_MATCHES = /^m(atches)?\s*?/
         REGEX_QUIT = /^q(uit)?\s*$/
+        REGEX_TEAMS = /^t(eams)?\s*?/
 
         # ENTRY POINT
         def self.start
@@ -88,19 +89,12 @@ module SpoilerFreeSoccerPlayByPlayReports
                 print "(M)atches | (T)eams | [team name] | (Q)uit: ".prepend(INDENT)
                 @@input = gets.strip
 
-                if @@input.match(REGEX_QUIT)
+                if @@input.match(REGEX_QUIT) 
                     self.state(STATE_QUIT)
-
-                elsif @@input.match(REGEX_MATCHES)
+                elsif @@input.match(REGEX_MATCHES) 
                     self.handle_matches_input(nil)
-
-                elsif @@input.match(/^t(eams)?\s*?/)
-                    if !Report.teams.empty?
-                        self.state(STATE_TEAMS_LIST)
-                    else
-                        @@error_string = "No reports are currently available for any teams :("
-                    end
-
+                elsif @@input.match(REGEX_TEAMS)
+                    self.handle_teams_input
                 else
                     self.handle_matches_input(@@input)
                 end
@@ -144,6 +138,8 @@ module SpoilerFreeSoccerPlayByPlayReports
                         @@report_index = @@input.to_i
                         self.state(STATE_REPORT)
                     end
+                elsif @@input.match(REGEX_TEAMS)
+                    self.handle_teams_input
                 else 
                     self.handle_back_exit_and_misc
                 end
@@ -269,6 +265,14 @@ module SpoilerFreeSoccerPlayByPlayReports
                     "\n...However, the parser is not the brightest."\
                     "\nYou may want to double-check your spelling and/or try (T)eams just in case." : 
                     "No matches are currently available :("
+            end
+        end
+
+        def self.handle_teams_input
+            if !Report.teams.empty?
+                self.state(STATE_TEAMS_LIST)
+            else
+                @@error_string = "No reports are currently available for any teams :("
             end
         end
     end
