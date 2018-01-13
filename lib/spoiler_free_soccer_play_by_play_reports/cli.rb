@@ -7,7 +7,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         STATE_MATCHES_LIST = 2
         STATE_TEAMS_LIST = 3
         STATE_REPORT = 4
-        STATE_EXIT = 5
+        STATE_QUIT = 5
 
         @@state = nil
         @@changing_state = false
@@ -23,7 +23,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         INDENT = "     "
 
         # regex strings
-        REGEX_EXIT = /^q(uit)?\s*$/
+        REGEX_QUIT = /^q(uit)?\s*$/
 
         # ENTRY POINT
         def self.start
@@ -44,7 +44,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         # MAIN LOOP
         def self.main_loop
-            while STATE_EXIT != @@state
+            while STATE_QUIT != @@state
                 case @@state
                 when STATE_MAIN_MENU
                     self.main_menu_loop
@@ -90,8 +90,8 @@ module SpoilerFreeSoccerPlayByPlayReports
                 print "(M)atches | (T)eams | [team name] | (Q)uit: ".prepend(INDENT)
                 @@input = gets.strip
 
-                if @@input.match(REGEX_EXIT)
-                    self.state(STATE_EXIT)
+                if @@input.match(REGEX_QUIT)
+                    self.state(STATE_QUIT)
 
                 elsif @@input.match(/^m(atches)?\s*?/)
                     if !Report.matches.empty?
@@ -180,7 +180,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 puts self.error_string
                 puts ""
 
-                print "[team #] | (B)ack | (Q)uit: ".prepend(INDENT)
+                print "[team #] | (M)atches | (Q)uit: ".prepend(INDENT)
                 @@input = gets.chomp
 
                 if @@input.to_i > 0
@@ -190,8 +190,17 @@ module SpoilerFreeSoccerPlayByPlayReports
                         @@matches_list_team_name = Report.teams[@@input.to_i - 1]
                         self.state(STATE_MATCHES_LIST)
                     end
-                else 
-                    self.handle_back_exit_and_misc
+                elsif @@input.match(/^m(atches)?\s*?/)
+                    if !Report.matches.empty?
+                        self.state(STATE_MATCHES_LIST)
+                        @@matches_list_team_name = nil
+                    else
+                        @@error_string = "No matches are currently available :("
+                    end
+                elsif @@input.match(REGEX_QUIT)
+                    self.state(STATE_QUIT)
+                else
+                    @@error_string = "To make a selection, enter its number."
                 end
             end
         end
@@ -257,8 +266,8 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.handle_back_exit_and_misc(handle_other=true)
             if @@input.match(/^b(ack)?\s*$/)
                 self.state(@@previous_state)
-            elsif @@input.match(REGEX_EXIT)
-                self.state(STATE_EXIT)
+            elsif @@input.match(REGEX_QUIT)
+                self.state(STATE_QUIT)
             elsif handle_other
                 @@error_string = "To make a selection, enter its number."
             end

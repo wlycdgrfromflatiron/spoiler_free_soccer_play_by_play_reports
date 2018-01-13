@@ -1,6 +1,7 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO
 
+* DEBUG: indent error message
 * DEBUG: 'back' on teams list should always go back to main menu
 * DEBUG: apply team name filter correctly when generating report lists
 
