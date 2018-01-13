@@ -32,7 +32,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 # also skip live commentary for in-progress-matches, for which the title is of the form
                 # Live Commentary: Tottenham Hotspur 0-0 Everton - live 8'
-                if title.include?(" - live ")
+                if !title.include?(" - as it happened")
                     next
                 end
 

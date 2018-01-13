@@ -1,9 +1,6 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO
 
-* DEBUG: make sure I filter out ongoing matches!!
-	* check for the presence of "- as it happened"
-	* skip if not present
 * UI: clear screen at start of report
 * FUNC: keep controls visible on report page (in abbreviated form ?)
 * UI: indent all lines of each blurb on report page
@@ -79,3 +76,7 @@ DONE DONE DONE DONE DONE DONE DONE
 * DONE DEBUG: apply team name filter correctly when generating report lists
 
 * DONE DEBUG: fix "Updated: Last Updated:" redundancy in byline output
+
+* DONE DEBUG: make sure I filter out ongoing matches!!
+	* check for the presence of "- as it happened"
+	* skip if not present
