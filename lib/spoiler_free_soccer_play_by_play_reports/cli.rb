@@ -95,12 +95,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                     self.state(STATE_QUIT)
 
                 elsif @@input.match(REGEX_MATCHES)
-                    if !Report.matches.empty?
-                        self.state(STATE_MATCHES_LIST)
-                        @@matches_list_team_name = nil
-                    else
-                        @@error_string = "No matches are currently available :("
-                    end
+                    self.handle_matches_input
 
                 elsif @@input.match(/^t(eams)?\s*?/)
                     if !Report.teams.empty?
@@ -162,6 +157,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end
 
+        # TEAMS LIST LOOP
         def self.teams_list_loop
             header_string = "TEAMS THAT HAVE REPORTS AVAILABLE:".prepend(INDENT)
 
@@ -192,12 +188,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                         self.state(STATE_MATCHES_LIST)
                     end
                 elsif @@input.match(REGEX_MATCHES)
-                    if !Report.matches.empty?
-                        self.state(STATE_MATCHES_LIST)
-                        @@matches_list_team_name = nil
-                    else
-                        @@error_string = "No matches are currently available :("
-                    end
+                    self.handle_matches_input
                 elsif @@input.match(REGEX_QUIT)
                     self.state(STATE_QUIT)
                 else
@@ -206,6 +197,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end
 
+        # REPORT LOOP
         def self.report_loop
             report = Report.report(@@report_index)
             
@@ -271,6 +263,15 @@ module SpoilerFreeSoccerPlayByPlayReports
                 self.state(STATE_QUIT)
             elsif handle_other
                 @@error_string = "To make a selection, enter its number."
+            end
+        end
+
+        def self.handle_matches_input
+            if !Report.matches.empty?
+                self.state(STATE_MATCHES_LIST)
+                @@matches_list_team_name = nil
+            else
+                @@error_string = "No matches are currently available :("
             end
         end
     end
