@@ -231,7 +231,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         # PRINTER FUNCTIONS
         def self.error_string
-            error_string = @@error_string ? @@error_string : ""
+            error_string = @@error_string ? @@error_string.prepend(INDENT) : ""
             @@error_string = nil
             error_string
         end
