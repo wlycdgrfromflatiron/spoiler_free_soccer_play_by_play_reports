@@ -16,10 +16,11 @@ module SpoilerFreeSoccerPlayByPlayReports
         @@matches_list_team_name = nil
         @@report_index = nil
 
-        @@error_string = nil
-
         # output formatting
         INDENT = "     "
+
+        # error handling
+        @@error_string = nil
 
         # regex strings
         REGEX_MATCHES = /^m(atches)?\s*?/
@@ -153,7 +154,14 @@ module SpoilerFreeSoccerPlayByPlayReports
                     self.state(STATE_QUIT)
 
                 else 
-                    # NOTHIN'
+                    if !Report.matches(@@input).empty?
+                        @@matches_list_team_name = @@input
+                        self.matches_list_loop
+                    else
+                        @@error_string = "No matches are available for #{@@input} :(\n"\
+                        "#{INDENT}...However, the parser is not the brightest.\n"\
+                        "#{INDENT}You may want to double-check your spelling and/or try (T)eams just in case."
+                    end
                 end
             end
         end
@@ -273,10 +281,10 @@ module SpoilerFreeSoccerPlayByPlayReports
                 @@matches_list_team_name = team_name
             else
                 @@error_string = team_name ? 
-                    "No matches are available for #{@@input} :("\
-                    "\n...However, the parser is not the brightest."\
-                    "\nYou may want to double-check your spelling and/or try (T)eams just in case." : 
-                    "No matches are currently available :("
+                "No matches are available for #{@@input} :(\n"\
+                "#{INDENT}...However, the parser is not the brightest.\n"\
+                "#{INDENT}You may want to double-check your spelling and/or try (T)eams just in case." : 
+                "No matches are currently available :("
             end
         end
 
