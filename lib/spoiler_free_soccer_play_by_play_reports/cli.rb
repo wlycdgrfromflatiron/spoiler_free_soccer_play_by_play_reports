@@ -7,40 +7,44 @@ module SpoilerFreeSoccerPlayByPlayReports
         STATE_MATCHES_LIST = 2
         STATE_TEAMS_LIST = 3
         STATE_REPORT = 4
-        STATE_QUIT = 5
+        STATE_EXIT = 5
+
         @@state = nil
         @@changing_state = false
 
-        @@matches_list = []
+        @@input = ""
+
         @@matches_list_team_name = nil
-        @@teams_list = []
         @@report_index = nil
 
-        @@error_message = nil
+        @@error_string = nil
 
         # output formatting
-        PUTS_INDENT = 5
-        PRINT_INDENT = 5
+        INDENT = "     "
+
+        # regex strings
+        REGEX_EXIT = /^e(xit)?\s*$/
 
         # ENTRY POINT
         def self.start
-            set_default_puts_indent(PUTS_INDENT)
-            set_default_print_indent(PRINT_INDENT)
-
-            system "clear" or system "cls"; puts ""
-            self.welcome; puts ""
-            puts_indented("Loading report list...")
+            system "clear" or system "cls"
+            puts ""
+            puts self.welcome
+            puts ""
+            puts "Loading report list...".prepend(INDENT)
             Report.list('all')
 
             self.state(STATE_MAIN_MENU)
             self.main_loop
 
-            puts ""; puts_indented("Thanks for using this app. Goodbye!"); puts ""
+            puts ""
+            "Thanks for using this app. Goodbye!".prepend(INDENT)
+            puts ""
         end
 
         # MAIN LOOP
         def self.main_loop
-            while STATE_QUIT != @@state
+            while STATE_EXIT != @@state
                 case @@state
                 when STATE_MAIN_MENU
                     self.main_menu_loop
@@ -52,6 +56,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                     self.report_loop
                 end
                 @@changing_state = false
+                @@input = ""
             end
         end
 
@@ -64,47 +69,51 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         # MAIN MENU LOOP AND ITS HELPER FUNCTIONS
         def self.main_menu_loop
-            input = ""
+            welcome_string = self.welcome
+            controls_string = ""
+            controls_string << "MAIN MENU CONTROLS:\n".prepend(INDENT)
+            controls_string << "(M)atches:        List all matches for which reports are available.\n".prepend(INDENT)
+            controls_string << "(T)eams:          List all teams for which reports are available.\n".prepend(INDENT)
+            controls_string << "[team name]:      List all available reports for [team name].\n".prepend(INDENT)
+            controls_string << "(E)xit:           Exit the program.".prepend(INDENT)
 
             while (!@@changing_state)
-                system "clear" or system "cls"; puts ""
-                self.welcome; puts ""
-                puts_indented("MAIN MENU CONTROLS:")
-                puts_indented("(M)atches:        List all matches for which reports are available.")
-                puts_indented("(T)eams:          List all teams for which reports are available.")
-                puts_indented("[team name]:      List all available reports for [team name].")
-                puts_indented("(E)xit:           Exit the program.")
+                system "clear" or system "cls"
                 puts ""
-                self.error_message
+                puts welcome_string
+                puts ""
+                puts controls_string
+                puts ""
+                puts self.error_string
+                puts ""
             
-                print_indented("(M)atches | (T)eams | [team name] | (E)xit: "); input = gets.strip
+                print "(M)atches | (T)eams | [team name] | (E)xit: ".prepend(INDENT)
+                @@input = gets.strip
 
-                if input.match(/^e(xit)?\s*$/)
-                    this.state(STATE_QUIT)
+                if @@input.match(REGEX_EXIT)
+                    self.state(STATE_EXIT)
 
-                elsif input.match(/^m(atches)?\s*?/)
-                    @@matches_list = Report.matches
-                    if !@@matches_list.empty?
+                elsif @@input.match(/^m(atches)?\s*?/)
+                    if !Report.matches.empty?
                         self.state(STATE_MATCHES_LIST)
+                        @@matches_list_team_name = nil
                     else
-                        @@error_message = "No matches are currently available :("
+                        @@error_string = "No matches are currently available :("
                     end
 
-                elsif input.match(/^t(eams)?\s*?/)
-                    @@teams_list = Report.teams
-                    if !@@teams_list.empty?
+                elsif @@input.match(/^t(eams)?\s*?/)
+                    if !Report.teams.empty?
                         self.state(STATE_TEAMS_LIST)
                     else
-                        @@error_message = "No reports are currently available for any teams :("
+                        @@error_string = "No reports are currently available for any teams :("
                     end
 
                 else
-                    @@matches_list = Report.matches
-                    if !@@matches_list.empty?
-                        @@matches_list_team_name = input
+                    if !Report.matches.empty?
                         self.state(STATE_MATCHES_LIST)
+                        @@matches_list_team_name = @@input
                     else
-                        @@error_message = "No matches are available for #{team_name} :("\
+                        @@error_string = "No matches are available for #{@@input} :("\
                             "\n...However, the parser is not the brightest."\
                             "\nYou may want to double-check your spelling and/or try (T)eams just in case."
                     end
@@ -114,69 +123,75 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         # MATCHES LIST LOOP
         def self.matches_list_loop
-            input = ""
-
-            header = @@matches_list_team_name ? 
+            header_string = @@matches_list_team_name ? 
                 "AVAILABLE REPORTS FOR #{@@matches_list_team_name.upcase}" : 
                 "ALL AVAILABLE REPORTS"
+            header_string = header_string.prepend(INDENT)
 
             match_strings = []
-            @@matches_list.each.with_index(1) do |match, index|
+            Report.matches(@@matches_list_team_name).each.with_index(1) do |match, index|
                 match_strings << "#{index}. #{match.team1} vs. #{match.team2}"
             end
             match_list_string = column_print(match_strings)
 
             while (!@@changing_state)
-                system "clear" or system "cls"; puts ""
-                puts_indented(header); puts ""
-                puts match_list_string; puts ""
-                self.error_message
+                system "clear" or system "cls"
+                puts ""
+                puts header_string
+                puts ""
+                puts match_list_string 
+                puts ""
+                puts self.error_string
+                puts ""
 
-                print_indented("[report #] | (B)ack | (E)xit: "); input = gets.chomp
+                print "[report #] | (B)ack | (E)xit: ".prepend(INDENT)
+                @@input = gets.chomp
 
                 # User is trying to select a report to view
-                if input.to_i > 0
-                    if input.to_i > @@matches_list.size
-                        @@error_message = "Invalid report number! Please try again."
+                if @@input.to_i > 0
+                    if @@input.to_i > Report.matches(@@matches_list_team_name).size
+                        @@error_string = "Invalid report number! Please try again."
                     else
-                        @@report_index = input.to_i
+                        @@report_index = @@input.to_i
                         self.state(STATE_REPORT)
                     end
                 else 
-                    self.handle_back_exit_and_misc(input)
+                    self.handle_back_exit_and_misc
                 end
             end
         end
 
         def self.teams_list_loop
-            input = ""
+            header_string = "TEAMS THAT HAVE REPORTS AVAILABLE:".prepend(INDENT)
+
+            teams_strings = []
+            Report.teams.each.with_index(1) do |team_name, index|
+                teams_strings << "#{index}. #{team_name}"
+            end
+            team_list_string = column_print(teams_strings)
 
             while (!@@changing_state)
-                system "clear" or system "cls"; puts ""
-                puts_indented("TEAMS THAT HAVE REPORTS AVAILABLE:"); puts ""
+                system "clear" or system "cls"
+                puts ""
+                puts header_string
+                puts ""
+                puts team_list_string
+                puts ""
+                puts self.error_string
+                puts ""
 
-                @@teams_list.each.with_index(1) do |team_name, index|
-                    puts_indented("#{index}. #{team_name}")
-                end
+                print "[team #] | (B)ack | (E)xit: ".prepend(INDENT)
+                @@input = gets.chomp
 
-                self.error_message
-
-                print_indented("[team #] | (B)ack | (E)xit: ")
-                input = gets.chomp
-
-                # User is trying to select a team to see a list of available matches for
-                if input.to_i > 0
-                    if input.to_i > @@teams_list.size
-                        @@error_message = "Invalid index! Please try again."
+                if @@input.to_i > 0
+                    if @@input.to_i > Report.teams.size
+                        @@error_string = "Invalid index! Please try again."
                     else
-                        team_name = @@teams_list[input.to_i - 1]
-                        @@matches_list = Report.matches(team_name)
-                        @@matches_list_team_name = team_name
-
+                        @@matches_list_team_name = Report.teams[@@input.to_i - 1]
                         self.state(STATE_MATCHES_LIST)
                     end
                 else 
-                    self.handle_back_exit_and_misc(input)
+                    self.handle_back_exit_and_misc
                 end
             end
         end
@@ -184,64 +199,68 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.report_loop
             report = Report.report(@@report_index)
             
+            # Byline
             puts ""
-            puts_indented("MATCH REPORT")
-            puts_indented("#{report.team1} VS. #{report.team2}")
-            puts_indented("")
-            puts_indented("Author: #{report.byline.author}")
-            puts_indented("Filed: #{report.byline.filed}")
-            puts_indented("Updated: #{report.byline.updated}")
+            puts "MATCH REPORT".prepend(INDENT)
+            puts "#{report.team1} VS. #{report.team2}".prepend(INDENT)
             puts ""
-
-            puts ""
-            puts_indented("Controls:")
-            puts_indented("[Spacebar]:      Show next report item.")
-            puts_indented("b:               Return to previous screen.")
-            puts_indented("q:               Exit the program.")
+            puts "Author: #{report.byline.author}".prepend(INDENT)
+            puts "Filed: #{report.byline.filed}".prepend(INDENT)
+            puts "Updated: #{report.byline.updated}".prepend(INDENT)
             puts ""
 
-            input = ""
+            # Controls
+            puts ""
+            puts "Controls:".prepend(INDENT)
+            puts "[Spacebar]:      Show next report item.".prepend(INDENT)
+            puts "b:               Return to previous screen.".prepend(INDENT)
+            puts "q:               Exit the program.".prepend(INDENT)
+            puts ""
+
+            blurb = nil
             while (!@@changing_state && !Report.done)
-                input = STDIN.getch
+                @@input = STDIN.getch
 
-                if ' ' == input
+                if ' ' == @@input
                     blurb = Report.next_blurb
                     puts ""
-                    puts_indented("#{blurb.label}")
-                    puts_indented("#{blurb.text}")
+                    puts "#{blurb.label}".prepend(INDENT)
+                    puts "#{blurb.text}".prepend(INDENT)
                     puts ""
                 else
-                    self.handle_back_exit_and_misc(input, false)
+                    self.handle_back_exit_and_misc(false)
                 end
             end
 
             if Report.done
-                puts Report.conclusion
-                input = STDIN.getch
+                puts Report.conclusion.prepend(INDENT)
+                STDIN.getch
             end
         end
 
         # PRINTER FUNCTIONS
-        def self.error_message
-            puts_indented(@@error_message) if @error_message
-            @@error_message = nil
+        def self.error_string
+            error_string = @@error_string ? @@error_string : ""
+            @@error_string = nil
+            error_string
         end
 
         def self.welcome
-            puts_indented("~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~")
-            puts_indented("A service for reading live commentaries for completed soccer matches")
-            puts_indented("in chronological order and without spoilers.")
-            puts_indented("(data source: SPORTSMOLE.CO.UK)")
+            welcome_string = ""
+            welcome_string << "~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~\n".prepend(INDENT)
+            welcome_string << "A service for reading live commentaries for completed soccer matches\n".prepend(INDENT)
+            welcome_string << "in chronological order and without spoilers.\n".prepend(INDENT)
+            welcome_string << "(data source: SPORTSMOLE.CO.UK)".prepend(INDENT)
         end
 
         # INPUT HANDLING
-        def self.handle_back_exit_and_misc(input, handle_other=true)
-            if input.match(/^b(ack)?\s*$/)
+        def self.handle_back_exit_and_misc(handle_other=true)
+            if @@input.match(/^b(ack)?\s*$/)
                 self.state(@@previous_state)
-            elsif input.match(/^e(xit)?\s*$/)
-                self.state(STATE_QUIT)
+            elsif @@input.match(REGEX_EXIT)
+                self.state(STATE_EXIT)
             elsif handle_other
-                @@error_message = "To make a selection, enter its number."
+                @@error_string = "To make a selection, enter its number."
             end
         end
     end
