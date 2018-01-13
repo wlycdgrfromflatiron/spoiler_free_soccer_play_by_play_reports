@@ -153,11 +153,11 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.teams_list_loop
             header_string = "TEAMS THAT HAVE REPORTS AVAILABLE:".prepend(INDENT)
 
-            teams_strings = []
-            Report.teams.each.with_index(1) do |team_name, index|
-                teams_strings << "#{index}. #{team_name}"
-            end
-            team_list_string = column_print(teams_strings)
+            team_list_string = column_print(
+                Report.teams.collect.with_index(1) do |team_name, index|
+                    "#{index}. #{team_name}"
+                end
+            )
 
             while (!@@changing_state)
                 system "clear" or system "cls"
