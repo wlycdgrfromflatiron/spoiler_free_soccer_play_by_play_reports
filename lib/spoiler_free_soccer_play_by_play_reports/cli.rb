@@ -59,23 +59,6 @@ module SpoilerFreeSoccerPlayByPlayReports
             @@error_message = nil
         end
 
-        def self.input_prompt
-            prompt_pieces = []
-            case @@state
-            when STATE_MAIN_MENU
-                prompt_pieces << "(M)atches" << "(T)eams" << "[team name]"
-            when STATE_MATCHES_LIST
-                prompt_pieces << "[match #]" << "(B)ack"
-            when STATE_TEAMS_LIST
-                prompt_pieces << "[team #]" << "(B)ack"
-            end
-            prompt_pieces << "(E)xit"
-
-            print_indented(prompt_pieces.join(" | ") + ": ")
-
-            gets.chomp
-        end
-
         def self.state(new_state)
             @@previous_state = @@state
             @@state = new_state
@@ -91,7 +74,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 when STATE_TEAMS_LIST
                     self.teams_list_loop
                 when STATE_REPORT
-                    self.update_report
+                    self.report_loop
                 end
             end
         end
