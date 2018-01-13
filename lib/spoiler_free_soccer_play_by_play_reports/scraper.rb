@@ -97,6 +97,19 @@ module SpoilerFreeSoccerPlayByPlayReports
                     blurb_text = "~ A Tweet was here ~"
                 else
                     blurb_text = blurb_text_span.text
+
+                    # if the blurb contains an image, remove the copyright text
+                    img_copyright_tag = blurb_text_span.at(".article_img_copyright")
+                    if img_copyright_tag
+                        img_tag = blurb_text_span.at("img")
+                        img_alt_text = ""
+                        if img_tag
+                            img_alt_text = img_tag.attr("alt")
+                        end
+                        blurb_text.gsub!(
+                            img_copyright_tag.text, 
+                            "\n\n~ An image was here ~ #{img_alt_text}")
+                    end
                 end
                 
                 blurb_text.gsub!(/([?.!])([^?.!\s])/, "\\1\n\n\\2")

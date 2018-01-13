@@ -1,7 +1,6 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO
 
-* DEBUG: handle image blurbs correctly
 * DEBUG: handle strings like "B.Silva" correctly (i.e. without making a paragraph break after the .)
 
 * UI: indent all lines of each blurb on report page
@@ -80,3 +79,4 @@ DONE DONE DONE DONE DONE DONE DONE
 * DONE UI: clear screen at start of report
 * REJECTED: decided to keep UI as is; finalized it. [UI: keep match report, byline, and controls visible]
 * DONE DEBUG: handle tweet blurbs correctly
+* DONE DEBUG: handle image blurbs correctly
