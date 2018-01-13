@@ -224,9 +224,8 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts ""
             puts "Controls:".prepend(INDENT)
             puts "[Spacebar]:      Show next report item.".prepend(INDENT)
-            puts "b:               Return to previous screen.".prepend(INDENT)
-            puts "t:               List all teams for which reports are available.".prepend(INDENT)
             puts "m:               List all available match reports.".prepend(INDENT)
+            puts "t:               List all teams for which reports are available.".prepend(INDENT)
             puts "q:               Quit the program.".prepend(INDENT)
             puts ""
 
@@ -240,8 +239,15 @@ module SpoilerFreeSoccerPlayByPlayReports
                     puts "#{blurb.label}".prepend(INDENT)
                     puts "#{blurb.text}".prepend(INDENT)
                     puts ""
-                else
-                    self.handle_back_exit_and_misc(false)
+
+                elsif @@input.match(REGEX_MATCHES)
+                    self.handle_matches_input(nil)
+
+                elsif @@input.match(REGEX_TEAMS)
+                    self.handle_teams_input
+
+                elsif @@input.match(REGEX_QUIT)
+                    self.state(STATE_QUIT)
                 end
             end
 

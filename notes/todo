@@ -1,15 +1,11 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO
 
-* FUNC: change match list menu input options: remove Back, add Teams, add [team name], add All Matches (if only showing some)
-* DEBUG: 'back' on teams list should always go back to main menu
-* DEBUG: apply team name filter correctly when generating report lists
+* DEBUG: fix "Updated: Last Updated:" redundancy in byline output
 
 * FUNC: If there is only one report available for a team the user has picked, go directly to report detail view
+
 * UI: upcase the OTHER teams in the team report list
-* UI: Clear screen and reprint controls on return to main menu from report list screen
-* UI: Clear screen and reprint report list on return to report list view from report detail view
-* UI: Snazz welcome message
 
 * DEBUG: handle image blurbs correctly
 * DEBUG: handle tweet blurbs correctly
@@ -18,7 +14,6 @@ TODO TODO TODO TODO TODO TODO TODO
 
 * REFACTOR: Report.preamble and Report.conclusion; they should not get involved in building output strings
 * REFACTOR: add a decorator that accepts an array of string to puts out and puts an empty line before the first and after the last
-
 
 __________________________________
 DONE DONE DONE DONE DONE DONE DONE
@@ -66,7 +61,13 @@ DONE DONE DONE DONE DONE DONE DONE
 * DONE FUNC: Show only relevant controls on report list screen (report #, Hlep, Main, Exit)
 * DONE FUNC: on main menu, offer user the ability to print all Matches, print all Teams, and look up reports by [team name]
 
+* DONE UI: Clear screen and reprint controls on return to main menu from report list screen
+* DONE UI: Clear screen and reprint report list on return to report list view from report detail view
+* DONE UI: Snazz welcome message
+
 * DONE FUNC: Implement matches list menu (in matches_list_loop)
 * DONE DEBUG: Print goodbye message
 * DONE DEBUG: 'q' should quit on report page
 * DONE DEBUG: indent error message
+* DONE FUNC: change match list menu input options: remove Back, add Teams, add [team name], add All Matches (if only showing some)
+* DONE DEBUG: apply team name filter correctly when generating report lists
