@@ -10,7 +10,6 @@ module SpoilerFreeSoccerPlayByPlayReports
         STATE_QUIT = 5
 
         @@state = nil
-        @@changing_state = false
 
         @@input = ""
 
@@ -56,7 +55,6 @@ module SpoilerFreeSoccerPlayByPlayReports
                 when STATE_REPORT
                     self.report_loop
                 end
-                @@changing_state = false
                 @@input = ""
             end
         end
@@ -65,7 +63,6 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.state(new_state)
             @@previous_state = @@state
             @@state = new_state
-            @@changing_state = true
         end
 
         # MAIN MENU LOOP AND ITS HELPER FUNCTIONS
@@ -78,7 +75,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             controls_string << "[team name]:      List all available reports for [team name].\n".prepend(INDENT)
             controls_string << "(Q)uit:           Quit the program.".prepend(INDENT)
 
-            while (!@@changing_state)
+            while (STATE_MAIN_MENU == @@state)
                 system "clear" or system "cls"
                 puts ""
                 puts welcome_string
@@ -122,7 +119,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 end
             )
 
-            while (!@@changing_state)
+            while (STATE_MATCHES_LIST == @@state)
                 system "clear" or system "cls"
                 puts ""
                 puts header_string
@@ -159,7 +156,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 end
             )
 
-            while (!@@changing_state)
+            while (STATE_TEAMS_LIST == @@state)
                 system "clear" or system "cls"
                 puts ""
                 puts header_string
@@ -212,7 +209,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts ""
 
             blurb = nil
-            while (!@@changing_state && !Report.done)
+            while (STATE_REPORT == @@state && !Report.done)
                 @@input = STDIN.getch
 
                 if ' ' == @@input
