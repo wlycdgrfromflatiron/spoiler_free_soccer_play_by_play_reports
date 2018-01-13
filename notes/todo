@@ -1,6 +1,7 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO
 
+* DEBUG: 'back' on teams list should always go back to main menu
 * DEBUG: apply team name filter correctly when generating report lists
 
 * FUNC: If there is only one report available for a team the user has picked, go directly to report detail view
