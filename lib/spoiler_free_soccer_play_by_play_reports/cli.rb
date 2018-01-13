@@ -91,10 +91,13 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 if @@input.match(REGEX_QUIT) 
                     self.state(STATE_QUIT)
+
                 elsif @@input.match(REGEX_MATCHES) 
                     self.handle_matches_input(nil)
+
                 elsif @@input.match(REGEX_TEAMS)
                     self.handle_teams_input
+
                 else
                     self.handle_matches_input(@@input)
                 end
@@ -138,13 +141,19 @@ module SpoilerFreeSoccerPlayByPlayReports
                         @@report_index = @@input.to_i
                         self.state(STATE_REPORT)
                     end
+
                 elsif @@input.match(REGEX_TEAMS)
                     self.handle_teams_input
+
                 elsif @@matches_list_team_name && @@input.match(REGEX_MATCHES)
                     @@matches_list_team_name = nil
                     self.matches_list_loop
+
+                elsif @@input.match(REGEX_QUIT)
+                    self.state(STATE_QUIT)
+
                 else 
-                    self.handle_back_exit_and_misc
+                    # NOTHIN'
                 end
             end
         end
