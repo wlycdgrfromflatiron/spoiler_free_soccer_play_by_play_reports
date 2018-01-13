@@ -96,7 +96,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 elsif @@input.match(REGEX_MATCHES)
                     self.handle_matches_input(nil)
-                    
+
                 elsif @@input.match(/^t(eams)?\s*?/)
                     if !Report.teams.empty?
                         self.state(STATE_TEAMS_LIST)
@@ -113,15 +113,14 @@ module SpoilerFreeSoccerPlayByPlayReports
         # MATCHES LIST LOOP
         def self.matches_list_loop
             header_string = @@matches_list_team_name ? 
-                "AVAILABLE REPORTS FOR #{@@matches_list_team_name.upcase}" : 
-                "ALL AVAILABLE REPORTS"
-            header_string = header_string.prepend(INDENT)
+                "AVAILABLE REPORTS FOR #{@@matches_list_team_name.upcase}".prepend(INDENT) : 
+                "ALL AVAILABLE REPORTS".prepend(INDENT)
 
-            match_strings = []
-            Report.matches(@@matches_list_team_name).each.with_index(1) do |match, index|
-                match_strings << "#{index}. #{match.team1} vs. #{match.team2}"
-            end
-            match_list_string = column_print(match_strings)
+            match_list_string = column_print(
+                Report.matches(@@matches_list_team_name).collect.with_index(1) do |match, index|
+                    "#{index}. #{match.team1} vs. #{match.team2}"
+                end
+            )
 
             while (!@@changing_state)
                 system "clear" or system "cls"
