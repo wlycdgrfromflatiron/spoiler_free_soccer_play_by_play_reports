@@ -1,10 +1,10 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class Blurb
-        attr_reader :label, :text
+        attr_reader :label, :paragraphs
 
         def initialize(hash)
             @label = hash[:label] || "[UNTITLED]"
-            @text = hash[:text] || "[No text]"
+            @paragraphs = hash[:paragraphs] || ["[No text]"]
         end
     end
 end

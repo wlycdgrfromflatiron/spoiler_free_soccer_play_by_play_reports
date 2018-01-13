@@ -234,8 +234,11 @@ module SpoilerFreeSoccerPlayByPlayReports
                     blurb = Report.next_blurb
                     puts ""
                     puts "#{blurb.label}".prepend(INDENT)
-                    puts "#{blurb.text}".prepend(INDENT)
                     puts ""
+                    blurb.paragraphs.each do |paragraph|
+                        puts paragraph.prepend(INDENT)
+                        puts ""
+                    end
 
                 elsif @@input.match(REGEX_MATCHES)
                     self.handle_matches_input(nil)

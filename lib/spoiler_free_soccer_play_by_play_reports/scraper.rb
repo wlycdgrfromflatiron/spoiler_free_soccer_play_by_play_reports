@@ -88,13 +88,26 @@ module SpoilerFreeSoccerPlayByPlayReports
             report_details[:blurbs] = []
             scraped_blurbs.each do |scraped_blurb|
                 blurb_text_span = scraped_blurb.at("span.post")
+                blurb_paragraphs = []
 
                 # handle blurbs that are TWEETS
                 is_tweet = blurb_text_span.children[0].attr("class") == "twitter-tweet"
-
-                blurb_text = ""
                 if is_tweet
-                    blurb_text = "~ A Tweet was here ~"
+                    blurb_paragraphs << "~ A Tweet was here ~"
+                else
+                    index = 0
+                    child = blurb_text_span.children[index]
+                    first_paragraph = ""
+                    while (child && child.name != "p")
+                        first_paragraph << child.text
+
+                        index += 1
+                        child = blurb_text_span.children[index]
+                    end
+                    blurb_paragraphs << first_paragraph 
+                end
+
+=begin
                 else
                     blurb_text = blurb_text_span.text
 
@@ -111,12 +124,11 @@ module SpoilerFreeSoccerPlayByPlayReports
                             "\n\n~ An image was here ~ #{img_alt_text}")
                     end
                 end
-                
-                blurb_text.gsub!(/([?.!])([^?.!\s])/, "\\1\n\n\\2")
-
+=end
                 report_details[:blurbs] << {
                     :label => scraped_blurb.at("a.period").text,
-                    :text => blurb_text
+                    #:paragraphs => blurb_text.split(/([?.!])([^?.!\s])/)
+                    :paragraphs => blurb_paragraphs
                 }
             end
 
