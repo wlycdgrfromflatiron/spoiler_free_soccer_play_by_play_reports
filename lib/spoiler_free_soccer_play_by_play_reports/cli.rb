@@ -38,7 +38,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             self.main_loop
 
             puts ""
-            "Thanks for using this app. Goodbye!".prepend(INDENT)
+            puts "Thanks for using this app. Goodbye!".prepend(INDENT)
             puts ""
         end
 
