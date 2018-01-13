@@ -1,30 +1,12 @@
 module WlyCuteConsole
     module ClassMethods
-        DEFAULT_PUTS_INDENT = 2
-        DEFAULT_PRINT_INDENT = 2
+        DEFAULT_PRINT_INDENT = 5
         DEFAULT_COLUMN_PRINT_SETTINGS = {
             # :column_count => 2, - for ifwhen a more generic version of column_print becomes useful
             :column_width => 50
         }
 
-        @@puts_indent = DEFAULT_PUTS_INDENT
         @@print_indent = DEFAULT_PRINT_INDENT
-
-        def set_default_puts_indent(indent_value)
-            @@puts_indent = indent_value if indent_value.to_i > 0
-        end
-
-        def set_default_print_indent(indent_value)
-            @@print_indent = indent_value if indent_value.to_i > 0
-        end
-
-        def puts_indented(string, indent = @@puts_indent || DEFAULT_PUTS_INDENT)
-            puts string.prepend(" " * indent)
-        end
-
-        def print_indented(string, indent = @@print_indent || DEFAULT_PRINT_INDENT)
-            print string.prepend(" " * indent)
-        end
 
         def column_print(strings, settings=DEFAULT_COLUMN_PRINT_SETTINGS)
             columnized_string = ""
