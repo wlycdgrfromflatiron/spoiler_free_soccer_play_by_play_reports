@@ -221,30 +221,9 @@ module SpoilerFreeSoccerPlayByPlayReports
                         in_this_state = false
                     end
                 else 
-                    in_this_state = self.handle_back_exit_and_misc(input)
+                    in_this_state = self.handle_back_exit_and_misc(input, true, true, true)
                 end
             end
-        end
-
-        def self.handle_back_exit_and_misc(input)
-            in_this_state = true 
-
-            # User is trying to return to previous screen
-            if input.match(/^b(ack)?\s*$/)
-                self.state(@@previous_state)
-                in_this_state = false
-
-            # User is trying to exit the program
-            elsif input.match(/^e(xit)?\s*$/)
-                @@should_exit = true
-                in_this_state = false
-
-            # User has entered some funsense
-            else
-                @@error_message = "To make a selection, enter its number."
-            end
-
-            in_this_state
         end
 
         def self.report_loop
@@ -261,7 +240,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             in_this_state = true
             input = ""
-            while (in_this_state !input.match(/[qe]/) && !Report.done)
+            while (in_this_state && !Report.done)
                 input = STDIN.getch
 
                 # User wants to see the next blurb
@@ -271,22 +250,14 @@ module SpoilerFreeSoccerPlayByPlayReports
                     puts_indented("#{blurb.label}")
                     puts_indented("#{blurb.text}")
                     puts ""
-                
-                # User wants to go back to the previous screen
-                elsif input.match(/[bB]/)
-                    this.state(@@previous_state)
-                    in_this_state = false 
-
-                # User wants to quit the program
-                elsif input.match(/[qQ]/)
-                    @@should_exit = true
-                    in_this_state = false
+                else
+                    in_this_state = self.handle_back_exit_and_misc(input, true, true, false)
                 end
+            end
 
-                if Report.done
-                    puts Report.conclusion
-                    in_this_state = false
-                end
+            if Report.done
+                puts Report.conclusion
+                input = STDIN.getch
             end
         end
 
@@ -305,6 +276,27 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts ""
             puts_indented("Thanks for using this app. Goodbye!")
             puts ""
+        end
+
+        def self.handle_back_exit_and_misc(input, handle_back, handle_exit, handle_other)
+            in_this_state = true 
+
+            # User is trying to return to previous screen
+            if handle_back && input.match(/^b(ack)?\s*$/)
+                self.state(@@previous_state)
+                in_this_state = false
+
+            # User is trying to exit the program
+            elsif handle_exit input.match(/^e(xit)?\s*$/)
+                @@should_exit = true
+                in_this_state = false
+
+            # User has entered some funsense
+            elsif handle_other
+                @@error_message = "To make a selection, enter its number."
+            end
+
+            in_this_state
         end
     end
 end
