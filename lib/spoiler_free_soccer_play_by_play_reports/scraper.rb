@@ -24,9 +24,15 @@ module SpoilerFreeSoccerPlayByPlayReports
                     next
                 end
 
-                # skip live commentaries for in-progress or soon-to-start matches, for which the title is of the form
+                # skip live commentaries for soon-to-start matches, for which the title is of the form
                 # Live Commentary: Real Madrid vs. Numancia - kickoff at 8.30pm
                 if title.include?(" vs. ")
+                    next
+                end
+
+                # also skip live commentary for in-progress-matches, for which the title is of the form
+                # Live Commentary: Tottenham Hotspur 0-0 Everton - live 8'
+                if title.include?(" - live ")
                     next
                 end
 
