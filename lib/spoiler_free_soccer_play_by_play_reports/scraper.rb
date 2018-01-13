@@ -94,7 +94,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 blurb_text = ""
                 if is_tweet
-                    blurb_text = "A Tweet that you can view at: TODO scrape tweet URL"
+                    blurb_text = "~ A Tweet was here ~"
                 else
                     blurb_text = blurb_text_span.text
                 end
