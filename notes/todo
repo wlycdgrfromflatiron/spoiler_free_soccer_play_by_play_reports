@@ -1,7 +1,9 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO
 
-* DEBUG: fix "Updated: Last Updated:" redundancy in byline output
+* FUNC: keep controls visible on report page (in abbreviated form ?)
+* UI: indent all lines of each blurb on report page
+* UI: implement sensible line breaks on report page
 
 * FUNC: If there is only one report available for a team the user has picked, go directly to report detail view
 
@@ -71,3 +73,5 @@ DONE DONE DONE DONE DONE DONE DONE
 * DONE DEBUG: indent error message
 * DONE FUNC: change match list menu input options: remove Back, add Teams, add [team name], add All Matches (if only showing some)
 * DONE DEBUG: apply team name filter correctly when generating report lists
+
+* DONE DEBUG: fix "Updated: Last Updated:" redundancy in byline output

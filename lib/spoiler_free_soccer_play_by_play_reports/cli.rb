@@ -217,7 +217,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts ""
             puts "Author: #{report.byline.author}".prepend(INDENT)
             puts "Filed: #{report.byline.filed}".prepend(INDENT)
-            puts "Updated: #{report.byline.updated}".prepend(INDENT)
+            puts "#{report.byline.updated}".prepend(INDENT)
             puts ""
 
             # Controls
