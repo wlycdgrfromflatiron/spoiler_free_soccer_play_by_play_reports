@@ -19,17 +19,16 @@ module SpoilerFreeSoccerPlayByPlayReports
         @@error_message = nil
 
         # output formatting
-        DEFAULT_PUTS_INDENT = 5
-        DEFAULT_PRINT_INDENT = 5
+        PUTS_INDENT = 5
+        PRINT_INDENT = 5
 
         def self.start
-            set_default_puts_indent(DEFAULT_PUTS_INDENT)
-            set_default_print_indent(DEFAULT_PRINT_INDENT)
+            set_default_puts_indent(PUTS_INDENT)
+            set_default_print_indent(PRINT_INDENT)
 
             system "clear" or system "cls"
-            puts ""
-            self.welcome
-            puts ""
+
+            puts ""; self.welcome; puts ""
             puts_indented("Loading report list...")
             Report.list('all')
 
