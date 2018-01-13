@@ -211,14 +211,16 @@ module SpoilerFreeSoccerPlayByPlayReports
             report = Report.report(@@report_index)
             
             # Byline
+            byline_string = ""
+            byline_string << "MATCH REPORT\n".prepend(INDENT)
+            byline_string << "#{report.team1} VS. #{report.team2}\n".prepend(INDENT)
+            byline_string << "\n"
+            byline_string << "Author: #{report.byline.author}\n".prepend(INDENT)
+            byline_string << "Filed: #{report.byline.filed}\n".prepend(INDENT)
+            byline_string << "#{report.byline.updated}\n".prepend(INDENT)
             puts ""
-            puts "MATCH REPORT".prepend(INDENT)
-            puts "#{report.team1} VS. #{report.team2}".prepend(INDENT)
-            puts ""
-            puts "Author: #{report.byline.author}".prepend(INDENT)
-            puts "Filed: #{report.byline.filed}".prepend(INDENT)
-            puts "#{report.byline.updated}".prepend(INDENT)
-            puts ""
+            puts byline_string
+            puts "" 
 
             # Controls
             puts ""
