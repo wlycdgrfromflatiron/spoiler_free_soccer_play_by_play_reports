@@ -225,6 +225,8 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts "Controls:".prepend(INDENT)
             puts "[Spacebar]:      Show next report item.".prepend(INDENT)
             puts "b:               Return to previous screen.".prepend(INDENT)
+            puts "t:               List all teams for which reports are available.".prepend(INDENT)
+            puts "m:               List all available match reports.".prepend(INDENT)
             puts "q:               Quit the program.".prepend(INDENT)
             puts ""
 
