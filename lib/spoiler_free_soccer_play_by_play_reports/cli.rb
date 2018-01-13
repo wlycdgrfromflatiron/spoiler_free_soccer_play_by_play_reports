@@ -95,8 +95,8 @@ module SpoilerFreeSoccerPlayByPlayReports
                     self.state(STATE_QUIT)
 
                 elsif @@input.match(REGEX_MATCHES)
-                    self.handle_matches_input
-
+                    self.handle_matches_input(nil)
+                    
                 elsif @@input.match(/^t(eams)?\s*?/)
                     if !Report.teams.empty?
                         self.state(STATE_TEAMS_LIST)
@@ -105,14 +105,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                     end
 
                 else
-                    if !Report.matches.empty?
-                        self.state(STATE_MATCHES_LIST)
-                        @@matches_list_team_name = @@input
-                    else
-                        @@error_string = "No matches are available for #{@@input} :("\
-                            "\n...However, the parser is not the brightest."\
-                            "\nYou may want to double-check your spelling and/or try (T)eams just in case."
-                    end
+                    self.handle_matches_input(@@input)
                 end
             end
         end
@@ -188,7 +181,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                         self.state(STATE_MATCHES_LIST)
                     end
                 elsif @@input.match(REGEX_MATCHES)
-                    self.handle_matches_input
+                    self.handle_matches_input(nil)
                 elsif @@input.match(REGEX_QUIT)
                     self.state(STATE_QUIT)
                 else
@@ -266,12 +259,16 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end
 
-        def self.handle_matches_input
-            if !Report.matches.empty?
+        def self.handle_matches_input(team_name)
+            if !Report.matches(team_name).empty?
                 self.state(STATE_MATCHES_LIST)
-                @@matches_list_team_name = nil
+                @@matches_list_team_name = team_name
             else
-                @@error_string = "No matches are currently available :("
+                @@error_string = team_name ? 
+                    "No matches are available for #{@@input} :("\
+                    "\n...However, the parser is not the brightest."\
+                    "\nYou may want to double-check your spelling and/or try (T)eams just in case." : 
+                    "No matches are currently available :("
             end
         end
     end
