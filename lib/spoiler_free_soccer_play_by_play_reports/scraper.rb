@@ -89,7 +89,15 @@ module SpoilerFreeSoccerPlayByPlayReports
             scraped_blurbs.each do |scraped_blurb|
                 blurb_text_span = scraped_blurb.at("span.post")
 
-                blurb_text = blurb_text_span.text
+                # handle blurbs that are TWEETS
+                is_tweet = blurb_text_span.children[0].attr("class") == "twitter-tweet"
+
+                blurb_text = ""
+                if is_tweet
+                    blurb_text = "A Tweet that you can view at: TODO scrape tweet URL"
+                else
+                    blurb_text = blurb_text_span.text
+                end
                 
                 blurb_text.gsub!(/([?.!])([^?.!\s])/, "\\1\n\n\\2")
 
