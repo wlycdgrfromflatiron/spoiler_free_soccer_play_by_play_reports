@@ -22,6 +22,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         class InputHandler
             INPUT_MATCHES = '(M)atches'
             INPUT_REPORT_INDEX = '[report #]'
+            INPUT_TEAM_INDEX = '[team #]'
             INPUT_TEAMNAME = '[team name]'
             INPUT_TEAMS = '(T)eams'
 
@@ -38,21 +39,30 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
 
             def self.handle_input(options)
-                Printer.print(@error_feedback)
+                Printer.print(@@error_feedback)
 
-                Printer.print(@input_prompt)
+                Printer.print(@@input_prompt)
                 input = gets.strip
 
                 if input.match(REGEX_QUIT)
                     State.set_state(State::QUIT)
 
-                elsif accepted_inputs.include?(INPUT_REPORT_INDEX) && input.to_i > 0
-                    if input.to_i > Report.current_list.size
-                        @@error_feedback = "Invalid report number! Please try again."
-                    else
-                        CLI::report_index == input.to_i
-                        StatePlayer.play(State::REPORT)
-                    end
+                elsif input.to_i > 0
+                    if accepted_inputs.include?(INPUT_REPORT_INDEX)
+                        if input.to_i > Report.current_list.size
+                            @@error_feedback = "Invalid report number! Please try again."
+                        else
+                            CLI::report_index == input.to_i
+                            StatePlayer.play(State::REPORT)
+                        end
+
+                    elsif accepted_inputs.include?(INPUT_TEAM_INDEX)
+                        if input.to_i > Report.teams.size
+                            @@error_feedback = "Invalid index! Please try again."
+                        else
+                            Report.matches(Reports.teams[input.to_i - 1])
+                            StatePlayer.play(State::MATCHES_LIST)
+                        end
 
                 elsif accepted_inputs.include?(INPUT_MATCHES) && input.match(REGEX_MATCHES)
                     self.handle_matches_input(nil)
@@ -88,16 +98,8 @@ module SpoilerFreeSoccerPlayByPlayReports
             TEAMS_LIST = 3
             REPORT = 4
 
-# Teams list
-=begin
-            header_string = "TEAMS THAT HAVE REPORTS AVAILABLE:".prepend(INDENT)
-
-            team_list_string = column_print(
-                Report.teams.collect.with_index(1) do |team_name, index|
-                    "#{index}. #{team_name}"
-                end
-            )
-=end
+            @input_options = []
+            @output_strings = []
 
             INPUT_OPTIONS[MAIN_MENU] = [
                 InputHandler::CLI_OPTION_MATCHES, 
@@ -123,9 +125,9 @@ module SpoilerFreeSoccerPlayByPlayReports
                 InputHandler::CLI_OPTION_TEAMS
             ]
 
-            def initialize(id, input_options)
+            def initialize(id)
                 @id = id
-                @output_strings = ["Default output_string value for State #{@id}."]
+                @input_options = State::INPUT_OPTIONS[@id]
             end
 
             def output_strings=(strings)
@@ -133,8 +135,8 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
 
             def update
-                Printer.clear_print(@output_string)
-                InputHandler.handle_input(INPUT_OPTIONS[@id])
+                Printer.clear_print(@output_strings)
+                InputHandler.handle_input(@input_options)
             end
         end
 
@@ -176,7 +178,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 when State::MATCHES_LIST
                     output_string << "Matches list output string 1!"
-
+=begin
                     header_string = @@matches_list_team_name ? 
                     "AVAILABLE REPORTS FOR #{@@matches_list_team_name.upcase}".prepend(INDENT) : 
                     "ALL AVAILABLE REPORTS".prepend(INDENT)
@@ -186,10 +188,18 @@ module SpoilerFreeSoccerPlayByPlayReports
                         "#{index}. #{match.team1} vs. #{match.team2}"
                     end
                 )
-
+=end
                 when State::TEAMS_LIST
                     output_string << "Teams list output string 1!"
+=begin
+                    header_string = "TEAMS THAT HAVE REPORTS AVAILABLE:".prepend(INDENT)
 
+                    team_list_string = column_print(
+                        Report.teams.collect.with_index(1) do |team_name, index|
+                            "#{index}. #{team_name}"
+                        end
+                    )
+=end
                 when State::REPORT
                     output_string << "Report output string 1!"
                 end
@@ -218,39 +228,6 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts ""
             puts "Thanks for using this app. Goodbye!".prepend(INDENT)
             puts ""
-        end
-
-        # TEAMS LIST LOOP
-        def self.teams_list_loop
-
-            while (STATE_TEAMS_LIST == @@state)
-                system "clear" or system "cls"
-                puts ""
-                puts header_string
-                puts ""
-                puts team_list_string
-                puts ""
-                puts self.error_string
-                puts ""
-
-                print "[team #] | (M)atches | (Q)uit: ".prepend(INDENT)
-                @@input = gets.chomp
-
-                if @@input.to_i > 0
-                    if @@input.to_i > Report.teams.size
-                        @@error_string = "Invalid index! Please try again."
-                    else
-                        @@matches_list_team_name = Report.teams[@@input.to_i - 1]
-                        self.state(STATE_MATCHES_LIST)
-                    end
-                elsif @@input.match(REGEX_MATCHES)
-                    self.handle_matches_input(nil)
-                elsif @@input.match(REGEX_QUIT)
-                    self.state(STATE_QUIT)
-                else
-                    @@error_string = "To make a selection, enter its number."
-                end
-            end
         end
 
         # REPORT LOOP
