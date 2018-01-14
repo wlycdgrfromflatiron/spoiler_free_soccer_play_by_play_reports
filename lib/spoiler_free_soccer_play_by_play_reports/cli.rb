@@ -98,6 +98,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 REPORT,
             ]
 
+# main menu output string
 =begin
             welcome_string = self.welcome
             controls_string = ""
@@ -106,6 +107,45 @@ module SpoilerFreeSoccerPlayByPlayReports
             controls_string << "(T)eams:          List all teams for which reports are available.\n".prepend(INDENT)
             controls_string << "[team name]:      List all available reports for [team name].\n".prepend(INDENT)
             controls_string << "(Q)uit:           Quit the program.".prepend(INDENT)
+=end
+
+#matches list output string + input stuff 
+=begin
+            header_string = @@matches_list_team_name ? 
+                "AVAILABLE REPORTS FOR #{@@matches_list_team_name.upcase}".prepend(INDENT) : 
+                "ALL AVAILABLE REPORTS".prepend(INDENT)
+
+            match_list_string = column_print(
+                Report.matches(@@matches_list_team_name).collect.with_index(1) do |match, index|
+                    "#{index}. #{match.team1} vs. #{match.team2}"
+                end
+            )
+
+                            # User is trying to select a report to view
+                if @@input.to_i > 0
+                    if @@input.to_i > Report.matches(@@matches_list_team_name).size
+                        @@error_string = "Invalid report number! Please try again."
+                    else
+                        @@report_index = @@input.to_i
+                        self.state(STATE_REPORT)
+                    end
+
+
+                                    elsif @@matches_list_team_name && @@input.match(REGEX_MATCHES)
+                    @@matches_list_team_name = nil
+                    self.matches_list_loop
+
+                    
+                else 
+                    if !Report.matches(@@input).empty?
+                        @@matches_list_team_name = @@input
+                        self.matches_list_loop
+                    else
+                        @@error_string = "No matches are available for #{@@input} :(\n"\
+                        "#{INDENT}...However, the parser is not the brightest.\n"\
+                        "#{INDENT}You may want to double-check your spelling and/or try (T)eams just in case."
+                    end
+                end
 =end
 
             INPUT_OPTIONS[MAIN_MENU] = 
@@ -177,67 +217,6 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts ""
             puts "Thanks for using this app. Goodbye!".prepend(INDENT)
             puts ""
-        end
-
-        # MATCHES LIST LOOP
-        def self.matches_list_loop
-            header_string = @@matches_list_team_name ? 
-                "AVAILABLE REPORTS FOR #{@@matches_list_team_name.upcase}".prepend(INDENT) : 
-                "ALL AVAILABLE REPORTS".prepend(INDENT)
-
-            match_list_string = column_print(
-                Report.matches(@@matches_list_team_name).collect.with_index(1) do |match, index|
-                    "#{index}. #{match.team1} vs. #{match.team2}"
-                end
-            )
-
-            input_prompt_string = "[report #] | ".prepend(INDENT)
-            input_prompt_string << (@@matches_list_team_name ? "all (M)atches | " : "")
-            input_prompt_string << "(T)eams | [team name] | (Q)uit: "
-
-            while (STATE_MATCHES_LIST == @@state)
-                system "clear" or system "cls"
-                puts ""
-                puts header_string
-                puts ""
-                puts match_list_string 
-                puts ""
-                puts self.error_string
-                puts ""
-
-                print input_prompt_string
-                @@input = gets.chomp
-
-                # User is trying to select a report to view
-                if @@input.to_i > 0
-                    if @@input.to_i > Report.matches(@@matches_list_team_name).size
-                        @@error_string = "Invalid report number! Please try again."
-                    else
-                        @@report_index = @@input.to_i
-                        self.state(STATE_REPORT)
-                    end
-
-                elsif @@input.match(REGEX_TEAMS)
-                    self.handle_teams_input
-
-                elsif @@matches_list_team_name && @@input.match(REGEX_MATCHES)
-                    @@matches_list_team_name = nil
-                    self.matches_list_loop
-
-                elsif @@input.match(REGEX_QUIT)
-                    self.state(STATE_QUIT)
-
-                else 
-                    if !Report.matches(@@input).empty?
-                        @@matches_list_team_name = @@input
-                        self.matches_list_loop
-                    else
-                        @@error_string = "No matches are available for #{@@input} :(\n"\
-                        "#{INDENT}...However, the parser is not the brightest.\n"\
-                        "#{INDENT}You may want to double-check your spelling and/or try (T)eams just in case."
-                    end
-                end
-            end
         end
 
         # TEAMS LIST LOOP
