@@ -98,6 +98,16 @@ module SpoilerFreeSoccerPlayByPlayReports
                 REPORT,
             ]
 
+=begin
+            welcome_string = self.welcome
+            controls_string = ""
+            controls_string << "MAIN MENU CONTROLS:\n".prepend(INDENT)
+            controls_string << "(M)atches:        List all matches for which reports are available.\n".prepend(INDENT)
+            controls_string << "(T)eams:          List all teams for which reports are available.\n".prepend(INDENT)
+            controls_string << "[team name]:      List all available reports for [team name].\n".prepend(INDENT)
+            controls_string << "(Q)uit:           Quit the program.".prepend(INDENT)
+=end
+
             INPUT_OPTIONS[MAIN_MENU] = 
                 [InputHandler::CLI_OPTION_MATCHES, InputHandler::CLI_OPTION_TEAMS, InputHandler::CLI_OPTION_TEAMNAME]
             INPUT_OPTIONS[MATCHES_LIST] =
@@ -168,45 +178,6 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts "Thanks for using this app. Goodbye!".prepend(INDENT)
             puts ""
         end
-
-=begin
-        def self.main_menu_loop
-            welcome_string = self.welcome
-            controls_string = ""
-            controls_string << "MAIN MENU CONTROLS:\n".prepend(INDENT)
-            controls_string << "(M)atches:        List all matches for which reports are available.\n".prepend(INDENT)
-            controls_string << "(T)eams:          List all teams for which reports are available.\n".prepend(INDENT)
-            controls_string << "[team name]:      List all available reports for [team name].\n".prepend(INDENT)
-            controls_string << "(Q)uit:           Quit the program.".prepend(INDENT)
-
-            while (STATE_MAIN_MENU == @@state)
-                system "clear" or system "cls"
-                puts ""
-                puts welcome_string
-                puts ""
-                puts controls_string
-                puts ""
-                puts self.error_string
-                puts ""
-            
-                print "(M)atches | (T)eams | [team name] | (Q)uit: ".prepend(INDENT)
-                @@input = gets.strip
-
-                if @@input.match(REGEX_QUIT) 
-                    self.state(STATE_QUIT)
-
-                elsif @@input.match(REGEX_MATCHES) 
-                    self.handle_matches_input(nil)
-
-                elsif @@input.match(REGEX_TEAMS)
-                    self.handle_teams_input
-
-                else
-                    self.handle_matches_input(@@input)
-                end
-            end
-        end
-=end
 
         # MATCHES LIST LOOP
         def self.matches_list_loop
