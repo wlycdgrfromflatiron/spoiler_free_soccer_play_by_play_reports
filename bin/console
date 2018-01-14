@@ -5,6 +5,6 @@ require "bundler/setup"
 require "spoiler_free_soccer_play_by_play_reports"
 
 # secure a fresh one at Scraper::SOURCE_BASE_URL
-WLY_SAMPLE_BLURBS_URL = "/football/real-madrid/live-commentary/live-commentary-real-madrid-vs-villarreal_316170.html"
+WLY_SAMPLE_BLURBS_URL = "/football/arsenal/live-commentary/live-commentary-bournemouth-vs-arsenal_316226.html"
 
 Pry.start

@@ -1,10 +1,12 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO
 
-* DEBUG: handle strings like "B.Silva" correctly (i.e. without making a paragraph break after the .)
+* UI: print each paragraph with each line indented
+* UI: add appropriate line breaks
 
-* UI: indent all lines of each blurb on report page
-* UI: implement sensible line breaks on report page
+* DEBUG: fix spacing issues with multiple paragraph blurbs
+* DEBUG: update tweet handling given changes to scraper code
+* DEBUG: update image handling given changes to scraper code
 
 * FUNC: If there is only one report available for a team the user has picked, go directly to report detail view
 

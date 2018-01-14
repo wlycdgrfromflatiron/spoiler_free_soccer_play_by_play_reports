@@ -91,43 +91,33 @@ module SpoilerFreeSoccerPlayByPlayReports
                 blurb_paragraphs = []
 
                 # handle blurbs that are TWEETS
-                is_tweet = blurb_text_span.children[0].attr("class") == "twitter-tweet"
-                if is_tweet
+                if blurb_text_span.children[0].attr("class") == "twitter-tweet"
                     blurb_paragraphs << "~ A Tweet was here ~"
                 else
-                    index = 0
-                    child = blurb_text_span.children[index]
-                    first_paragraph = ""
-                    while (child && child.name != "p")
-                        first_paragraph << child.text
+                    span_kids_index = 0 
+                    blurb_paragraphs_index = 0
+                    span_kid = nil
 
-                        index += 1
-                        child = blurb_text_span.children[index]
-                    end
-                    blurb_paragraphs << first_paragraph 
-                end
+                    blurb_paragraphs[blurb_paragraphs_index] = ""
+                    while (span_kid = blurb_text_span.children[span_kids_index])
+                        span_kids_index += 1
 
-=begin
-                else
-                    blurb_text = blurb_text_span.text
+                        if ("p" == span_kid.name)
+                            blurb_paragraphs_index += 1
+                            blurb_paragraphs[blurb_paragraphs_index] = ""
 
-                    # if the blurb contains an image, remove the copyright text
-                    img_copyright_tag = blurb_text_span.at(".article_img_copyright")
-                    if img_copyright_tag
-                        img_tag = blurb_text_span.at("img")
-                        img_alt_text = ""
-                        if img_tag
-                            img_alt_text = img_tag.attr("alt")
+                            blurb_paragraphs[blurb_paragraphs_index] << span_kid.text
+
+                            blurb_paragraphs_index += 1
+                            blurb_paragraphs[blurb_paragraphs_index] = ""
+                        else
+                            blurb_paragraphs[blurb_paragraphs_index] << span_kid.text
                         end
-                        blurb_text.gsub!(
-                            img_copyright_tag.text, 
-                            "\n\n~ An image was here ~ #{img_alt_text}")
                     end
                 end
-=end
+
                 report_details[:blurbs] << {
                     :label => scraped_blurb.at("a.period").text,
-                    #:paragraphs => blurb_text.split(/([?.!])([^?.!\s])/)
                     :paragraphs => blurb_paragraphs
                 }
             end
