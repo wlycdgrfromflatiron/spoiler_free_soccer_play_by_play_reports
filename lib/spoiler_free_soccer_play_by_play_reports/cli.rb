@@ -2,6 +2,42 @@ module SpoilerFreeSoccerPlayByPlayReports
     class CLI
         extend WlyCuteConsole::ClassMethods
 
+=begin
+        class InputLoop
+            def initialize(current_state, output_string)
+                @current_state = current_state
+                @output_string = output_string
+                # build input prompt string
+            end
+
+            def setup
+
+            end
+
+            def loop 
+                while (@current_state == @@state)
+                    system "clear" or system "cls" 
+
+                    puts @output_string
+
+                    print @input_prompt_string
+                    @@input = gets.strip
+
+                    if @@input.match(REGEX_QUIT)
+                        CLI.state(STATE_QUIT)
+                    
+                    elsif @match_matches && @@input.match(REGEX_MATCHES)
+                        CLI::InputLoop.handle_matches_input(nil)
+
+                    elsif @match_teams && @input.match(REGEX_TEAMS)
+                        CLI::InputLoop.handle_teams_input
+
+                    elsif @match_teamname
+                        CLI::InputLoop.handle_matches_input(@@input)
+            end
+        end
+=end
+
         # state tracking
         STATE_MAIN_MENU = 1
         STATE_MATCHES_LIST = 2
