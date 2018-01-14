@@ -10,10 +10,6 @@ module SpoilerFreeSoccerPlayByPlayReports
                 # build input prompt string
             end
 
-            def setup
-
-            end
-
             def loop 
                 while (@current_state == @@state)
                     system "clear" or system "cls" 
@@ -309,16 +305,6 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         # INPUT HANDLING
-        def self.handle_back_exit_and_misc(handle_other=true)
-            if @@input.match(/^b(ack)?\s*$/)
-                self.state(@@previous_state)
-            elsif @@input.match(REGEX_QUIT)
-                self.state(STATE_QUIT)
-            elsif handle_other
-                @@error_string = "To make a selection, enter its number."
-            end
-        end
-
         def self.handle_matches_input(team_name)
             if !Report.matches(team_name).empty?
                 self.state(STATE_MATCHES_LIST)
