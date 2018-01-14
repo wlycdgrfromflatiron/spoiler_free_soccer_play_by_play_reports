@@ -374,19 +374,5 @@ module SpoilerFreeSoccerPlayByPlayReports
             welcome_string << "in chronological order and without spoilers.\n".prepend(INDENT)
             welcome_string << "(data source: SPORTSMOLE.CO.UK)".prepend(INDENT)
         end
-
-        # INPUT HANDLING
-        def self.handle_matches_input(team_name)
-            if !Report.matches(team_name).empty?
-                self.state(STATE_MATCHES_LIST)
-                @@matches_list_team_name = team_name
-            else
-                @@error_string = team_name ? 
-                "No matches are available for #{@@input} :(\n"\
-                "#{INDENT}...However, the parser is not the brightest.\n"\
-                "#{INDENT}You may want to double-check your spelling and/or try (T)eams just in case." : 
-                "No matches are currently available :("
-            end
-        end
     end
 end
