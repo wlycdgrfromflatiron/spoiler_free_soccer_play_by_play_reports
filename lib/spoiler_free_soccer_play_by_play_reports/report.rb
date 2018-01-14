@@ -18,6 +18,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         @@all = []
         @@teams = []
         @@current_list = []
+        @@current_team_name = nil
         @@current_report= nil
         @@next_part_index = 0
 
@@ -85,6 +86,8 @@ module SpoilerFreeSoccerPlayByPlayReports
                 0 == team_name.casecmp(report.team1) ||
                 0 == team_name.casecmp(report.team2)
             end
+
+            @@current_team_name = team_name
 
             @@current_list
         end

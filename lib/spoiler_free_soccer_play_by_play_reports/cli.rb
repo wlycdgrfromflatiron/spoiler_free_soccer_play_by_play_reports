@@ -2,62 +2,155 @@ module SpoilerFreeSoccerPlayByPlayReports
     class CLI
         extend WlyCuteConsole::ClassMethods
 
-=begin
-        class InputLoop
-            def initialize(current_state, output_string)
-                @current_state = current_state
-                @output_string = output_string
-                # build input prompt string
+        class Printer
+            INDENT = "     "
+
+            def self.clear_print(string)
+                system "clear" or system "cls"
+                puts ""
+                puts string
+                puts ""
             end
 
-            def loop 
-                while (@current_state == @@state)
-                    system "clear" or system "cls" 
-
-                    puts @output_string
-
-                    print @input_prompt_string
-                    @@input = gets.strip
-
-                    if @@input.match(REGEX_QUIT)
-                        CLI.state(STATE_QUIT)
-                    
-                    elsif @match_matches && @@input.match(REGEX_MATCHES)
-                        CLI::InputLoop.handle_matches_input(nil)
-
-                    elsif @match_teams && @input.match(REGEX_TEAMS)
-                        CLI::InputLoop.handle_teams_input
-
-                    elsif @match_teamname
-                        CLI::InputLoop.handle_matches_input(@@input)
+            def print(string)
+                puts ""
+                puts string
+                puts ""
             end
         end
-=end
 
-        # state tracking
-        STATE_MAIN_MENU = 1
-        STATE_MATCHES_LIST = 2
-        STATE_TEAMS_LIST = 3
-        STATE_REPORT = 4
-        STATE_QUIT = 5
+        class InputHandler
+            CLI_OPTION_MATCHES = '(M)atches'
+            CLI_OPTION_TEAMS = '(T)eams'
+            CLI_OPTION_TEAMNAME = '[team name]'
 
-        @@state = nil
+            REGEX_MATCHES = /^m(atches)?\s*?/
+            REGEX_QUIT = /^q(uit)?\s*$/
+            REGEX_TEAMS = /^t(eams)?\s*?/
 
-        @@input = ""
+            @@match_matches = false
+            @@match_teams = false
+            @@match_teamname = false 
 
-        @@matches_list_team_name = nil
+            @@error_feedback = ""
+
+            @@input_prompt = "Default InputHandler input prompt: "
+
+            def self.build_input_prompt(options)
+                
+            end
+
+            def self.set_input_options(options)
+                @match_matches = options.include?(CLI_OPTION_MATCHES)
+                @match_teams = options.include?(CLI_OPTION_TEAMS)
+                @match_teamname = options.include?(CLI_OPTION_TEAMNAME)
+
+                self.build_input_prompt(options)
+            end
+
+            def self.handle_input
+                Printer.print(@error_feedback)
+
+                Printer.print(@input_prompt)
+                input = gets.strip
+
+                if input.match(REGEX_QUIT)
+                    State.set_state(State::QUIT)
+
+                elsif @match_matches && input.match(REGEX_MATCHES)
+                    self.handle_matches_input(nil)
+
+                elsif @match_teams && input.match(REGEX_TEAMS)
+                    if !Report.teams.empty?
+                        StatePlayer.play(State::TEAMS_LIST)
+                    else 
+                        @@error_feedback = "No reports are currently available for any teams :("
+
+                elsif @match_teamname
+                    self.handle_matches_input(input)
+                end
+            end
+
+            def self.handle_matches_input(team_name)
+                if !Report.matches(team_name).empty?
+                    StateManager.set_state(State::MATCHES_LIST)
+                else
+                    ## TODO factor out to Printer
+                    @@error_feedback = team_name ? 
+                    "No matches are available for #{team_name} :(\n"\
+                    "...However, the parser is not the brightest.\n"\
+                    "You may want to double-check your spelling and/or try (T)eams just in case." : 
+                    "No matches are currently available :("
+                end
+            end
+        end
+
+        class State
+            MAIN_MENU = 1
+            MATCHES_LIST = 2
+            TEAMS_LIST = 3
+            REPORT = 4
+
+            STATES = [
+                MAIN_MENU,
+                MATCHES_LIST,
+                TEAMS_LIST,
+                REPORT,
+            ]
+
+            INPUT_OPTIONS[MAIN_MENU] = 
+                [InputHandler::CLI_OPTION_MATCHES, InputHandler::CLI_OPTION_TEAMS, InputHandler::CLI_OPTION_TEAMNAME]
+            INPUT_OPTIONS[MATCHES_LIST] =
+                [InputHandler::CLI_OPTION_REPORT_INDEX, InputHandler::CLI_OPTION_MATCHES, InputHanlder::CLI_OPTION_TEAMS]
+
+            def initialize(id, input_options)
+                @id = id
+                @input_options = input_options
+                @output_string = "Default output_string value for State #{@id}."
+            end
+
+            def set_output(output)
+                @output_string = output
+            end
+
+            def update
+                Printer.clear_print(@output_string)
+                InputHandler.handle_input
+            end
+        end
+
+        class StatePlayer
+            @@current_state = nil
+            @@states = []
+            @@keep_playing = true
+
+            def self.turn_on
+                State::STATES.each do |state_id|
+                    @@states << State.new(
+                        state_id,
+                        State::INPUT_OPTIONS[state_id]
+                    )
+                end
+            end
+
+            def self.play(state)
+                self.load(state)
+
+                while (@@keep_playing)
+                    @@current_state.update
+                end
+            end
+
+            def self.load(state)
+                @@current_state = @@states.detect {|state| state.id == state}
+            end
+
+            def self.stop
+                @@keep_playing = false
+            end
+        end
+
         @@report_index = nil
-
-        # output formatting
-        INDENT = "     "
-
-        # error handling
-        @@error_string = nil
-
-        # regex strings
-        REGEX_MATCHES = /^m(atches)?\s*?/
-        REGEX_QUIT = /^q(uit)?\s*$/
-        REGEX_TEAMS = /^t(eams)?\s*?/
 
         # ENTRY POINT
         def self.start
@@ -68,38 +161,15 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts "Loading report list...".prepend(INDENT)
             Report.list('all')
 
-            self.state(STATE_MAIN_MENU)
-            self.main_loop
+            StatePlayer.turn_on
+            StatePlayer.play(State::MAIN_MENU)
 
             puts ""
             puts "Thanks for using this app. Goodbye!".prepend(INDENT)
             puts ""
         end
 
-        # MAIN LOOP
-        def self.main_loop
-            while STATE_QUIT != @@state
-                case @@state
-                when STATE_MAIN_MENU
-                    self.main_menu_loop
-                when STATE_MATCHES_LIST
-                    self.matches_list_loop
-                when STATE_TEAMS_LIST
-                    self.teams_list_loop
-                when STATE_REPORT
-                    self.report_loop
-                end
-                @@input = ""
-            end
-        end
-
-        # STATE HANDLING
-        def self.state(new_state)
-            @@previous_state = @@state
-            @@state = new_state
-        end
-
-        # MAIN MENU LOOP AND ITS HELPER FUNCTIONS
+=begin
         def self.main_menu_loop
             welcome_string = self.welcome
             controls_string = ""
@@ -136,6 +206,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 end
             end
         end
+=end
 
         # MATCHES LIST LOOP
         def self.matches_list_loop
@@ -315,14 +386,6 @@ module SpoilerFreeSoccerPlayByPlayReports
                 "#{INDENT}...However, the parser is not the brightest.\n"\
                 "#{INDENT}You may want to double-check your spelling and/or try (T)eams just in case." : 
                 "No matches are currently available :("
-            end
-        end
-
-        def self.handle_teams_input
-            if !Report.teams.empty?
-                self.state(STATE_TEAMS_LIST)
-            else
-                @@error_string = "No reports are currently available for any teams :("
             end
         end
     end
