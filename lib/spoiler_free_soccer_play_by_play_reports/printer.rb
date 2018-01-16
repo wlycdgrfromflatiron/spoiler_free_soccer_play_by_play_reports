@@ -2,7 +2,12 @@ class Printer
     ###################
     # CLASS CONSTANTS #
     ###################
+    COLUMN_WIDTH = 50
     INDENT = "     "
+    COLUMN_PRINT_SETTINGS = {
+        # :column_count => 2, - for ifwhen a more generic version of column_print becomes useful
+        :column_width => 50
+    }
 
 
     ########################
@@ -10,6 +15,25 @@ class Printer
     ########################
     def self.clear_screen
         system "clear" or system "cls"
+    end
+
+    def self.column_print(strings, column_width = COLUMN_WIDTH, indent = INDENT)
+        columnized_string = ""
+
+        string_count = strings.size
+        half_way = string_count.even? ? string_count / 2 : (string_count+1) / 2
+
+        left_string = "", right_string = ""
+        for i in 0...half_way
+            left_string = strings[i]
+            columnized_string << indent << left_string
+            if right_string = strings[i+half_way]
+                columnized_string << (" " * (column_width - left_string.size))
+                columnized_string << right_string
+            end
+        end
+
+        columnized_string
     end
 
     def self.line_feed(number = 1)

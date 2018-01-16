@@ -36,6 +36,10 @@ module SpoilerFreeSoccerPlayByPlayReports
             @@all
         end
 
+        def self.current_team_name
+            @@current_team_name
+        end
+
         def self.get_report_abstracts
             SpoilerFreeSoccerPlayByPlayReports::Scraper.report_list.each do |report_hash|
                 self.all << Report.new(report_hash)

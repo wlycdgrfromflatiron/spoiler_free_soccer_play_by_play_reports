@@ -1,7 +1,5 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class CLI
-        extend WlyCuteConsole::ClassMethods
-
         class InputHandler
             ###################
             # CLASS CONSTANTS #
@@ -175,6 +173,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             def self.update
                 Printer.clear_screen
+
                 Printer.padded_puts(State.output_strings)
 
                 Printer.padded_puts(State.error_message, true, true)
@@ -195,7 +194,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
 
             def self.load(state_id)
-                State.id = state_id
+                State.set(state_id)
 
                 output_strings = []
                 case State.id
@@ -212,10 +211,10 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 when State::MATCHES_LIST
                     output_strings << Report.current_team_name ?
-                        "AVAILABLE REPORTS FOR #{Report.current_team_name.upcase}" :
+                        "AVAILABLE REPORTS FOR #{Report.current_team_name}" :
                         "ALL AVAILABLE REPORTS"
 
-                    output_strings << column_print(
+                    output_strings << Printer.column_print(
                         Report.matches(Report.current_team_name).collect.with_index(1) do |match, index|
                             "#{index}. #{match.team1} vs. #{match.team2}"
                         end
