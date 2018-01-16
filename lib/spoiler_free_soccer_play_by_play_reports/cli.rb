@@ -21,7 +21,6 @@ module SpoilerFreeSoccerPlayByPlayReports
             ###################
             # CLASS VARIABLES #
             ###################
-            @@error_feedback = ""
             @@input_prompt = "Default InputHandler input prompt: "
 
 
@@ -39,19 +38,17 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
 
             def self.handle_input(accepted_inputs)
-                Printer.padded_puts(@@error_feedback, true, true)
-
                 Printer.indented_print(@@input_prompt)
                 input = gets.strip
 
                 if input.match(REGEX_QUIT)
                     StatePlayer.stop
                 elsif input.to_i > 0
-                    handle_integer_input(input.to_i)
+                    handle_integer_input(input.to_i, accepted_inputs)
                 elsif accepted_inputs.include?(INPUT_MATCHES) && input.match(REGEX_MATCHES)
                     handle_matches_input(nil)
                 elsif accepted_inputs.include?(INPUT_TEAMS) && input.match(REGEX_TEAMS)
-                    handle_teams_input
+                    handle_teams_input()
                 elsif accepted_inputs.include?(INPUT_TEAM_NAME)
                     handle_matches_input(input)
                 end
@@ -61,7 +58,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             #########################
             # PRIVATE CLASS METHODS #
             #########################
-            def self.handle_integer_input(input_number)
+            def self.handle_integer_input(input_number, accepted_inputs)
                 if accepted_inputs.include?(INPUT_REPORT_INDEX)
                     handle_report_index_input(input_number)
                 elsif accepted_inputs.include?(INPUT_TEAM_INDEX)
@@ -73,8 +70,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 if !Report.matches(team_name).empty?
                     StatePlayer.play(State::MATCHES_LIST)
                 else
-                    ## TODO factor out to Printer
-                    @@error_feedback = team_name ? 
+                    State.error_message = team_name ? 
                     "No matches are available for #{team_name} :(\n"\
                     "...However, the parser is not the brightest.\n"\
                     "You may want to double-check your spelling and/or try (T)eams just in case." : 
@@ -84,7 +80,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             def self.handle_report_index_input(input_number)
                 if input_number > Report.current_list.size
-                    @@error_feedback = "Invalid report number! Please try again."
+                    State.error_message = "Invalid report number! Please try again."
                 else
                     CLI::report_index == input_number
                     StatePlayer.play(State::REPORT)
@@ -93,7 +89,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             def self.handle_team_index_input(input_number)
                 if input_number > Report.teams.size
-                    @@error_feedback = "Invalid index! Please try again."
+                    State.error_message = "Invalid index! Please try again."
                 else
                     Report.matches(Reports.teams[input_number - 1])
                     StatePlayer.play(State::MATCHES_LIST)
@@ -104,7 +100,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 if !Report.teams.empty?
                     StatePlayer.play(State::TEAMS_LIST)
                 else 
-                    @@error_feedback = "No reports are currently available for any teams :("
+                    State.error_message = "No reports are currently available for any teams :("
                 end
             end
 
@@ -117,9 +113,6 @@ module SpoilerFreeSoccerPlayByPlayReports
             MATCHES_LIST = 1
             TEAMS_LIST = 2
             REPORT = 3
-
-            @@current_id = 1
-            @@output_strings = []
 
             ACCEPTED_INPUTS = [
                 # MAIN_MENU
@@ -151,13 +144,29 @@ module SpoilerFreeSoccerPlayByPlayReports
                 ]
             ]
 
-            def self.id
-                @@current_id
+            @@current_state = 1
+            @@error_message = ""
+            @@output_strings = []
+
+            def self.error_message
+                @@error_message
             end
 
-            def self.id=(id)
-                @@current_id = id
-                InputHandler.build_input_prompt(ACCEPTED_INPUTS[@@current_id])
+            def self.error_message=(string)
+                @@error_message = string
+            end
+
+            def self.id
+                @@current_state
+            end
+
+            def self.set(id)
+                @@current_state = id
+                InputHandler.build_input_prompt(ACCEPTED_INPUTS[State.id])
+            end
+
+            def self.output_strings
+                @@output_strings
             end
 
             def self.output_strings=(strings)
@@ -166,9 +175,11 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             def self.update
                 Printer.clear_screen
-                Printer.padded_puts(@@output_strings)
+                Printer.padded_puts(State.output_strings)
 
-                InputHandler.handle_input(ACCEPTED_INPUTS[@@current_id])
+                Printer.padded_puts(State.error_message, true, true)
+
+                InputHandler.handle_input(ACCEPTED_INPUTS[State.id])
             end
         end
 
