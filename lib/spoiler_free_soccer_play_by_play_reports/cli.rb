@@ -2,31 +2,6 @@ module SpoilerFreeSoccerPlayByPlayReports
     class CLI
         extend WlyCuteConsole::ClassMethods
 
-        class Printer
-            INDENT = "     "
-
-            def self.clear_screen
-                system "clear" or system "cls"
-            end
-                
-            def self.clear_print(string)
-                system "clear" or system "cls"
-                puts ""
-                puts string
-                puts ""
-            end
-
-            def self.line_feed
-                puts ""
-            end
-
-            def self.print_indented(string)
-                puts ""
-                puts string
-                puts ""
-            end
-        end
-
         class InputHandler
             INPUT_MATCHES = '(M)atches'
             INPUT_NEXT_BLURB = 'Next blurb'
@@ -47,10 +22,10 @@ module SpoilerFreeSoccerPlayByPlayReports
                 @@input_prompt = "Custom input prompt!!"
             end
 
-            def self.handle_input(options)
-                Printer.print_indented(@@error_feedback)
+            def self.handle_input(accepted_inputs)
+                Printer.print(@@error_feedback)
 
-                Printer.print_indented(@@input_prompt)
+                Printer.print(@@input_prompt)
                 input = gets.strip
 
                 if input.match(REGEX_QUIT)
@@ -156,7 +131,10 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
 
             def self.update
-                Printer.clear_print(@@output_strings)
+                Printer.clear_screen
+                Printer.line_feed
+                Printer.print(@@output_strings)
+
                 InputHandler.handle_input(ACCEPTED_INPUTS[@@current_id])
             end
         end
@@ -227,17 +205,17 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.start
             Printer.clear_screen
             Printer.line_feed
-            Printer.print_indented(self.welcome)
+            Printer.print(self.welcome)
             Printer.line_feed
-            Printer.print_indented("Loading report list...")
+            Printer.print("Loading report list...")
             
             Report.list('all')
 
             StatePlayer.play(State::MAIN_MENU)
 
-            puts ""
-            puts "Thanks for using this app. Goodbye!"
-            puts ""
+            Printer.line_feed
+            Printer.print("Thanks for using this app. Goodbye!")
+            Printer.line_feed
         end
 
         # REPORT LOOP
