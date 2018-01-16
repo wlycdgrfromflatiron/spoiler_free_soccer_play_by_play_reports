@@ -18,7 +18,7 @@ class Printer
         end
     end
 
-    def self.print(string)
+    def self.indented_print(string)
         print string.prepend(INDENT)
     end
 

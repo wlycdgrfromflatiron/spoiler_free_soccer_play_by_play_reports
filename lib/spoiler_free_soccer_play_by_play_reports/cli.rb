@@ -41,7 +41,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             def self.handle_input(accepted_inputs)
                 Printer.padded_puts(@@error_feedback, true, true)
 
-                Printer.print(@@input_prompt)
+                Printer.indented_print(@@input_prompt)
                 input = gets.strip
 
                 if input.match(REGEX_QUIT)
