@@ -27,6 +27,8 @@ class Printer
     
     # Private
     def self.print_string(string)
+        string.gsub!(/\n/, "\n#{INDENT}");
+
         puts string.prepend(INDENT)
     end
 

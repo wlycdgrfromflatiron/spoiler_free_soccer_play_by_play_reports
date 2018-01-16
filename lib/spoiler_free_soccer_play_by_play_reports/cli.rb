@@ -277,6 +277,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.welcome
+            
             welcome_string = ""
             welcome_string << "~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~\n"
             welcome_string << "A service for reading live commentaries for completed soccer matches\n"
