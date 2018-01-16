@@ -3,6 +3,9 @@ module SpoilerFreeSoccerPlayByPlayReports
         extend WlyCuteConsole::ClassMethods
 
         class InputHandler
+            ###################
+            # CLASS CONSTANTS #
+            ###################
             INPUT_MATCHES = '(M)atches'
             INPUT_NEXT_BLURB = 'Next blurb'
             INPUT_REPORT_INDEX = '[report #]'
@@ -14,10 +17,17 @@ module SpoilerFreeSoccerPlayByPlayReports
             REGEX_QUIT = /^q(uit)?\s*$/
             REGEX_TEAMS = /^t(eams)?\s*?/
 
-            @@error_feedback = ""
 
+            ###################
+            # CLASS VARIABLES #
+            ###################
+            @@error_feedback = ""
             @@input_prompt = "Default InputHandler input prompt: "
 
+
+            ########################
+            # PUBLIC CLASS METHODS #
+            ########################
             def self.build_input_prompt(accepted_inputs)
                 @@input_prompt = "Custom input prompt!!"
             end
@@ -47,6 +57,18 @@ module SpoilerFreeSoccerPlayByPlayReports
                 end
             end
 
+            
+            #########################
+            # PRIVATE CLASS METHODS #
+            #########################
+            def self.handle_integer_input(input_number)
+                if accepted_inputs.include?(INPUT_REPORT_INDEX)
+                    handle_report_index_input(input_number)
+                elsif accepted_inputs.include?(INPUT_TEAM_INDEX)
+                    handle_teams_index_input(input_number)
+                end
+            end
+
             def self.handle_matches_input(team_name)
                 if !Report.matches(team_name).empty?
                     StatePlayer.play(State::MATCHES_LIST)
@@ -57,14 +79,6 @@ module SpoilerFreeSoccerPlayByPlayReports
                     "...However, the parser is not the brightest.\n"\
                     "You may want to double-check your spelling and/or try (T)eams just in case." : 
                     "No matches are currently available :("
-                end
-            end
-
-            def self.handle_integer_input(input_number)
-                if accepted_inputs.include?(INPUT_REPORT_INDEX)
-                    handle_report_index_input(input_number)
-                elsif accepted_inputs.include?(INPUT_TEAM_INDEX)
-                    handle_teams_index_input(input_number)
                 end
             end
 
