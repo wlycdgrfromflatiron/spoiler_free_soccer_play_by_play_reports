@@ -5,10 +5,18 @@ module SpoilerFreeSoccerPlayByPlayReports
         class Printer
             INDENT = "     "
 
+            def self.clear_screen
+                system "clear" or system "cls"
+            end
+                
             def self.clear_print(string)
                 system "clear" or system "cls"
                 puts ""
                 puts string
+                puts ""
+            end
+
+            def self.line_feed
                 puts ""
             end
 
@@ -217,11 +225,12 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         # ENTRY POINT
         def self.start
-            system "clear" or system "cls"
-            puts ""
-            puts self.welcome
-            puts ""
-            puts "Loading report list..."
+            Printer.clear_screen
+            Printer.line_feed
+            Printer.print_indented(self.welcome)
+            Printer.line_feed
+            Printer.print_indented("Loading report list...")
+            
             Report.list('all')
 
             StatePlayer.play(State::MAIN_MENU)
