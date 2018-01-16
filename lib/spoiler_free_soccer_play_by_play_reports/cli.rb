@@ -30,25 +30,8 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 if input.match(REGEX_QUIT)
                     StatePlayer.stop
-
                 elsif input.to_i > 0
-                    if accepted_inputs.include?(INPUT_REPORT_INDEX)
-                        if input.to_i > Report.current_list.size
-                            @@error_feedback = "Invalid report number! Please try again."
-                        else
-                            CLI::report_index == input.to_i
-                            StatePlayer.play(State::REPORT)
-                        end
-                    end
-
-                    elsif accepted_inputs.include?(INPUT_TEAM_INDEX)
-                        if input.to_i > Report.teams.size
-                            @@error_feedback = "Invalid index! Please try again."
-                        else
-                            Report.matches(Reports.teams[input.to_i - 1])
-                            StatePlayer.play(State::MATCHES_LIST)
-                        end
-
+                    handle_integer_input(input.to_i)
                 elsif accepted_inputs.include?(INPUT_MATCHES) && input.match(REGEX_MATCHES)
                     self.handle_matches_input(nil)
 
@@ -76,6 +59,34 @@ module SpoilerFreeSoccerPlayByPlayReports
                     "No matches are currently available :("
                 end
             end
+
+            def self.handle_integer_input(input_number)
+                if accepted_inputs.include?(INPUT_REPORT_INDEX)
+                    handle_report_index_input(input_number)
+                elsif accepted_inputs.include?(INPUT_TEAM_INDEX)
+                    handle_teams_index_input(input_number)
+                end
+            end
+
+            def self.handle_report_index_input(input_number)
+                if input_number > Report.current_list.size
+                    @@error_feedback = "Invalid report number! Please try again."
+                else
+                    CLI::report_index == input_number
+                    StatePlayer.play(State::REPORT)
+                end
+            end
+
+            def self.handle_team_index_input(input_number)
+                if input_number > Report.teams.size
+                    @@error_feedback = "Invalid index! Please try again."
+                else
+                    Report.matches(Reports.teams[input_number - 1])
+                    StatePlayer.play(State::MATCHES_LIST)
+                end
+            end
+
+            private_class_methods :handle_integer_input, :handle_report_index_input, :handle_team_index_input
         end
 
         class State
@@ -277,7 +288,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.welcome
-            
+
             welcome_string = ""
             welcome_string << "~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~\n"
             welcome_string << "A service for reading live commentaries for completed soccer matches\n"
