@@ -49,17 +49,11 @@ module SpoilerFreeSoccerPlayByPlayReports
                 elsif input.to_i > 0
                     handle_integer_input(input.to_i)
                 elsif accepted_inputs.include?(INPUT_MATCHES) && input.match(REGEX_MATCHES)
-                    self.handle_matches_input(nil)
-
+                    handle_matches_input(nil)
                 elsif accepted_inputs.include?(INPUT_TEAMS) && input.match(REGEX_TEAMS)
-                    if !Report.teams.empty?
-                        StatePlayer.play(State::TEAMS_LIST)
-                    else 
-                        @@error_feedback = "No reports are currently available for any teams :("
-                    end
-
+                    handle_teams_input
                 elsif accepted_inputs.include?(INPUT_TEAM_NAME)
-                    self.handle_matches_input(input)
+                    handle_matches_input(input)
                 end
             end
 
@@ -106,8 +100,16 @@ module SpoilerFreeSoccerPlayByPlayReports
                 end
             end
 
+            def self.handle_teams_input
+                if !Report.teams.empty?
+                    StatePlayer.play(State::TEAMS_LIST)
+                else 
+                    @@error_feedback = "No reports are currently available for any teams :("
+                end
+            end
+
             private_class_method :handle_integer_input, :handle_matches_input, 
-            :handle_report_index_input, :handle_team_index_input
+            :handle_report_index_input, :handle_team_index_input, :handle_teams_input
         end
 
         class State
