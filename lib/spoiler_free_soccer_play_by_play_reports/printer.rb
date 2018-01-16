@@ -18,29 +18,41 @@ class Printer
         end
     end
 
-    def self.print(string_or_string_array)
+    def self.print(string)
+        print string.prepend(INDENT)
+    end
+
+    def self.padded_puts(string_or_string_array, top_padding = true, bottom_padding = false)
+        if top_padding 
+            puts ""
+        end
+
         if string_or_string_array.is_a?(String)
-            print_string(string_or_string_array)
+            puts_string(string_or_string_array)
         
         elsif string_or_string_array.is_a?(Array)
             last_paragraph = string_or_string_array.pop
             string_or_string_array.each do |string|
-                print_string(string)
+                puts_string(string)
                 self.line_feed(2)
             end
-            print_string(last_paragraph)
+            puts_string(last_paragraph)
+        end
+
+        if bottom_padding
+            puts ""
         end
     end
     
-    
+
     #########################
     # PRIVATE CLASS METHODS #
     #########################
-    def self.print_string(string)
+    def self.puts_string(string)
         string.gsub!(/\n/, "\n#{INDENT}");
 
         puts string.prepend(INDENT)
     end
 
-    private_class_method :print_string
+    private_class_method :puts_string
 end

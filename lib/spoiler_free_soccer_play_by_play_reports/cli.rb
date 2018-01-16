@@ -39,7 +39,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
 
             def self.handle_input(accepted_inputs)
-                Printer.print(@@error_feedback)
+                Printer.padded_puts(@@error_feedback, true, true)
 
                 Printer.print(@@input_prompt)
                 input = gets.strip
@@ -164,8 +164,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             def self.update
                 Printer.clear_screen
-                Printer.line_feed
-                Printer.print(@@output_strings)
+                Printer.padded_puts(@@output_strings)
 
                 InputHandler.handle_input(ACCEPTED_INPUTS[@@current_id])
             end
@@ -236,18 +235,14 @@ module SpoilerFreeSoccerPlayByPlayReports
         # ENTRY POINT
         def self.start
             Printer.clear_screen
-            Printer.line_feed
-            Printer.print(self.welcome)
-            Printer.line_feed
-            Printer.print("Loading report list...")
+            Printer.padded_puts(self.welcome)
+            Printer.padded_puts("Loading report list...")
             
             Report.list('all')
 
             StatePlayer.play(State::MAIN_MENU)
 
-            Printer.line_feed
-            Printer.print("Thanks for using this app. Goodbye!")
-            Printer.line_feed
+            Printer.padded_puts("Thanks for using this app. Goodbye!")
         end
 
         # REPORT LOOP
