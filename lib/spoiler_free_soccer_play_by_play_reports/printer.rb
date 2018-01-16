@@ -1,6 +1,13 @@
 class Printer
+    ###################
+    # CLASS CONSTANTS #
+    ###################
     INDENT = "     "
 
+
+    ########################
+    # PUBLIC CLASS METHODS #
+    ########################
     def self.clear_screen
         system "clear" or system "cls"
     end
@@ -25,7 +32,10 @@ class Printer
         end
     end
     
-    # Private
+    
+    #########################
+    # PRIVATE CLASS METHODS #
+    #########################
     def self.print_string(string)
         string.gsub!(/\n/, "\n#{INDENT}");
 
