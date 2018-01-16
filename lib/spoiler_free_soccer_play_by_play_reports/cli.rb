@@ -30,6 +30,13 @@ module SpoilerFreeSoccerPlayByPlayReports
             ########################
             def self.build_input_prompt(accepted_inputs)
                 @@input_prompt = "Custom input prompt!!"
+                @@input_prompt = ""
+
+                accepted_inputs.each do |accepted_input|
+                    @@input_prompt << accepted_input << " | "
+                end
+
+                @@input_prompt << "(Q)uit: "
             end
 
             def self.handle_input(accepted_inputs)
@@ -57,7 +64,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 end
             end
 
-            
+
             #########################
             # PRIVATE CLASS METHODS #
             #########################
@@ -100,7 +107,8 @@ module SpoilerFreeSoccerPlayByPlayReports
                 end
             end
 
-            private_class_methods :handle_integer_input, :handle_report_index_input, :handle_team_index_input
+            private_class_method :handle_integer_input, :handle_matches_input, 
+            :handle_report_index_input, :handle_team_index_input
         end
 
         class State
