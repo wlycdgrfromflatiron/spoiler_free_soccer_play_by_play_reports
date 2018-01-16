@@ -29,7 +29,6 @@ module SpoilerFreeSoccerPlayByPlayReports
             # PUBLIC CLASS METHODS #
             ########################
             def self.build_input_prompt(accepted_inputs)
-                @@input_prompt = "Custom input prompt!!"
                 @@input_prompt = ""
 
                 accepted_inputs.each do |accepted_input|
