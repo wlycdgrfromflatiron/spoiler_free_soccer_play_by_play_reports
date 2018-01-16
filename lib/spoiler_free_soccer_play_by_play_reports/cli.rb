@@ -23,7 +23,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             INPUT_MATCHES = '(M)atches'
             INPUT_REPORT_INDEX = '[report #]'
             INPUT_TEAM_INDEX = '[team #]'
-            INPUT_TEAMNAME = '[team name]'
+            INPUT_TEAM_NAME = '[team name]'
             INPUT_TEAMS = '(T)eams'
 
             REGEX_MATCHES = /^m(atches)?\s*?/
@@ -72,8 +72,9 @@ module SpoilerFreeSoccerPlayByPlayReports
                         StatePlayer.play(State::TEAMS_LIST)
                     else 
                         @@error_feedback = "No reports are currently available for any teams :("
+                    end
 
-                elsif accepted_inputs.include?(INPUT_TEAMNAME)
+                elsif accepted_inputs.include?(INPUT_TEAM_NAME)
                     self.handle_matches_input(input)
                 end
             end
@@ -98,73 +99,63 @@ module SpoilerFreeSoccerPlayByPlayReports
             TEAMS_LIST = 3
             REPORT = 4
 
-            @input_options = []
-            @output_strings = []
+            @@current_id
+            @@output_strings = []
 
-            INPUT_OPTIONS[MAIN_MENU] = [
-                InputHandler::CLI_OPTION_MATCHES, 
-                InputHandler::CLI_OPTION_TEAMS, 
-                InputHandler::CLI_OPTION_TEAMNAME
+            ACCEPTED_INPUTS[MAIN_MENU] = [
+                InputHandler::INPUT_MATCHES, 
+                InputHandler::INPUT_TEAMS, 
+                InputHandler::INPUT_TEAM_NAME
             ]
 
-            INPUT_OPTIONS[MATCHES_LIST] = [
-                InputHandler::CLI_OPTION_REPORT_INDEX, 
-                InputHandler::CLI_OPTION_MATCHES, 
-                InputHanlder::CLI_OPTION_TEAMS,
-                InputHandler::CLI_OPTION_TEAMNAME
+            ACCEPTED_INPUTS[MATCHES_LIST] = [
+                InputHandler::INPUT_REPORT_INDEX, 
+                InputHandler::INPUT_MATCHES, 
+                InputHanlder::INPUT_TEAMS,
+                InputHandler::INPUT_TEAM_NAME
             ]
 
-            INPUT_OPTIONS[TEAMS_LIST] = [
-                InputHandler::CLI_OPTION_TEAM_INDEX,
-                InputHandler::CLI_OPTION_MATCHES
+            ACCEPTED_INPUTS[TEAMS_LIST] = [
+                InputHandler::INPUT_TEAM_INDEX,
+                InputHandler::INPUT_MATCHES
             ]
 
-            INPUT_OPTIONS[REPORT] = [
-                InputHandler::CLI_OPTION_NEXT_BLURB,
-                InputHandler::CLI_OPTION_MATCHES,
-                InputHandler::CLI_OPTION_TEAMS
+            ACCEPTED_INPUTS[REPORT] = [
+                InputHandler::INPUT_NEXT_BLURB,
+                InputHandler::INPUT_MATCHES,
+                InputHandler::INPUT_TEAMS
             ]
 
-            def initialize(id)
-                @id = id
-                @input_options = State::INPUT_OPTIONS[@id]
+            def self.id=(id)
+                @@current_id = id
             end
 
-            def output_strings=(strings)
-                @output_strings = strings
+            def self.output_strings=(strings)
+                @@output_strings = strings
             end
 
-            def update
-                Printer.clear_print(@output_strings)
-                InputHandler.handle_input(@input_options)
+            def self.update
+                Printer.clear_print(@@output_strings)
+                InputHandler.handle_input(ACCEPTED_INPUTS[@@current_id])
             end
         end
 
         class StatePlayer
-            @@current_state = nil
-            @@states = []
             @@keep_playing = true
 
-            def self.turn_on
-                @@states << State.new(State::MAIN_MENU)
-                @@states << State.new(State::MATCHES_LIST)
-                @@states << State.new(State::TEAMS_LIST)
-                @@states << State.new(State::REPORT)
-            end
-
-            def self.play(state)
-                self.load(state)
+            def self.play(state_id)
+                self.load(state_id)
 
                 while (@@keep_playing)
-                    @@current_state.update
+                    State.update
                 end
             end
 
-            def self.load(state)
-                @@current_state = @@states.detect {|state| state.id == state}
+            def self.load(state_id)
+                State.id = state_id
 
                 output_strings = []
-                case @@current_state
+                case State.id
                 when State::MAIN_MENU
                     output_strings << CLI.welcome
 
@@ -177,18 +168,16 @@ module SpoilerFreeSoccerPlayByPlayReports
                     output_strings << controls_string
 
                 when State::MATCHES_LIST
-                    output_string << "Matches list output string 1!"
-=begin
-                    header_string = @@matches_list_team_name ? 
-                    "AVAILABLE REPORTS FOR #{@@matches_list_team_name.upcase}".prepend(INDENT) : 
-                    "ALL AVAILABLE REPORTS".prepend(INDENT)
-    
-                match_list_string = column_print(
-                    Report.matches(@@matches_list_team_name).collect.with_index(1) do |match, index|
-                        "#{index}. #{match.team1} vs. #{match.team2}"
-                    end
-                )
-=end
+                    output_strings << Report.current_team_name ?
+                        "AVAILABLE REPORTS FOR #{Report.current_team_name.upcase}" :
+                        "ALL AVAILABLE REPORTS"
+
+                    output_strings << column_print(
+                        Report.matches(Report.current_team_name).collect.with_index(1) do |match, index|
+                            "#{index}. #{match.team1} vs. #{match.team2}"
+                        end
+                    )
+
                 when State::TEAMS_LIST
                     output_string << "Teams list output string 1!"
 =begin
