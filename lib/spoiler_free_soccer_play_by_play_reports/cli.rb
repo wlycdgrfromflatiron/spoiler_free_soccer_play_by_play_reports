@@ -12,7 +12,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 puts ""
             end
 
-            def print(string)
+            def self.print_indented(string)
                 puts ""
                 puts string
                 puts ""
@@ -21,6 +21,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         class InputHandler
             INPUT_MATCHES = '(M)atches'
+            INPUT_NEXT_BLURB = 'Next blurb'
             INPUT_REPORT_INDEX = '[report #]'
             INPUT_TEAM_INDEX = '[team #]'
             INPUT_TEAM_NAME = '[team name]'
@@ -35,17 +36,17 @@ module SpoilerFreeSoccerPlayByPlayReports
             @@input_prompt = "Default InputHandler input prompt: "
 
             def self.build_input_prompt(accepted_inputs)
-                
+                @@input_prompt = "Custom input prompt!!"
             end
 
             def self.handle_input(options)
-                Printer.print(@@error_feedback)
+                Printer.print_indented(@@error_feedback)
 
-                Printer.print(@@input_prompt)
+                Printer.print_indented(@@input_prompt)
                 input = gets.strip
 
                 if input.match(REGEX_QUIT)
-                    State.set_state(State::QUIT)
+                    StatePlayer.stop
 
                 elsif input.to_i > 0
                     if accepted_inputs.include?(INPUT_REPORT_INDEX)
@@ -55,6 +56,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                             CLI::report_index == input.to_i
                             StatePlayer.play(State::REPORT)
                         end
+                    end
 
                     elsif accepted_inputs.include?(INPUT_TEAM_INDEX)
                         if input.to_i > Report.teams.size
@@ -94,40 +96,51 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         class State
-            MAIN_MENU = 1
-            MATCHES_LIST = 2
-            TEAMS_LIST = 3
-            REPORT = 4
+            MAIN_MENU = 0
+            MATCHES_LIST = 1
+            TEAMS_LIST = 2
+            REPORT = 3
 
-            @@current_id
+            @@current_id = 1
             @@output_strings = []
 
-            ACCEPTED_INPUTS[MAIN_MENU] = [
-                InputHandler::INPUT_MATCHES, 
-                InputHandler::INPUT_TEAMS, 
-                InputHandler::INPUT_TEAM_NAME
+            ACCEPTED_INPUTS = [
+                # MAIN_MENU
+                [
+                    InputHandler::INPUT_MATCHES, 
+                    InputHandler::INPUT_TEAMS, 
+                    InputHandler::INPUT_TEAM_NAME
+                ], 
+
+                # MATCHES_LIST
+                [                
+                    InputHandler::INPUT_REPORT_INDEX, 
+                    InputHandler::INPUT_MATCHES, 
+                    InputHandler::INPUT_TEAMS,
+                    InputHandler::INPUT_TEAM_NAME
+                ],
+
+                # TEAMS_LIST
+                [
+                    InputHandler::INPUT_TEAM_INDEX,
+                    InputHandler::INPUT_MATCHES
+                ],
+
+                # REPORT
+                [
+                    InputHandler::INPUT_NEXT_BLURB,
+                    InputHandler::INPUT_MATCHES,
+                    InputHandler::INPUT_TEAMS
+                ]
             ]
 
-            ACCEPTED_INPUTS[MATCHES_LIST] = [
-                InputHandler::INPUT_REPORT_INDEX, 
-                InputHandler::INPUT_MATCHES, 
-                InputHanlder::INPUT_TEAMS,
-                InputHandler::INPUT_TEAM_NAME
-            ]
-
-            ACCEPTED_INPUTS[TEAMS_LIST] = [
-                InputHandler::INPUT_TEAM_INDEX,
-                InputHandler::INPUT_MATCHES
-            ]
-
-            ACCEPTED_INPUTS[REPORT] = [
-                InputHandler::INPUT_NEXT_BLURB,
-                InputHandler::INPUT_MATCHES,
-                InputHandler::INPUT_TEAMS
-            ]
+            def self.id
+                @@current_id
+            end
 
             def self.id=(id)
                 @@current_id = id
+                InputHandler.build_input_prompt(ACCEPTED_INPUTS[@@current_id])
             end
 
             def self.output_strings=(strings)
@@ -192,7 +205,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 when State::REPORT
                     output_string << "Report output string 1!"
                 end
-                @@current_state.output_strings = output_strings
+                State.output_strings = output_strings
             end
 
             def self.stop
@@ -208,14 +221,13 @@ module SpoilerFreeSoccerPlayByPlayReports
             puts ""
             puts self.welcome
             puts ""
-            puts "Loading report list...".prepend(INDENT)
+            puts "Loading report list..."
             Report.list('all')
 
-            StatePlayer.turn_on
             StatePlayer.play(State::MAIN_MENU)
 
             puts ""
-            puts "Thanks for using this app. Goodbye!".prepend(INDENT)
+            puts "Thanks for using this app. Goodbye!"
             puts ""
         end
 
@@ -279,10 +291,10 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.welcome
             welcome_string = ""
-            welcome_string << "~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~\n".prepend(INDENT)
-            welcome_string << "A service for reading live commentaries for completed soccer matches\n".prepend(INDENT)
-            welcome_string << "in chronological order and without spoilers.\n".prepend(INDENT)
-            welcome_string << "(data source: SPORTSMOLE.CO.UK)".prepend(INDENT)
+            welcome_string << "~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~\n"
+            welcome_string << "A service for reading live commentaries for completed soccer matches\n"
+            welcome_string << "in chronological order and without spoilers.\n"
+            welcome_string << "(data source: SPORTSMOLE.CO.UK)"
         end
     end
 end
