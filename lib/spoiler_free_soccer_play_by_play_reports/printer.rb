@@ -5,7 +5,7 @@ class Printer
     COLUMN_WIDTH = 50
     INDENT = "     "
 
-    
+
     ########################
     # PUBLIC CLASS METHODS #
     ########################
@@ -14,20 +14,12 @@ class Printer
     end
 
     def self.column_print(strings, column_width = COLUMN_WIDTH)
-        columnized_string = ""
-
         string_count = strings.size
         half_way = string_count.even? ? string_count / 2 : (string_count+1) / 2
 
-        left_string = "", right_string = ""
+        columnized_string = ""
         for i in 0...half_way
-            left_string = strings[i]
-            columnized_string << left_string
-            if right_string = strings[i+half_way]
-                columnized_string << (" " * (column_width - left_string.size))
-                columnized_string << right_string
-            end
-            columnized_string << "\n"
+            columnized_string << print_row(column_width, strings[i], strings[i+half_way])
         end
 
         columnized_string
@@ -69,6 +61,16 @@ class Printer
     #########################
     # PRIVATE CLASS METHODS #
     #########################
+    def self.print_row(column_width, left_string, right_string)
+        row_string = ""
+        row_string << left_string
+        if right_string
+            row_string << (" " * (column_width - left_string.size))
+            row_string << right_string
+        end
+        row_string << "\n"
+    end
+
     def self.puts_string(string)
         string.gsub!(/\n/, "\n#{INDENT}");
 
