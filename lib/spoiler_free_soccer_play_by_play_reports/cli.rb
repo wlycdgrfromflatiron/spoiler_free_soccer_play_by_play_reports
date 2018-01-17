@@ -216,7 +216,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                         "AVAILABLE REPORTS FOR #{Report.current_team_name}" :
                         "ALL AVAILABLE REPORTS")
 
-                    output_strings << Printer.column_print(
+                    output_strings << Printer.build_columnized_string_from_string_array(
                         Report.matches(Report.current_team_name).collect.with_index(1) do |match, index|
                             "#{index}. #{match.team1} vs. #{match.team2}"
                         end

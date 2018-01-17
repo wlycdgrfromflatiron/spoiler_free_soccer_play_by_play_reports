@@ -13,7 +13,7 @@ class Printer
         system "clear" or system "cls"
     end
 
-    def self.column_print(strings, column_width = COLUMN_WIDTH)
+    def self.build_columnized_string_from_string_array(strings, column_width = COLUMN_WIDTH)
         string_count = strings.size
         half_way = string_count.even? ? string_count / 2 : (string_count+1) / 2
 
