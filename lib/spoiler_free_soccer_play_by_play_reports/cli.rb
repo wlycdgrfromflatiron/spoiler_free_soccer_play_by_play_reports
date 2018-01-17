@@ -171,6 +171,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             def self.set(id)
                 @@current_state = id
+                @@error_message = ""
                 InputHandler.build_input_prompt(ACCEPTED_INPUTS[State.id])
             end
 
