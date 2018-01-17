@@ -151,6 +151,8 @@ module SpoilerFreeSoccerPlayByPlayReports
             ###################
             @@current_state = 1
             @@error_message = ""
+            @@output_header = ""
+            @@output_body = ""
             @@output_strings = []
 
 
@@ -316,12 +318,6 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         # PRINTER FUNCTIONS
-        def self.error_string
-            error_string = @@error_string ? @@error_string.prepend(INDENT) : ""
-            @@error_string = nil
-            error_string
-        end
-
         def self.welcome
 
             welcome_string = ""
