@@ -107,6 +107,9 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         class State
+            ###################
+            # CLASS CONSTANTS #
+            ###################
             MAIN_MENU = 0
             MATCHES_LIST = 1
             TEAMS_LIST = 2
@@ -142,10 +145,18 @@ module SpoilerFreeSoccerPlayByPlayReports
                 ]
             ]
 
+
+            ###################
+            # CLASS VARIABLES #
+            ###################
             @@current_state = 1
             @@error_message = ""
             @@output_strings = []
 
+
+            ########################
+            # PUBLIC CLASS METHODS #
+            ########################
             def self.error_message
                 @@error_message
             end
@@ -173,11 +184,8 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             def self.update
                 Printer.clear_screen
-
                 Printer.padded_puts(State.output_strings)
-
                 Printer.padded_puts(State.error_message, true, true)
-
                 InputHandler.handle_input(ACCEPTED_INPUTS[State.id])
             end
         end
