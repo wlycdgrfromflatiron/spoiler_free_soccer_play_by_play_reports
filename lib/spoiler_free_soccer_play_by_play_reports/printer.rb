@@ -4,12 +4,8 @@ class Printer
     ###################
     COLUMN_WIDTH = 50
     INDENT = "     "
-    COLUMN_PRINT_SETTINGS = {
-        # :column_count => 2, - for ifwhen a more generic version of column_print becomes useful
-        :column_width => 50
-    }
 
-
+    
     ########################
     # PUBLIC CLASS METHODS #
     ########################
@@ -17,7 +13,7 @@ class Printer
         system "clear" or system "cls"
     end
 
-    def self.column_print(strings, column_width = COLUMN_WIDTH, indent = INDENT)
+    def self.column_print(strings, column_width = COLUMN_WIDTH)
         columnized_string = ""
 
         string_count = strings.size
@@ -26,11 +22,12 @@ class Printer
         left_string = "", right_string = ""
         for i in 0...half_way
             left_string = strings[i]
-            columnized_string << indent << left_string
+            columnized_string << left_string
             if right_string = strings[i+half_way]
                 columnized_string << (" " * (column_width - left_string.size))
                 columnized_string << right_string
             end
+            columnized_string << "\n"
         end
 
         columnized_string
