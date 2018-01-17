@@ -1,17 +1,21 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class CLI
+        ##################
+        # HELPER CLASSES #
+        ##################
         class InputHandler
             ###################
             # CLASS CONSTANTS #
             ###################
             INPUT_MATCHES = '(M)atches'
-            INPUT_NEXT_BLURB = 'Next blurb'
+            INPUT_NEXT_BLURB = '[Spacebar]'
             INPUT_REPORT_INDEX = '[report #]'
             INPUT_TEAM_INDEX = '[team #]'
             INPUT_TEAM_NAME = '[team name]'
             INPUT_TEAMS = '(T)eams'
 
             REGEX_MATCHES = /^m(atches)?\s*?/
+            REGEX_NEXT_BLURB = / /
             REGEX_QUIT = /^q(uit)?\s*$/
             REGEX_TEAMS = /^t(eams)?\s*?/
 
@@ -19,7 +23,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             ###################
             # CLASS VARIABLES #
             ###################
-            @@input_prompt = "Default InputHandler input prompt: "
+            @@input_prompt = "Enter command or (Q)uit: "
 
 
             ########################
@@ -40,7 +44,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 input = gets.strip
 
                 if input.match(REGEX_QUIT)
-                    StatePlayer.stop
+                    CLI.should_quit = true
                 elsif input.to_i > 0
                     handle_integer_input(input.to_i, accepted_inputs)
                 elsif accepted_inputs.include?(INPUT_MATCHES) && input.match(REGEX_MATCHES)
@@ -52,6 +56,26 @@ module SpoilerFreeSoccerPlayByPlayReports
                 end
             end
 
+            def self.handle_report_input(report)
+                while (State::REPORT == State.screen && !CLI.should_quit && !Report.done)
+                    input == STDIN.getch
+
+                    if input.match(REGEX_QUIT)
+                        CLI.should_quit = true
+                    elsif input.match(REGEX_NEXT_BLURB)
+                        handle_next_blurb_input
+                    elsif input.match(REGEX_MATCHES)
+                        handle_matches_input(nil)
+                    elsif input.match(REGEX_TEAMS)
+                        handle_teams_input
+                    end
+                end
+
+                if Report.done
+                    Printer.print_indentedReport.conclusion.prepend(INDENT)
+                    STDIN.getch
+                end
+            end
 
             #########################
             # PRIVATE CLASS METHODS #
@@ -65,14 +89,26 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
 
             def self.handle_matches_input(team_name)
-                if !Report.matches(team_name).empty?
-                    StatePlayer.play(State::MATCHES_LIST)
+                CLI.selected_team = team_name
+
+                if !Report.matches(CLI.selected_team).empty?
+                    State.screen = State::TO_MATCHES_LIST
                 else
                     State.error_message = team_name ? 
-                    "No matches are available for #{team_name} :(\n"\
+                    "No matches are available for #{CLI.selected_team} :(\n"\
                     "...However, the parser is not the brightest.\n"\
                     "You may want to double-check your spelling and/or try (T)eams just in case." : 
                     "No matches are currently available :("
+                end
+            end
+
+            def self.handle_next_blurb_input
+                blurb = Report.next_blurb
+
+                puts ""
+                Printer.print_indented("#{blurb.label}\n")
+                blurb.paragraphs.each do |paragraph|
+                    Printer.print_indented(paragraph)
                 end
             end
 
@@ -80,8 +116,8 @@ module SpoilerFreeSoccerPlayByPlayReports
                 if input_number > Report.current_list.size
                     State.error_message = "Invalid report number! Please try again."
                 else
-                    CLI::report_index == input_number
-                    StatePlayer.play(State::REPORT)
+                    CLI.report_index == input_number
+                    State.screen = State::REPORT
                 end
             end
 
@@ -90,13 +126,13 @@ module SpoilerFreeSoccerPlayByPlayReports
                     State.error_message = "Invalid index! Please try again."
                 else
                     Report.matches(Reports.teams[input_number - 1])
-                    StatePlayer.play(State::MATCHES_LIST)
+                    State.screen = State::MATCHES_LIST
                 end
             end
 
             def self.handle_teams_input
                 if !Report.teams.empty?
-                    StatePlayer.play(State::TEAMS_LIST)
+                    State.screen = State::TEAMS_LIST
                 else 
                     State.error_message = "No reports are currently available for any teams :("
                 end
@@ -106,220 +142,161 @@ module SpoilerFreeSoccerPlayByPlayReports
             :handle_report_index_input, :handle_team_index_input, :handle_teams_input
         end
 
+
         class State
             ###################
             # CLASS CONSTANTS #
             ###################
-            MAIN_MENU = 0
-            MATCHES_LIST = 1
-            TEAMS_LIST = 2
+            LOADING = 0
+            MAIN_MENU = 1
+            MATCHES_LIST = 2
             REPORT = 3
+            TEAMS_LIST = 4
+            TO_MAIN_MENU = 5
+            TO_MATCHES_LIST = 6
+            TO_REPORT = 7
+            TO_TEAMS_LIST = 8
 
             ACCEPTED_INPUTS = [
-                # MAIN_MENU
-                [
+                [ # MAIN_MENU
                     InputHandler::INPUT_MATCHES, 
                     InputHandler::INPUT_TEAMS, 
                     InputHandler::INPUT_TEAM_NAME
                 ], 
-
-                # MATCHES_LIST
-                [                
+                [  # MATCHES_LIST              
                     InputHandler::INPUT_REPORT_INDEX, 
                     InputHandler::INPUT_MATCHES, 
                     InputHandler::INPUT_TEAMS,
                     InputHandler::INPUT_TEAM_NAME
                 ],
-
-                # TEAMS_LIST
-                [
+                [ # TEAMS_LIST
                     InputHandler::INPUT_TEAM_INDEX,
                     InputHandler::INPUT_MATCHES
-                ],
-
-                # REPORT
-                [
-                    InputHandler::INPUT_NEXT_BLURB,
-                    InputHandler::INPUT_MATCHES,
-                    InputHandler::INPUT_TEAMS
                 ]
             ]
-
 
             ###################
             # CLASS VARIABLES #
             ###################
-            @@current_state = 1
-            @@error_message = ""
-            @@output_header = ""
-            @@output_body = ""
-            @@output_strings = []
+            @@current_screen = 1
 
 
             ########################
             # PUBLIC CLASS METHODS #
             ########################
-            def self.error_message
-                @@error_message
+            def self.screen
+                @@current_screen
             end
 
-            def self.error_message=(string)
-                @@error_message = string
-            end
-
-            def self.id
-                @@current_state
-            end
-
-            def self.set(id)
-                @@current_state = id
-                @@error_message = ""
-                InputHandler.build_input_prompt(ACCEPTED_INPUTS[State.id])
-            end
-
-            def self.output_strings
-                @@output_strings
-            end
-
-            def self.output_strings=(strings)
-                @@output_strings = strings
-            end
-
-            def self.update
-                Printer.clear_screen
-                Printer.padded_puts(State.output_strings)
-                Printer.padded_puts(State.error_message, true, true)
-                InputHandler.handle_input(ACCEPTED_INPUTS[State.id])
+            def self.screen=(name)
+                @@current_screen = name
             end
         end
 
-        class StatePlayer
-            @@keep_playing = true
 
-            def self.play(state_id)
-                self.load(state_id)
+        ###################
+        # CLASS VARIABLES #
+        ###################
+        @@report_index = nil
+        @@should_quit = false
+        @@header_string = nil
+        @@data_string = nil
+        @@selected_team = nil
 
-                while (@@keep_playing)
-                    State.update
-                end
-            end
 
-            def self.load(state_id)
-                State.set(state_id)
+# ----> ###############
+# ----> # ENTRY POINT #
+# ----> ###############
+        def self.start
+            State.screen = State::LOADING
+            while (!@@should_quit)
+                case State.screen
+                when State::LOADING
+                    Printer.clear_screen
+                    Printer.line_feed
+                    Printer.indented_puts(self.welcome)
+                    Printer.line_feed
+                    Printer.indented_puts("Loading report list...")
+                    Report.list('all')
+                    State.screen = State::TO_MAIN_MENU
 
-                output_strings = []
-                case State.id
-                when State::MAIN_MENU
-                    output_strings << CLI.welcome
+                when State::TO_MAIN_MENU
+                    self.header = self.welcome
+                    self.data = self.main_menu_controls
+                    InputHandler.build_input_prompt(State::ACCEPTED_INPUTS[State::MAIN_MENU])
+                    State.screen = State::MAIN_MENU
 
-                    controls_string = ""
-                    controls_string << "MAIN MENU CONTROLS:\n"
-                    controls_string << "(M)atches:        List all matches for which reports are available.\n"
-                    controls_string << "(T)eams:          List all teams for which reports are available.\n"
-                    controls_string << "[team name]:      List all available reports for [team name].\n"
-                    controls_string << "(Q)uit:           Quit the program."
-                    output_strings << controls_string
+                when State::MAIN_MENU, State::MATCHES_LIST, State::TEAMS_LIST
+                    Printer.clear_screen
+                    Printer.indented_puts(self.header)
+                    Printer.indented_puts(self.data)
+                    Printer.indented_puts(self.error_message)
+                    InputHandler.handle_input(State::ACCEPTED_INPUTS[State.screen])
 
-                when State::MATCHES_LIST
-                    output_strings << (Report.current_team_name ?
-                        "AVAILABLE REPORTS FOR #{Report.current_team_name}" :
+                when State::TO_MATCHES_LIST
+                    self.header = (self.selected_team ?
+                        "AVAILABLE REPORTS FOR #{self.selected_team}" :
                         "ALL AVAILABLE REPORTS")
-
-                    output_strings << Printer.build_columnized_string_from_string_array(
-                        Report.matches(Report.current_team_name).collect.with_index(1) do |match, index|
+                    self.data =  Printer.build_columnized_string_from_string_array(
+                        Report.matches(self.selected_team).collect.with_index(1) do |match, index|
                             "#{index}. #{match.team1} vs. #{match.team2}"
-                        end
-                    )
-
-                when State::TEAMS_LIST
-                    output_strings << "TEAMS THAT HAVE REPORTS AVAILABLE:"
-
-                    output_strings << Printer.build_columnized_string_from_string_array(
+                        end)
+                    InputHandler.build_input_prompt(State::ACCEPTED_INPUTS[State::MATCHES_LIST])
+                    State.screen = State::MATCHES_LIST
+                
+                when State::TO_TEAMS_LIST
+                    self.header = "TEAMS THAT HAVE REPORTS AVAILABLE:"
+                    self.data = Printer.build_columnized_string_from_string_array(
                         Report.teams.collect.with_index(1) do |team_name, index|
                             "#{index}. #{team_name}"
-                        end
-                    )
+                        end)
+                    InputHandler.build_input_prompt(State::ACCEPTED_INPUTS[State::TEAMS_LIST])
+                    State.screen = State::TEAMS_LIST
+
+                when State::TO_REPORT
+                    @@report = Report.report(CLI.report_index)
+
+                    Printer.clear_screen
+                    Printer.line_feed
+                    Printer.indented_puts("MATCH REPORT")
+                    Printer.indented_puts("#{@@report.team1} VS. #{@@report.team2}")
+                    Printer.line_feed
+    
+                    Printer.indented_puts("Author: #{@@report.byline.author}")
+                    Printer.indented_puts("Filed: #{@@report.byline.filed}")
+                    Printer.indented_puts("#report.byline.updated")
+                    Printer.line_feed
+    
+                    Printer.indented_puts("Controls:")
+                    Printer.indented_puts("[Spacebar]:      Show next report item.")
+                    Printer.indented_puts("m:               List all available match reports.")
+                    Printer.indented_puts("t:               List all teams for which reports are available.")
+                    Printer.indented_puts("q:               Quit the program.")
+                    Printer.line_feed
+
+                    State.screen = State::REPORT
 
                 when State::REPORT
-                    output_string << "Report output string 1!"
-                end
-                State.output_strings = output_strings
+                    InputHandler.handle_report_input
+                end 
             end
 
-            def self.stop
-                @@keep_playing = false
-            end
+            Printer.indented_puts("Thanks for using this app. Goodbye!")
         end
 
-        @@report_index = nil
-
-        # ENTRY POINT
-        def self.start
-            Printer.clear_screen
-            Printer.padded_puts(self.welcome)
-            Printer.padded_puts("Loading report list...")
-            
-            Report.list('all')
-
-            StatePlayer.play(State::MAIN_MENU)
-
-            Printer.padded_puts("Thanks for using this app. Goodbye!")
+        ########################
+        # PUBLIC CLASS METHODS #
+        ########################
+        def self.main_menu_controls
+            controls_string = ""
+            controls_string << "MAIN MENU CONTROLS:\n"
+            controls_string << "(M)atches:        List all matches for which reports are available.\n"
+            controls_string << "(T)eams:          List all teams for which reports are available.\n"
+            controls_string << "[team name]:      List all available reports for [team name].\n"
+            controls_string << "(Q)uit:           Quit the program."
         end
 
-        # REPORT LOOP
-        def self.report_loop
-            report = Report.report(@@report_index)
-
-            system "clear" or system "cls"
-            puts ""
-            puts "MATCH REPORT\n".prepend(INDENT)
-            puts "#{report.team1} VS. #{report.team2}\n".prepend(INDENT)
-            puts ""
-            puts "Author: #{report.byline.author}\n".prepend(INDENT)
-            puts "Filed: #{report.byline.filed}\n".prepend(INDENT)
-            puts "#{report.byline.updated}\n".prepend(INDENT)
-            puts ""
-            puts "Controls:\n".prepend(INDENT)
-            puts "[Spacebar]:      Show next report item.\n".prepend(INDENT)
-            puts "m:               List all available match reports.\n".prepend(INDENT)
-            puts "t:               List all teams for which reports are available.\n".prepend(INDENT)
-            puts "q:               Quit the program.\n".prepend(INDENT)
-            puts ""
-
-            blurb = nil
-            while (STATE_REPORT == @@state && !Report.done)
-                @@input = STDIN.getch
-
-                if ' ' == @@input
-                    blurb = Report.next_blurb
-                    puts ""
-                    puts "#{blurb.label}".prepend(INDENT)
-                    puts ""
-                    blurb.paragraphs.each do |paragraph|
-                        puts paragraph.prepend(INDENT)
-                        puts ""
-                    end
-
-                elsif @@input.match(REGEX_MATCHES)
-                    self.handle_matches_input(nil)
-
-                elsif @@input.match(REGEX_TEAMS)
-                    self.handle_teams_input
-
-                elsif @@input.match(REGEX_QUIT)
-                    self.state(STATE_QUIT)
-                end
-            end
-
-            if Report.done
-                puts Report.conclusion.prepend(INDENT)
-                STDIN.getch
-            end
-        end
-
-        # PRINTER FUNCTIONS
         def self.welcome
-
             welcome_string = ""
             welcome_string << "~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~\n"
             welcome_string << "A service for reading live commentaries for completed soccer matches\n"

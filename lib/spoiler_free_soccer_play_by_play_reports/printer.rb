@@ -35,7 +35,7 @@ class Printer
         print string.prepend(INDENT)
     end
 
-    def self.padded_puts(string_or_string_array, top_padding = true, bottom_padding = false)
+    def self.padded_puts(string_or_string_array, top_padding = false, bottom_padding = false)
         if top_padding 
             puts ""
         end
