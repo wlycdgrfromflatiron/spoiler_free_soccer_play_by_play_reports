@@ -218,8 +218,6 @@ module SpoilerFreeSoccerPlayByPlayReports
                     output_strings << controls_string
 
                 when State::MATCHES_LIST
-                    output_strings << "State::MATCHES_LIST output string!"
-
                     output_strings << (Report.current_team_name ?
                         "AVAILABLE REPORTS FOR #{Report.current_team_name}" :
                         "ALL AVAILABLE REPORTS")
@@ -231,16 +229,14 @@ module SpoilerFreeSoccerPlayByPlayReports
                     )
 
                 when State::TEAMS_LIST
-                    output_string << "Teams list output string 1!"
-=begin
-                    header_string = "TEAMS THAT HAVE REPORTS AVAILABLE:".prepend(INDENT)
+                    output_strings << "TEAMS THAT HAVE REPORTS AVAILABLE:"
 
-                    team_list_string = column_print(
+                    output_strings << Printer.build_columnized_string_from_string_array(
                         Report.teams.collect.with_index(1) do |team_name, index|
                             "#{index}. #{team_name}"
                         end
                     )
-=end
+
                 when State::REPORT
                     output_string << "Report output string 1!"
                 end
