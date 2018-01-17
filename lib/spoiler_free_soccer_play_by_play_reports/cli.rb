@@ -210,9 +210,11 @@ module SpoilerFreeSoccerPlayByPlayReports
                     output_strings << controls_string
 
                 when State::MATCHES_LIST
-                    output_strings << Report.current_team_name ?
+                    output_strings << "State::MATCHES_LIST output string!"
+
+                    output_strings << (Report.current_team_name ?
                         "AVAILABLE REPORTS FOR #{Report.current_team_name}" :
-                        "ALL AVAILABLE REPORTS"
+                        "ALL AVAILABLE REPORTS")
 
                     output_strings << Printer.column_print(
                         Report.matches(Report.current_team_name).collect.with_index(1) do |match, index|
