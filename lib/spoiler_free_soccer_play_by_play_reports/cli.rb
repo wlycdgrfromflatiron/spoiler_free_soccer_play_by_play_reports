@@ -31,11 +31,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             ########################
             def self.build_input_prompt(accepted_inputs)
                 @@input_prompt = ""
-
-                accepted_inputs.each do |accepted_input|
-                    @@input_prompt << accepted_input << " | "
-                end
-
+                accepted_inputs.each {|accepted_input| @@input_prompt << accepted_input << " | "}
                 @@input_prompt << "(Q)uit: "
             end
 
@@ -294,7 +290,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.data=(string)
             @@data_string = string
         end
-        
+
         def self.header
             @@self_header
         end
