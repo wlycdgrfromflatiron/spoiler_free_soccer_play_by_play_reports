@@ -42,6 +42,12 @@ module SpoilerFreeSoccerPlayByPlayReports
             "#{INDENT}[team name]:      List all available reports for [team name].\n" \
             "#{INDENT}(Q)uit:           Quit the program.\n"
         TEAMS_LIST_HEADER = "\n#{INDENT}TEAMS THAT HAVE REPORTS AVAILABLE\n"
+        REPORT_CONTROLS = "\n" \
+            "#{INDENT}Controls:\n" \
+            "#{INDENT}[Spacebar]:      Show next report item.\n" \
+            "#{INDENT}m:               List all available match reports.\n" \
+            "#{INDENT}t:               List all teams for which reports are available.\n" \
+            "#{INDENT}q:               Quit the program.\n"
         GOODBYE_MESSAGE = "\n#{INDENT}Thanks for using this app. Goodbye!\n"        
 
         REGEX_MATCHES = /^m(atches)?\s*?/
@@ -79,9 +85,9 @@ module SpoilerFreeSoccerPlayByPlayReports
                 when State::MATCHES_LIST
                     matches_list_loop(matches_list_header(), matches_list())
                 when State::TEAMS_LIST
-                    teams_list_loop(teams_list_setup)
+                    teams_list_loop(teams_list())
                 when State::REPORT
-                    report_loop()
+                    report_loop(report_title_and_byline())
                 end
             end
 
@@ -106,7 +112,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.main_menu_loop
             while !State.touched
-                print_output(DESCRIPTION, INSTRUCTIONS)
+                Printer.puts_output(DESCRIPTION, INSTRUCTIONS, @@error_message)
 
                 input = get_input "(M)atches | (T)eams | [team name] | (Q)uit: "
 
@@ -137,76 +143,70 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.matches_list_loop(header, matches_list)
             while !State.touched
-                self.print_output(header, matches_list)
+                Printer.puts_output(header, matches_list, @@error_message)
 
-                input = self.get_input "[match #] | (M)atches | (T)eams | [team name] | (Q)uit: "
+                input = get_input("[match #] | (M)atches | (T)eams | [team name] | (Q)uit: ")
 
                 if input.match(REGEX_QUIT)
-                    self.state = QUIT
+                    State.id = State::QUIT
                 elsif input.to_i > 0
-                    self.handle_report_index_input(input.to_i)
+                    handle_report_index_input(input.to_i)
                 elsif input.match(REGEX_MATCHES)
-                    self.handle_matches_input(nil)
+                    handle_matches_input(nil)
                 elsif input.match(REGEX_TEAMS)
-                    self.handle_teams_input()
+                    handle_teams_input()
                 else
-                    self.handle_matches_input(input)
+                    handle_matches_input(input)
                 end
             end
         end
 
-        def self.teams_list_setup
+        def self.teams_list
             Printer.columnize(
-                Report.matches(@@selected_team).collect.with_index(1) do |match, index|
-                    "#{index}. #{match.team1} vs. #{match.team2}"
+                Report.teams.collect.with_index(1) do |team_name, index|
+                    "#{index}. #{team_name}"
                 end
             )
         end
 
-        def self.teams_list_loop(matches_list)
+        def self.teams_list_loop(teams_list)
             while !State.touched
-                self.print_output(TEAMS_LIST_HEADER, matches_list)
+                Printer.puts_output(TEAMS_LIST_HEADER, teams_list, @@error_message)
 
-                input = self.get_input "[team #] | (M)atches | (Q)uit: "
+                input = get_input "[team #] | (M)atches | (Q)uit: "
 
                 if input.match(REGEX_QUIT)
-                    self.state = QUIT
+                    State.id = State::QUIT
                 elsif input.to_i > 0
-                    self.handle_teams_index_input(input.to_i)
+                    handle_teams_index_input(input.to_i)
                 elsif input.match(REGEX_MATCHES)
-                    self.handle_matches_input(nil)
+                    handle_matches_input(nil)
                 end
             end
         end
 
-        def self.report_loop
-            report = Report.report(CLI.report_index)
+        def self.report_title_and_byline
+            report = Report.report(@@report_index)
 
-            Printer.clear_screen
-            puts ""
-            Printer.indented_puts("MATCH REPORT")
-            Printer.indented_puts("#{report.team1} VS. #{report.team2}")
-            puts ""
+            title_and_byline = 
+                "#{INDENT}MATCH REPORT\n" \
+                "#{INDENT}#{report.team1} VS. #{report.team2}\n" \
+                "\n" \
+                "#{INDENT}Author: #{report.byline.author}\n" \
+                "#{INDENT}Filed: #{report.byline.filed}\n" \
+                "#{INDENT}#{report.byline.updated}\n"
+        end
 
-            Printer.indented_puts("Author: #{report.byline.author}")
-            Printer.indented_puts("Filed: #{report.byline.filed}")
-            Printer.indented_puts("#{report.byline.updated}")
-            puts ""
+        def self.report_loop(title_and_byline)
+            Printer.print_output(title_and_byline, REPORT_CONTROLS)
 
-            Printer.indented_puts("Controls:")
-            Printer.indented_puts("[Spacebar]:      Show next report item.")
-            Printer.indented_puts("m:               List all available match reports.")
-            Printer.indented_puts("t:               List all teams for which reports are available.")
-            Printer.indented_puts("q:               Quit the program.")
-            puts ""
-
-            while !@@state_touched && !Report.done
+            while !State.touched && !Report.done
                 input = STDIN.getch
 
                 if input.match(REGEX_QUIT)
-                    self.state = QUIT
+                    State.id = State::QUIT
                 elsif ' ' == input
-                    self.handle_next_blurb_input
+                    handle_next_blurb_input()
                 elsif input.match(REGEX_MATCHES)
                     handle_matches_input(nil)
                 elsif input.match(REGEX_TEAMS)
@@ -223,17 +223,6 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         # SECOND LEVEL
         # METHODS CALLED BY FIRST LEVEL METHODS
-        def self.print_output(header, body)
-            Printer.clear_screen
-            puts ""
-            puts header
-            puts ""
-            puts body
-            puts ""
-            puts @@error_message.prepend(INDENT)
-            puts ""
-        end
-
         def self.get_input(text)
             print "#{INDENT}#{text}"
             gets.strip
@@ -243,14 +232,14 @@ module SpoilerFreeSoccerPlayByPlayReports
             @@selected_team = team_name
 
             if !Report.matches(@@selected_team).empty?
-                self.state = MATCHES_LIST
+                State.id = State::MATCHES_LIST
             else
                 @@error_message = @@selected_team ? 
-                    "No matches are available for #{CLI.selected_team} :(\n" \
-                    "...However, the parser is not the brightest.\n" \
-                    "You may want to double-check your spelling and/or try (T)eams just in case." 
+                    "#{INDENT}No matches are available for #{@@selected_team} :(\n" \
+                    "#{INDENT}...However, the parser is not the brightest.\n" \
+                    "#{INDENT}You may want to double-check your spelling and/or try (T)eams just in case." 
                     : 
-                    "No matches are currently available :("
+                    "#{INDENT}No matches are currently available :("
             end
         end
 
@@ -258,10 +247,10 @@ module SpoilerFreeSoccerPlayByPlayReports
             blurb = Report.next_blurb
 
             puts ""
-            Printer.print_indented("#{blurb.label}\n")
+            puts Formatter.indent("#{blurb.label}")
             blurb.paragraphs.each do |paragraph|
-                Printer.print_indented(paragraph)
-            end
+                puts Formatter.indent(paragraph)
+            end 
         end
 
         def self.handle_report_index_input(input_number)
