@@ -62,7 +62,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             Printer.clear_screen
 
             puts DESCRIPTION
-            puts LOADING_MESSAGE
+            puts LOADING_MESSAGE 
 
             Report.list('all')
 
@@ -77,7 +77,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 when State::MAIN_MENU
                     main_menu_loop()
                 when State::MATCHES_LIST
-                    matches_list_loop(matches_list_header, matches_list)
+                    matches_list_loop(matches_list_header(), matches_list())
                 when State::TEAMS_LIST
                     teams_list_loop(teams_list_setup)
                 when State::REPORT
