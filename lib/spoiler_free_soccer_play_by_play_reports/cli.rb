@@ -1,9 +1,13 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class CLI
+
+
         ##################
         # HELPER CLASSES #
         ##################
         class InputHandler
+
+
             ###################
             # CLASS CONSTANTS #
             ###################
@@ -59,16 +63,16 @@ module SpoilerFreeSoccerPlayByPlayReports
                     if input.match(REGEX_QUIT)
                         CLI.should_quit = true
                     elsif input.match(REGEX_NEXT_BLURB)
-                        handle_next_blurb_input
+                        handle_next_blurb_input()
                     elsif input.match(REGEX_MATCHES)
                         handle_matches_input(nil)
                     elsif input.match(REGEX_TEAMS)
-                        handle_teams_input
+                        handle_teams_input()
                     end
                 end
 
                 if Report.done
-                    Printer.print_indentedReport.conclusion.prepend(INDENT)
+                    Printer.indented_print(Report.conclusion.prepend(INDENT))
                     STDIN.getch
                 end
             end
@@ -190,14 +194,50 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
 
-        ###################
-        # CLASS VARIABLES #
-        ###################
+        #######################
+        # CLI CLASS VARIABLES #
+        #######################
         @@report_index = nil
         @@should_quit = false
         @@header_string = nil
         @@data_string = nil
         @@selected_team = nil
+
+
+        ############################
+        # CLI PUBLIC CLASS METHODS #
+        ############################
+        def self.data
+            @@data_string
+        end
+
+        def self.data=(string)
+            @@data_string = string
+        end
+
+        def self.header
+            @@self_header
+        end
+        def self.header=(string)
+            @@self_header = string
+        end
+
+        def self.main_menu_controls
+            controls_string = ""
+            controls_string << "MAIN MENU CONTROLS:\n"
+            controls_string << "(M)atches:        List all matches for which reports are available.\n"
+            controls_string << "(T)eams:          List all teams for which reports are available.\n"
+            controls_string << "[team name]:      List all available reports for [team name].\n"
+            controls_string << "(Q)uit:           Quit the program."
+        end
+
+        def self.welcome
+            welcome_string = ""
+            welcome_string << "~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~\n"
+            welcome_string << "A service for reading live commentaries for completed soccer matches\n"
+            welcome_string << "in chronological order and without spoilers.\n"
+            welcome_string << "(data source: SPORTSMOLE.CO.UK)"
+        end
 
 
 # ----> ###############
@@ -236,7 +276,8 @@ module SpoilerFreeSoccerPlayByPlayReports
                     self.data =  Printer.build_columnized_string_from_string_array(
                         Report.matches(self.selected_team).collect.with_index(1) do |match, index|
                             "#{index}. #{match.team1} vs. #{match.team2}"
-                        end)
+                        end
+                    )
                     InputHandler.build_input_prompt(State::ACCEPTED_INPUTS[State::MATCHES_LIST])
                     State.screen = State::MATCHES_LIST
                 
@@ -245,7 +286,8 @@ module SpoilerFreeSoccerPlayByPlayReports
                     self.data = Printer.build_columnized_string_from_string_array(
                         Report.teams.collect.with_index(1) do |team_name, index|
                             "#{index}. #{team_name}"
-                        end)
+                        end
+                    )
                     InputHandler.build_input_prompt(State::ACCEPTED_INPUTS[State::TEAMS_LIST])
                     State.screen = State::TEAMS_LIST
 
@@ -274,45 +316,10 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 when State::REPORT
                     InputHandler.handle_report_input
-                end 
-            end
+                end
+            end # main while loop
 
             Printer.indented_puts("Thanks for using this app. Goodbye!")
-        end
-
-        ########################
-        # PUBLIC CLASS METHODS #
-        ########################
-        def self.data
-            @@data_string
-        end
-
-        def self.data=(string)
-            @@data_string = string
-        end
-
-        def self.header
-            @@self_header
-        end
-        def self.header=(string)
-            @@self_header = string
-        end
-
-        def self.main_menu_controls
-            controls_string = ""
-            controls_string << "MAIN MENU CONTROLS:\n"
-            controls_string << "(M)atches:        List all matches for which reports are available.\n"
-            controls_string << "(T)eams:          List all teams for which reports are available.\n"
-            controls_string << "[team name]:      List all available reports for [team name].\n"
-            controls_string << "(Q)uit:           Quit the program."
-        end
-
-        def self.welcome
-            welcome_string = ""
-            welcome_string << "~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~\n"
-            welcome_string << "A service for reading live commentaries for completed soccer matches\n"
-            welcome_string << "in chronological order and without spoilers.\n"
-            welcome_string << "(data source: SPORTSMOLE.CO.UK)"
-        end
-    end
-end
+        end # CLI.start
+    end # class CLI
+end # module SpoilerFreeSoccerPlayByPlayReports
