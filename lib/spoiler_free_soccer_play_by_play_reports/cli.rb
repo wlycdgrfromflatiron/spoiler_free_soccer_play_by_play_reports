@@ -287,6 +287,13 @@ module SpoilerFreeSoccerPlayByPlayReports
         ########################
         # PUBLIC CLASS METHODS #
         ########################
+        def self.header
+            @@self_header
+        end
+        def self.header=(string)
+            self.header = string
+        end
+        
         def self.main_menu_controls
             controls_string = ""
             controls_string << "MAIN MENU CONTROLS:\n"
