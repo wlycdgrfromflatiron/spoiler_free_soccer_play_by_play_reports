@@ -255,26 +255,26 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.handle_report_index_input(input_number)
             if input_number > Report.current_list.size
-                @@error_message = "Invalid report number! Please try again."
+                @@error_message = Formatter.indent("Invalid report number! Please try again.")
             else
                 @@report_index == input_number
-                self.state = REPORT
+                State.id = State::REPORT
             end
         end
 
         def self.handle_team_index_input(input_number)
             if input_number > Report.teams.size
-                @@error_message = "Invalid index! Please try again."
+                @@error_message = Formatter.indent("Invalid index! Please try again.")
             else
                 @@selected_team = Reports.team[input_number - 1]
-                self.state = MATCHES_LIST
+                State.id = State::MATCHES_LIST
             end
         end
 
         def self.handle_teams_input
             Report.teams.empty? ?
-                @@error_message = "No reports are currently available for any teams :(" :
-                self.state = TEAMS_LIST
+                @@error_message = Formatter.indent("No reports are currently available for any teams :(") : 
+                State.id = State::TEAMS_LIST
         end
     end
 end
