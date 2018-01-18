@@ -287,6 +287,14 @@ module SpoilerFreeSoccerPlayByPlayReports
         ########################
         # PUBLIC CLASS METHODS #
         ########################
+        def self.data
+            @@data_string
+        end
+
+        def self.data=(string)
+            @@data_string = string
+        end
+        
         def self.header
             @@self_header
         end
