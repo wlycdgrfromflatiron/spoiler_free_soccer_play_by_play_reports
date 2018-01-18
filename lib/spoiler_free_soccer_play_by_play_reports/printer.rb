@@ -35,11 +35,7 @@ class Printer
         print string.prepend(INDENT)
     end
 
-    def self.padded_puts(string_or_string_array, top_padding = false, bottom_padding = false)
-        if top_padding 
-            puts ""
-        end
-
+    def self.indented_puts(string_or_string_array)
         if string_or_string_array.is_a?(String)
             puts_string(string_or_string_array)
         
@@ -50,10 +46,6 @@ class Printer
                 self.line_feed(2)
             end
             puts_string(last_paragraph)
-        end
-
-        if bottom_padding
-            puts ""
         end
     end
     
