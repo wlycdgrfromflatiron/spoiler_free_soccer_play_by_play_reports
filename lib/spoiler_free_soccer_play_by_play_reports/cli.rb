@@ -291,9 +291,9 @@ module SpoilerFreeSoccerPlayByPlayReports
             @@self_header
         end
         def self.header=(string)
-            self.header = string
+            @@self_header = string
         end
-        
+
         def self.main_menu_controls
             controls_string = ""
             controls_string << "MAIN MENU CONTROLS:\n"
