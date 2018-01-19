@@ -89,7 +89,27 @@ module SpoilerFreeSoccerPlayByPlayReports
             def self.teams
                 @@value.match(REGEX_TEAMS)
             end
-        end 
+        end
+
+
+        class Error
+
+            INVALID_LIST_INDEX = "Invalid list index - please try again."
+            NO_MATCH_REPORTS_FOR_TEAM = "No match reports are available for that team :(\n" \
+                "...However, the parser is not the brightest.\n" \
+                "You may want to double-check your spelling and/or try (T)eams just in case."
+            NO_MATCH_REPORTS = "No match reports are currently available :("
+
+            @@text = nil
+
+            def self.text
+                @@text.prepend("ERROR: ")
+            end
+
+            def self.code=(code)
+                @@text = code
+            end
+        end
 
 
         #######################
@@ -120,7 +140,6 @@ module SpoilerFreeSoccerPlayByPlayReports
         #######################
         # CLI CLASS VARIABLES #
         #######################
-        @@error_message = ""
         @@report_index = nil
         @@selected_team = nil
 
@@ -169,12 +188,12 @@ module SpoilerFreeSoccerPlayByPlayReports
         #################################################
         def self.wash
             State.touched = false
-            @@error_message = ""
+            Error.code = nil
         end
 
         def self.main_menu_loop
             while !State.touched
-                Printer.puts([DESCRIPTION, INSTRUCTIONS, @@error_message])
+                Printer.puts([DESCRIPTION, INSTRUCTIONS, Error.text])
 
                 Input.get("(M)atches | (T)eams | [team name] | (Q)uit: ")
 
@@ -203,9 +222,9 @@ module SpoilerFreeSoccerPlayByPlayReports
                 end
             )
 
-        def self.matches_list_loop(header, matches_list)
+        def self.matches_list_loop(matches_list_header, matches_list)
             while !State.touched
-                Printer.puts_output(header, matches_list, @@error_message)
+                Printer.puts_output(matches_list_header, matches_list, Error.text)
 
                 input = get_input("[match #] | (M)atches | (T)eams | [team name] | (Q)uit: ")
 
@@ -233,7 +252,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.teams_list_loop(teams_list)
             while !State.touched
-                Printer.puts_output(TEAMS_LIST_HEADER, teams_list, @@error_message)
+                Printer.puts_output(TEAMS_LIST_HEADER, teams_list, Error.text)
 
                 input = get_input "[team #] | (M)atches | (Q)uit: "
 
@@ -291,17 +310,12 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.handle_matches_input(team_name)
-            @@selected_team = team_name
-
-            if !Report.matches(@@selected_team).empty?
+            if !Report.matches(@@selected_team = team_name).empty?
                 State.id = State::MATCHES_LIST
             else
-                @@error_message = @@selected_team ? 
-                    "#{INDENT}No matches are available for #{@@selected_team} :(\n" \
-                    "#{INDENT}...However, the parser is not the brightest.\n" \
-                    "#{INDENT}You may want to double-check your spelling and/or try (T)eams just in case." 
-                    : 
-                    "#{INDENT}No matches are currently available :("
+                Error.code = @@selected_team ? 
+                    Error::NO_MATCH_REPORTS_FOR_TEAM : 
+                    Error::NO_MATCH_REPORTS
             end
         end
 
@@ -317,7 +331,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.handle_report_index_input(input_number)
             if input_number > Report.current_list.size
-                @@error_message = Formatter.indent("Invalid report number! Please try again.")
+                Error.code = Error::INVALID_LIST_INDEX
             else
                 @@report_index == input_number
                 State.id = State::REPORT
@@ -326,7 +340,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.handle_team_index_input(input_number)
             if input_number > Report.teams.size
-                @@error_message = Formatter.indent("Invalid index! Please try again.")
+                Error.code = Error::INVALID_LIST_INDEX
             else
                 @@selected_team = Reports.team[input_number - 1]
                 State.id = State::MATCHES_LIST
@@ -334,8 +348,8 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.handle_teams_input
-            Report.teams.empty? ?
-                @@error_message = Formatter.indent("No reports are currently available for any teams :(") : 
+            Report.teams.empty? ? 
+                Error.code = Error::NO_MATCH_REPORTS : 
                 State.id = State::TEAMS_LIST
         end
     end
