@@ -276,7 +276,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.teams_list_loop(teams_list)
             while !State.touched
-                Printer.puts_output(TEAMS_LIST_HEADER, teams_list, Error.text)
+                Printer.puts([TEAMS_LIST_HEADER, teams_list, Error.text])
 
                 input = get_input "[team #] | (M)atches | (Q)uit: "
 
