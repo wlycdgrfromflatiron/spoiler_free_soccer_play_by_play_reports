@@ -64,10 +64,12 @@ module SpoilerFreeSoccerPlayByPlayReports
             REGEX_TEAMS = /^t(eams)?\s*?/
 
             DIVIDER = " | "
+            MATCH_INDEX = "[match #]"
             MATCHES = "(M)atches"
             QUIT = "(Q)uit"
-            TEAMS = "(T)eams"
+            TEAM_INDEX = "[team #]"
             TEAM_NAME = "[team name]"
+            TEAMS = "(T)eams"
 
             #########################
             # Input CLASS VARIABLES #
@@ -277,7 +279,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 Printer.clear_screen
                 Printer.puts([matches_list_header, matches_list, Error.text])
 
-                Input.get("[match #] | (M)atches | (T)eams | [team name] | (Q)uit: ")
+                Input.get([Input::MATCH_INDEX, Input::MATCHES, Input::TEAMS, Input::TEAM_NAME])
 
                 if Input.quit
                     State.set(State::QUIT)
@@ -306,7 +308,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 Printer.clear_screen
                 Printer.puts([TEAMS_LIST_HEADER, teams_list, Error.text])
 
-                Input.get("[team #] | (M)atches | (Q)uit: ")
+                Input.get([Input::TEAM_INDEX, Input::MATCHES])
 
                 if Input.quit
                     State.set(State::QUIT)
@@ -362,7 +364,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         # METHODS CALLED BY FIRST LEVEL METHODS
         def self.handle_matches_input(team_name)
             if !Report.matches(@@team_filter = team_name).empty?
-                State.id = State::MATCHES_LIST
+                State.set(State::MATCHES_LIST)
             else
                 Error.code = @@team_filter ? 
                     Error::NO_MATCH_REPORTS_FOR_TEAM : 
