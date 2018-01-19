@@ -119,6 +119,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             TEAM_NAME = "[team name]"
             TEAMS = "(T)eams"
 
+            
             #########################
             # Input CLASS VARIABLES #
             #########################
