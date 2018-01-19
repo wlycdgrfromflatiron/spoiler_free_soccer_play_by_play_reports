@@ -155,8 +155,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         #######################
         # CLI CLASS VARIABLES #
         #######################
-        @@report_index = nil
-        @@selected_team = nil
+        @@team_filter = nil
 
 
 ###########################
@@ -225,14 +224,14 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.matches_list_header
-            @@selected_team ?
-                "AVAILABLE REPORT FOR #{@@selected_team}" :
+            @@team_filter ?
+                "AVAILABLE REPORT FOR #{@@team_filter}" :
                 "ALL AVAILABLE REPORTS"
         end
 
         def self.matches_list
             Formatter.columnize(
-                Report.matches(@@selected_team).collect.with_index(1) do |match, index|
+                Report.matches(@@team_filter).collect.with_index(1) do |match, index|
                     "#{index}. #{match.team1} vs. #{match.team2}"
                 end
             )
@@ -282,7 +281,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.report_title_and_byline
-            report = Report.report(@@report_index)
+            report = Report.selected
 
             title_and_byline = 
                 "#{INDENT}MATCH REPORT\n" \
@@ -325,10 +324,10 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.handle_matches_input(team_name)
-            if !Report.matches(@@selected_team = team_name).empty?
+            if !Report.matches(@@team_filter = team_name).empty?
                 State.id = State::MATCHES_LIST
             else
-                Error.code = @@selected_team ? 
+                Error.code = @@team_filter ? 
                     Error::NO_MATCH_REPORTS_FOR_TEAM : 
                     Error::NO_MATCH_REPORTS
             end
@@ -348,7 +347,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             if input_number > Report.current_list.size
                 Error.code = Error::INVALID_LIST_INDEX
             else
-                @@report_index == input_number
+                Report.select(input_number)
                 State.id = State::REPORT
             end
         end
@@ -357,7 +356,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             if input_number > Report.teams.size
                 Error.code = Error::INVALID_LIST_INDEX
             else
-                @@selected_team = Reports.team[input_number - 1]
+                @@team_filter = Reports.team[input_number - 1]
                 State.id = State::MATCHES_LIST
             end
         end

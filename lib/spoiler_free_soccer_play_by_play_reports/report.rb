@@ -142,5 +142,12 @@ module SpoilerFreeSoccerPlayByPlayReports
             "CONCLUSION OF THE #{@@current_report.team1} VS. #{@@current_report.team2} REPORT"
         end
 
+        def self.select(index)
+           @@current_report =  @@current_list[index - 1]
+        end
+
+        def self.selected
+            @@current_report
+        end
     end
 end
