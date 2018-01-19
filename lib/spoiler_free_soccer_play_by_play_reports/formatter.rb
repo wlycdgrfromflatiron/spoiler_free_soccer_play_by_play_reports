@@ -28,8 +28,8 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.indent(string)
             return if !string.is_a?(String)
 
-            string.prepend(INDENT) # STUB, need to account for multi-line strings
-            string.gsub(/(\n)/, "\\1#{INDENT}") # STUB, need to account for strings that are not pre-formatted into lines
+            indented_string = INDENT + string # string.prepend modifies the string itself rather than returning a new string
+            indented_string.gsub(/(\n)/, "\\1#{INDENT}") # STUB, need to account for strings that are not pre-formatted into lines
         end
 
 

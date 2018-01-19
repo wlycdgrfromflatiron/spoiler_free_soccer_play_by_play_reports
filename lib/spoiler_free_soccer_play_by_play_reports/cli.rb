@@ -287,6 +287,11 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 if Input.quit
                     State.set(State::QUIT)
+
+                elsif 'r' == Input.value 
+                    State.set(State::MAIN_MENU)
+
+                    
                 elsif Input.integer
                     self.handle_report_index_input(Input.value)
                 elsif Input.matches
