@@ -283,9 +283,9 @@ module SpoilerFreeSoccerPlayByPlayReports
                 if Input.quit
                     State.set(State::QUIT)
                 elsif Input.integer
-                    handle_teams_index_input(Input.value)
+                    self.handle_teams_index_input(Input.value)
                 elsif Input.matches
-                    handle_matches_input
+                    self.handle_matches_input
                 end
             end
         end
