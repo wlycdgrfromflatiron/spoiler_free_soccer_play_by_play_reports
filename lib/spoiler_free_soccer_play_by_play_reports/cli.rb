@@ -22,31 +22,24 @@ module SpoilerFreeSoccerPlayByPlayReports
             QUIT = 4
 
 
-            #########################
-            # State CLASS VARIABLES #
-            #########################
-            @@id = MAIN_MENU
-            @@touched = false
-            
+            ##################################
+            # State CLASS INSTANCE VARIABLES #
+            ##################################
+            class << self
+                attr_accessor :touched
+                attr_reader :id
+            end
+
+            @id = MAIN_MENU
+            @touched = false 
+
 
             ##############################
             # State PUBLIC CLASS METHODS #
             ##############################
-            def self.id
-                @@id
-            end
-
             def self.set(id)
-                @@id = id
-                @@touched = true
-            end
-
-            def self.touched
-                @@touched
-            end
-
-            def self.touched=(value)
-                @@touched = value
+                @id = id
+                @touched = true
             end
         end
 
@@ -65,7 +58,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             class << self
                 attr_accessor :report, :report_list, :team
             end
-            
+
             @report = nil
             @report_list = nil
             @team = nil
