@@ -119,7 +119,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             TEAM_NAME = "[team name]"
             TEAMS = "(T)eams"
 
-            
+
             #########################
             # Input CLASS VARIABLES #
             #########################
@@ -177,9 +177,11 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
 
-        ####################
-        # CLI HELPER CLASS #
-        ####################
+        ########################################
+        # CLI HELPER CLASS                     #
+        # Keeps error messages organized and   #
+        # keeps track of current error, if any #
+        ########################################
         class Error
 
 
