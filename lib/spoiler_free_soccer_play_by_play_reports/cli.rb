@@ -35,7 +35,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
 
             def self.set(id)
-                @@id= id
+                @@id = id
                 @@touched = true
             end
 
