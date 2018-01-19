@@ -66,6 +66,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             TEAM_INDEX = "[team #]"
             TEAM_NAME = "[team name]"
             TEAMS = "(T)eams"
+            TERMINAL = " : "
 
 
             #########################
@@ -118,7 +119,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             def self.prompt(options)
                 prompt = ""
                 options.each {|option| prompt << option << DIVIDER}
-                prompt << QUIT
+                prompt << QUIT << TERMINAL
             end
 
             private_class_method :prompt
