@@ -232,10 +232,10 @@ module SpoilerFreeSoccerPlayByPlayReports
 #########################
 
         
-        # ###############################################
-        # CLI PUBLIC CLASS METHODS                      #
-        # FIRST LEVEL: CALLED DIRECTLY IN MAIN SEQUENCE #
-        #################################################
+        # #######################################################
+        # CLI PUBLIC CLASS METHODS                              #
+        # FIRST LEVEL: METHODS CALLED DIRECTLY BY MAIN SEQUENCE #
+        #########################################################
         def self.wash
             State.touched = false
             Error.code = nil
@@ -360,8 +360,10 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
 
-        # SECOND LEVEL
-        # METHODS CALLED BY FIRST LEVEL METHODS
+        # #####################################################
+        # CLI PUBLIC CLASS METHODS                            #
+        # SECOND LEVEL: METHODS CALLED BY FIRST LEVEL METHODS #
+        #######################################################
         def self.handle_matches_input(team_name)
             if !Report.matches(@@team_filter = team_name).empty?
                 State.set(State::MATCHES_LIST)
