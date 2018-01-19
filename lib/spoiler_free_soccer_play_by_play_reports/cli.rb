@@ -179,23 +179,13 @@ module SpoilerFreeSoccerPlayByPlayReports
                 Input.get("(M)atches | (T)eams | [team name] | (Q)uit: ")
 
                 if Input.quit
-                    State.id = State::QUIT
+                    State.set(State::QUIT)
                 elsif Input.matches
-                    handle_matches_input(nil)
+                    self.handle_matches_input
                 elsif Input.teams
-                    handle_teams_input()
+                    self.handle_teams_input
                 else
-                    handle_matches_input(Input.value)
-                end
-
-                if input.match(REGEX_QUIT)
-                    State.id = State::QUIT
-                elsif input.match(REGEX_MATCHES)
-                     handle_matches_input(nil)
-                elsif input.match(REGEX_TEAMS)
-                    handle_teams_input()
-                else
-                    handle_matches_input(input)
+                    self.handle_matches_input(Input.value)
                 end
             end
         end
