@@ -78,6 +78,11 @@ module SpoilerFreeSoccerPlayByPlayReports
                 @@value = gets.strip
             end
 
+            def self.get_unbuffered(prompt=nil)
+                Printer.print(prompt) if prompt
+                @@value = STDIN.getch
+            end
+
             def self.integer
                 @@value.to_i > 0
             end
@@ -311,7 +316,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             Printer.puts([report_title, report_byline, REPORT_CONTROLS])
 
             while !State.touched && !Report.done
-                input = STDIN.getch
+                Input.get_unbuffered
 
                 if input.match(REGEX_QUIT)
                     State.id = State::QUIT
