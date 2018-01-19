@@ -8,15 +8,28 @@ module SpoilerFreeSoccerPlayByPlayReports
         # HELPER CLASSES #
         ##################
         class State
+
+
+            ###################
+            # CLASS CONSTANTS #
+            ###################
             MAIN_MENU = 0
             MATCHES_LIST = 1
             TEAMS_LIST = 2
             REPORT = 3
             QUIT = 4
 
+
+            ###################
+            # CLASS VARIABLES #
+            ###################
             @@id = MAIN_MENU
             @@touched = false
             
+
+            ########################
+            # PUBLIC CLASS METHODS #
+            ########################
             def self.id
                 @@id
             end
@@ -35,7 +48,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end
 
-        
+
         ###################
         # CLASS CONSTANTS #
         ###################
@@ -65,22 +78,24 @@ module SpoilerFreeSoccerPlayByPlayReports
         REGEX_QUIT = /^q(uit)?\s*$/
         REGEX_TEAMS = /^t(eams)?\s*?/
 
+
+        ###################
+        # CLASS VARIABLES #
+        ###################
         @@error_message = ""
         @@report_index = nil
         @@selected_team = nil
 
 
 #######################
-# MAIN SEQUENCE BEGIN #
+# MAIN SEQUENCE START #
 #######################
         # ENTRY POINT
         def self.start
             Printer.clear_screen
             Printer.puts([DESCRIPTION, LOADING_MESSAGE])
-
             Report.list('all')
-
-            State.id = MAIN_MENU
+            State.id = State::MAIN_MENU
             main_loop()
         end
 
@@ -98,7 +113,6 @@ module SpoilerFreeSoccerPlayByPlayReports
                     report_loop(report_title_and_byline())
                 end
             end
-
             quit()
         end
 
@@ -111,8 +125,10 @@ module SpoilerFreeSoccerPlayByPlayReports
 #####################
 
         
-        # FIRST LEVEL:
-        # METHODS CALLED DIRECTLY IN MAIN SEQUENCE
+        # ###############################################
+        # PUBLIC CLASS METHODS                          #
+        # FIRST LEVEL: CALLED DIRECTLY IN MAIN SEQUENCE #
+        #################################################
         def self.wash
             State.touched = false
             @@error_message = ""
