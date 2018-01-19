@@ -4,15 +4,15 @@ module SpoilerFreeSoccerPlayByPlayReports
     class CLI
 
 
-        ##################
-        # HELPER CLASSES #
-        ##################
+        ######################
+        # CLI HELPER CLASSES #
+        ######################
         class State
 
 
-            ###################
-            # CLASS CONSTANTS #
-            ###################
+            #########################
+            # State CLASS CONSTANTS #
+            #########################
             MAIN_MENU = 0
             MATCHES_LIST = 1
             TEAMS_LIST = 2
@@ -20,16 +20,16 @@ module SpoilerFreeSoccerPlayByPlayReports
             QUIT = 4
 
 
-            ###################
-            # CLASS VARIABLES #
-            ###################
+            #########################
+            # State CLASS VARIABLES #
+            #########################
             @@id = MAIN_MENU
             @@touched = false
             
 
-            ########################
-            # PUBLIC CLASS METHODS #
-            ########################
+            ##############################
+            # State PUBLIC CLASS METHODS #
+            ##############################
             def self.id
                 @@id
             end
@@ -49,9 +49,36 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
 
-        ###################
-        # CLASS CONSTANTS #
-        ###################
+        class Input
+            REGEX_MATCHES = /^m(atches)?\s*?/
+            REGEX_NEXT_BLURB = / /
+            REGEX_QUIT = /^q(uit)?\s*$/
+            REGEX_TEAMS = /^t(eams)?\s*?/
+
+            @@value = nil
+
+            def self.get(prompt)
+                print Formatter.indent(prompt)
+                @@value = gets.strip
+            end
+
+            def self.quit
+                @@value.match(REGEX_QUIT)
+            end
+
+            def self.matches
+                @@value.match(REGEX_MATCHES)
+            end
+
+            def self.teams
+                @@value.match(REGEX_TEAMS)
+            end
+        end 
+
+
+        #######################
+        # CLI CLASS CONSTANTS #
+        #######################
         DESCRIPTION = "" \
             "~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~\n" \
             "A service for reading live commentaries for completed soccer matches\n" \
@@ -73,23 +100,18 @@ module SpoilerFreeSoccerPlayByPlayReports
             "q:               Quit the program."
         GOODBYE_MESSAGE = "Thanks for using this app. Goodbye!"
 
-        REGEX_MATCHES = /^m(atches)?\s*?/
-        REGEX_NEXT_BLURB = / /
-        REGEX_QUIT = /^q(uit)?\s*$/
-        REGEX_TEAMS = /^t(eams)?\s*?/
 
-
-        ###################
-        # CLASS VARIABLES #
-        ###################
+        #######################
+        # CLI CLASS VARIABLES #
+        #######################
         @@error_message = ""
         @@report_index = nil
         @@selected_team = nil
 
 
-#######################
-# MAIN SEQUENCE START #
-#######################
+###########################
+# CLI MAIN SEQUENCE START #
+###########################
         # ENTRY POINT
         def self.start
             Printer.clear_screen
@@ -120,13 +142,13 @@ module SpoilerFreeSoccerPlayByPlayReports
             Printer.puts([GOODBYE_MESSAGE])
         end
         # EXIT POINT
-#####################
-# MAIN SEQUENCE END #
-#####################
+#########################
+# CLI MAIN SEQUENCE END #
+#########################
 
         
         # ###############################################
-        # PUBLIC CLASS METHODS                          #
+        # CLI PUBLIC CLASS METHODS                      #
         # FIRST LEVEL: CALLED DIRECTLY IN MAIN SEQUENCE #
         #################################################
         def self.wash
@@ -138,12 +160,22 @@ module SpoilerFreeSoccerPlayByPlayReports
             while !State.touched
                 Printer.puts([DESCRIPTION, INSTRUCTIONS, @@error_message])
 
-                input = get_input "(M)atches | (T)eams | [team name] | (Q)uit: "
+                Input.get("(M)atches | (T)eams | [team name] | (Q)uit: ")
+
+                if Input.quit
+                    State.id = State::QUIT
+                elsif Input.matches
+                    handle_matches_input(nil)
+                elsif Input.teams
+                    handle_teams_input()
+                else
+                    handle_matches_input(Input.value)
+                end
 
                 if input.match(REGEX_QUIT)
                     State.id = State::QUIT
                 elsif input.match(REGEX_MATCHES)
-                    handle_matches_input(nil)
+                     handle_matches_input(nil)
                 elsif input.match(REGEX_TEAMS)
                     handle_teams_input()
                 else
