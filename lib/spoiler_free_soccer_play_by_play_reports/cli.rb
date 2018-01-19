@@ -325,11 +325,11 @@ module SpoilerFreeSoccerPlayByPlayReports
                 if Input.quit
                     State.set(State::QUIT)
                 elsif Input.next
-                    handle_next_blurb_input()
+                    self.handle_next_blurb_input
                 elsif Input.matches
-                    handle_matches_input(nil)
+                    self.handle_matches_input
                 elsif Input.teams
-                    handle_teams_input()
+                    self.handle_teams_input
                 end
             end
 
