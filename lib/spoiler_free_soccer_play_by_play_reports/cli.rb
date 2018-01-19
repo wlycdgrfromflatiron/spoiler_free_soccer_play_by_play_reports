@@ -189,7 +189,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 when State::TEAMS_LIST
                     self.teams_list_loop(self.teams_list)
                 when State::REPORT
-                    self.report_loop(self.report_title_and_byline)
+                    self.report_loop(self.report_title, self.report_byline)
                 end
             end
             self.quit
@@ -290,20 +290,23 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end
 
-        def self.report_title_and_byline
+        def self.report_title
             report = Report.selected
 
-            title_and_byline = 
-                "MATCH REPORT\n" \
-                "#{report.team1} VS. #{report.team2}\n" \
-                "\n" \
-                "Author: #{report.byline.author}\n" \
-                "Filed: #{report.byline.filed}\n" \
-                "#{report.byline.updated}\n"
+            "MATCH REPORT\n"
+            "#{report.team1} VS. #{report.team2}"
         end
 
-        def self.report_loop(title_and_byline)
-            Printer.print_output(title_and_byline, REPORT_CONTROLS)
+        def self.report_byline
+            report = Report.selected
+
+            "Author: #{report.byline.author}\n" \
+            "Filed: #{report.byline.filed}\n" \
+            "#{report.byline.updated}"
+        end
+
+        def self.report_loop(report_title, report_byline)
+            Printer.puts([report_title, report_byline, REPORT_CONTROLS])
 
             while !State.touched && !Report.done
                 input = STDIN.getch
