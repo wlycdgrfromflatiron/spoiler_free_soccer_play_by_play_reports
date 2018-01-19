@@ -44,27 +44,6 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
 
-        ##########################################
-        # CLI HELPER CLASS                       #
-        # Keeps track of which reports and lists #
-        # the user wants to see                  #
-        ##########################################
-        class Selection
-
-
-            ######################################
-            # Selection CLASS INSTANCE VARIABLES #
-            ######################################
-            class << self
-                attr_accessor :report, :report_list, :team
-            end
-
-            @report = nil
-            @report_list = nil
-            @team = nil
-        end
-
-
         #####################################################
         # CLI HELPER CLASS                                  #
         # Asks for, captures, parses, and stores user input #
@@ -183,6 +162,14 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
 
+        ##########################################
+        # CLI HELPER STRUCT                      #
+        # Keeps track of which reports and lists #
+        # the user wants to see                  #
+        ##########################################
+        Selection = Struct.new(:report, :report_list, :team)
+
+
         #######################
         # CLI CLASS CONSTANTS #
         #######################
@@ -211,7 +198,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         #######################
         # CLI CLASS VARIABLES #
         #######################
-        @@team_filter = nil
+        @@selected = Selection.new(nil, nil, nil)
 
 
 ###########################
