@@ -1,4 +1,6 @@
 module SpoilerFreeSoccerPlayByPlayReports
+
+
     class CLI
 
 
@@ -33,21 +35,10 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end
 
-
-
-        class Printer
-            def self.clear_screen
-                system "clear" or system "cls"
-            end
-
-            def self.puts(strings)
-                strings.each do |string|
-                    puts Formatter.indent(string)
-                    puts ""
-                end 
-            end
-        end
         
+        ###################
+        # CLASS CONSTANTS #
+        ###################
         DESCRIPTION = "" \
             "~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~\n" \
             "A service for reading live commentaries for completed soccer matches\n" \

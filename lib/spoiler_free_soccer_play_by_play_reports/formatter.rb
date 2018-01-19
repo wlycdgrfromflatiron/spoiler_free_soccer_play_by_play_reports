@@ -1,4 +1,6 @@
-module SpoilerFreeSoccerPlayByPlayReports 
+module SpoilerFreeSoccerPlayByPlayReports
+
+    
     class Formatter
 
 
