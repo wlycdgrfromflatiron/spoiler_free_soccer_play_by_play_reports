@@ -342,11 +342,6 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         # SECOND LEVEL
         # METHODS CALLED BY FIRST LEVEL METHODS
-        def self.get_input(text)
-            print "#{INDENT}#{text}"
-            gets.strip
-        end
-
         def self.handle_matches_input(team_name)
             if !Report.matches(@@team_filter = team_name).empty?
                 State.id = State::MATCHES_LIST
