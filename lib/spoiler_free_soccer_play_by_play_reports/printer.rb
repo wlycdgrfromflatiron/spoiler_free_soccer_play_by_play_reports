@@ -18,8 +18,9 @@ module SpoilerFreeSoccerPlayByPlayReports
             system "clear" or system "cls"
         end
 
-        def self.puts(strings)
-            strings.each do |string|
+        def self.puts(string_or_strings)
+            string_or_strings = [string_or_strings] if string_or_strings.is_a?(String)
+            string_or_strings.each do |string|
                 puts Formatter.indent(string)
                 puts ""
             end 

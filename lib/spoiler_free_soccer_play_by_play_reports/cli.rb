@@ -34,7 +34,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 @@id
             end
 
-            def self.id=(id)
+            def self.set(id)
                 @@id= id
                 @@touched = true
             end
@@ -133,29 +133,29 @@ module SpoilerFreeSoccerPlayByPlayReports
             Printer.clear_screen
             Printer.puts([DESCRIPTION, LOADING_MESSAGE])
             Report.list('all')
-            State.id = State::MAIN_MENU
-            main_loop()
+            State.set(State::MAIN_MENU)
+            self.main_loop
         end
 
         def self.main_loop
             while State::QUIT != State.id
-                wash()
+                self.wash
                 case State.id
                 when State::MAIN_MENU
-                    main_menu_loop()
+                    self.main_menu_loop
                 when State::MATCHES_LIST
-                    matches_list_loop(matches_list_header(), matches_list())
+                    self.matches_list_loop(self.matches_list_header, self.matches_list)
                 when State::TEAMS_LIST
-                    teams_list_loop(teams_list())
+                    self.teams_list_loop(self.teams_list)
                 when State::REPORT
-                    report_loop(report_title_and_byline())
+                    self.report_loop(self.report_title_and_byline)
                 end
             end
-            quit()
+            self.quit
         end
 
         def self.quit
-            Printer.puts([GOODBYE_MESSAGE])
+            Printer.puts(GOODBYE_MESSAGE)
         end
         # EXIT POINT
 #########################
