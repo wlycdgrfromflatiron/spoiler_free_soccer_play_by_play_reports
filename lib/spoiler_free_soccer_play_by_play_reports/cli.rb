@@ -276,6 +276,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.teams_list_loop(teams_list)
             while !State.touched
+                Printer.clear_screen
                 Printer.puts([TEAMS_LIST_HEADER, teams_list, Error.text])
 
                 Input.get("[team #] | (M)atches | (Q)uit: ")
@@ -306,6 +307,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.report_loop(report_title, report_byline)
+            Printer.clear_screen
             Printer.puts([report_title, report_byline, REPORT_CONTROLS])
 
             while !State.touched && !Report.done
