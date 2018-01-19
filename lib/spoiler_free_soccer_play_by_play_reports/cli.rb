@@ -96,9 +96,10 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
 
-        ####################
-        # CLI HELPER CLASS #
-        ####################
+        #####################################################
+        # CLI HELPER CLASS                                  #
+        # Asks for, captures, parses, and stores user input #
+        #####################################################
         class Input
 
 
