@@ -281,7 +281,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 Input.get("[team #] | (M)atches | (Q)uit: ")
 
                 if Input.quit
-                    State.id = State::QUIT
+                    State.set(State::QUIT)
                 elsif Input.integer
                     handle_teams_index_input(Input.value)
                 elsif Input.matches
