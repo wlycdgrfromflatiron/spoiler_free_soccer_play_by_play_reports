@@ -59,40 +59,16 @@ module SpoilerFreeSoccerPlayByPlayReports
         class Selection
 
 
-            #############################
-            # Selection CLASS VARIABLES #
-            #############################
-            @@report = nil
-            @@report_list = nil
-            @@team = nil
-
-
-            ##################################
-            # Selection PUBLIC CLASS METHODS #
-            ##################################
-            def self.report
-                @@report
-            end
-
-            def self.report=(report)
-                @@report = report
-            end
-
-            def self.report_list
-                @@report_list
-            end
-
-            def self.report_list=(report_list)
-                @@report_list = report_list
-            end
-
-            def self.team
-                @@team
+            ######################################
+            # Selection CLASS INSTANCE VARIABLES #
+            ######################################
+            class << self
+                attr_accessor :report, :report_list, :team
             end
             
-            def self.team=(team)
-                @@team = team
-            end
+            @report = nil
+            @report_list = nil
+            @team = nil
         end
 
 
