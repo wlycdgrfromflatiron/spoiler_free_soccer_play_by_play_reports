@@ -1,5 +1,10 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class CLI
+
+
+        ##################
+        # HELPER CLASSES #
+        ##################
         class State
             MAIN_MENU = 0
             MATCHES_LIST = 1
@@ -28,27 +33,41 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end
 
-        INDENT = "     "
-        DESCRIPTION = "\n" \
-            "#{INDENT}~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~\n" \
-            "#{INDENT}A service for reading live commentaries for completed soccer matches\n" \
-            "#{INDENT}in chronological order and without spoilers.\n" \
-            "#{INDENT}(data source: SPORTSMOLE.CO.UK)\n" \
-        LOADING_MESSAGE = "#{INDENT}Loading report list...\n"
-        INSTRUCTIONS = "\n" \
-            "#{INDENT}MAIN MENU CONTROLS:\n" \
-            "#{INDENT}(M)atches:        List all matches for which reports are available.\n" \
-            "#{INDENT}(T)eams:          List all teams for which reports are available.\n" \
-            "#{INDENT}[team name]:      List all available reports for [team name].\n" \
-            "#{INDENT}(Q)uit:           Quit the program.\n"
-        TEAMS_LIST_HEADER = "\n#{INDENT}TEAMS THAT HAVE REPORTS AVAILABLE\n"
-        REPORT_CONTROLS = "\n" \
-            "#{INDENT}Controls:\n" \
-            "#{INDENT}[Spacebar]:      Show next report item.\n" \
-            "#{INDENT}m:               List all available match reports.\n" \
-            "#{INDENT}t:               List all teams for which reports are available.\n" \
-            "#{INDENT}q:               Quit the program.\n"
-        GOODBYE_MESSAGE = "\n#{INDENT}Thanks for using this app. Goodbye!\n"        
+
+
+        class Printer
+            def self.clear_screen
+                system "clear" or system "cls"
+            end
+
+            def self.puts(strings)
+                strings.each do |string|
+                    puts Formatter.indent(string)
+                    puts ""
+                end 
+            end
+        end
+        
+        DESCRIPTION = "" \
+            "~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~\n" \
+            "A service for reading live commentaries for completed soccer matches\n" \
+            "in chronological order and without spoilers.\n" \
+            "(data source: SPORTSMOLE.CO.UK)"
+        LOADING_MESSAGE = "Loading report list..."
+        INSTRUCTIONS = "" \
+            "MAIN MENU CONTROLS:\n" \
+            "(M)atches:        List all matches for which reports are available.\n" \
+            "(T)eams:          List all teams for which reports are available.\n" \
+            "[team name]:      List all available reports for [team name].\n" \
+            "(Q)uit:           Quit the program."
+        TEAMS_LIST_HEADER = "TEAMS THAT HAVE REPORTS AVAILABLE"
+        REPORT_CONTROLS = "" \
+            "Controls:\n" \
+            "[Spacebar]:      Show next report item.\n" \
+            "m:               List all available match reports.\n" \
+            "t:               List all teams for which reports are available.\n" \
+            "q:               Quit the program."
+        GOODBYE_MESSAGE = "Thanks for using this app. Goodbye!"
 
         REGEX_MATCHES = /^m(atches)?\s*?/
         REGEX_NEXT_BLURB = / /
@@ -56,8 +75,8 @@ module SpoilerFreeSoccerPlayByPlayReports
         REGEX_TEAMS = /^t(eams)?\s*?/
 
         @@error_message = ""
-        @@input_prompt = ""
-        @@report_index
+        @@report_index = nil
+        @@selected_team = nil
 
 
 #######################
@@ -66,9 +85,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         # ENTRY POINT
         def self.start
             Printer.clear_screen
-
-            puts DESCRIPTION
-            puts LOADING_MESSAGE 
+            Printer.puts([DESCRIPTION, LOADING_MESSAGE])
 
             Report.list('all')
 
@@ -95,7 +112,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.quit
-            puts GOODBYE_MESSAGE
+            Printer.puts([GOODBYE_MESSAGE])
         end
         # EXIT POINT
 #####################
@@ -112,7 +129,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.main_menu_loop
             while !State.touched
-                Printer.puts_output(DESCRIPTION, INSTRUCTIONS, @@error_message)
+                Printer.puts([DESCRIPTION, INSTRUCTIONS, @@error_message])
 
                 input = get_input "(M)atches | (T)eams | [team name] | (Q)uit: "
 
@@ -135,7 +152,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.matches_list
-            Printer.columnize(
+            Formatter.columnize(
                 Report.matches(@@selected_team).collect.with_index(1) do |match, index|
                     "#{index}. #{match.team1} vs. #{match.team2}"
                 end

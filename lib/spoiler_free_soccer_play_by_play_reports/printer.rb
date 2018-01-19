@@ -9,9 +9,6 @@ class Printer
     ########################
     # PUBLIC CLASS METHODS #
     ########################
-    def self.clear_screen
-        system "clear" or system "cls"
-    end
 
     def self.columnize(strings, column_width = COLUMN_WIDTH)
         string_count = strings.size
@@ -38,18 +35,6 @@ class Printer
             puts_string(last_paragraph)
         end
     end
-
-    def self.puts_output(header, body, error_message)
-        clear_screen()
-        puts ""
-        puts header
-        puts ""
-        puts body
-        puts ""
-        puts error_message.prepend(INDENT)
-        puts ""
-    end
-    
 
     #########################
     # PRIVATE CLASS METHODS #
