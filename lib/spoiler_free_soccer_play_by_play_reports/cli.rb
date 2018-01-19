@@ -4,9 +4,11 @@ module SpoilerFreeSoccerPlayByPlayReports
     class CLI
 
 
-        ####################
-        # CLI HELPER CLASS #
-        ####################
+        #########################################
+        # CLI HELPER CLASS                      #
+        # Keeps track of which screen we are on #
+        # and whether we need to change it      #
+        #########################################
         class State
 
 
@@ -45,6 +47,51 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             def self.touched=(value)
                 @@touched = value
+            end
+        end
+
+
+        ##########################################
+        # CLI HELPER CLASS                       #
+        # Keeps track of which reports and lists #
+        # the user wants to see                  #
+        ##########################################
+        class Selection
+
+
+            #############################
+            # Selection CLASS VARIABLES #
+            #############################
+            @@report = nil
+            @@report_list = nil
+            @@team = nil
+
+
+            ##################################
+            # Selection PUBLIC CLASS METHODS #
+            ##################################
+            def self.report
+                @@report
+            end
+
+            def self.report=(report)
+                @@report = report
+            end
+
+            def self.report_list
+                @@report_list
+            end
+
+            def self.report_list=(report_list)
+                @@report_list = report_list
+            end
+
+            def self.team
+                @@team
+            end
+            
+            def self.team=(team)
+                @@team = team
             end
         end
 
