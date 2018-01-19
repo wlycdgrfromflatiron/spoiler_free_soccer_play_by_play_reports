@@ -15,7 +15,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         # PUBLIC CLASS METHODS #
         ########################
         def self.columnize(string_array, column_width = COLUMN_WIDTH)
-            odd_end = string_array.size.even? nil : string_array.pop
+            odd_end = string_array.size.even? ? nil : string_array.pop
 
             columnized_string = ""
             for i in 0...half_way = string_array.size / 2
