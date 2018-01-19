@@ -74,7 +74,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             # Input PUBLIC CLASS METHODS #
             ##############################
             def self.get(prompt)
-                print Formatter.indent(prompt)
+                Printer.print(prompt)
                 @@value = gets.strip
             end
 
@@ -92,16 +92,31 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
 
+        ####################
+        # CLI HELPER CLASS #
+        ####################
         class Error
 
+
+            #########################
+            # Error CLASS CONSTANTS #
+            #########################
             INVALID_LIST_INDEX = "Invalid list index - please try again."
             NO_MATCH_REPORTS_FOR_TEAM = "No match reports are available for that team :(\n" \
                 "...However, the parser is not the brightest.\n" \
                 "You may want to double-check your spelling and/or try (T)eams just in case."
             NO_MATCH_REPORTS = "No match reports are currently available :("
 
+
+            #########################
+            # Error CLASS VARIABLES #
+            #########################
             @@text = nil
 
+
+            ##############################
+            # Error PUBLIC CLASS METHODS #
+            ##############################
             def self.text
                 @@text.prepend("ERROR: ")
             end
