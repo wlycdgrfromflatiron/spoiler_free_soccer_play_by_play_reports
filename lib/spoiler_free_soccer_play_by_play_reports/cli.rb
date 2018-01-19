@@ -63,6 +63,11 @@ module SpoilerFreeSoccerPlayByPlayReports
             REGEX_QUIT = /^q(uit)?\s*$/
             REGEX_TEAMS = /^t(eams)?\s*?/
 
+            DIVIDER = " | "
+            MATCHES = "(M)atches"
+            QUIT = "(Q)uit"
+            TEAMS = "(T)eams"
+            TEAM_NAME = "[team name]"
 
             #########################
             # Input CLASS VARIABLES #
@@ -73,8 +78,8 @@ module SpoilerFreeSoccerPlayByPlayReports
             ##############################
             # Input PUBLIC CLASS METHODS #
             ##############################
-            def self.get(prompt)
-                Printer.print(prompt)
+            def self.get(options)
+                Printer.print(prompt(options))
                 @@value = gets.strip
             end
 
@@ -106,6 +111,18 @@ module SpoilerFreeSoccerPlayByPlayReports
             def self.value
                 self.integer ? @@value.to_i : @@value
             end
+
+
+            ###############################
+            # Input PRIVATE CLASS METHODS #
+            ###############################
+            def self.prompt(options)
+                prompt = ""
+                options.each {|option| prompt << option << DIVIDER}
+                prompt << QUIT
+            end
+
+            private_class_method :prompt
         end
 
 
@@ -227,7 +244,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 Printer.clear_screen
                 Printer.puts([DESCRIPTION, INSTRUCTIONS, Error.text])
 
-                Input.get("(M)atches | (T)eams | [team name] | (Q)uit: ")
+                Input.get([Input::MATCHES, Input::TEAMS, Input::TEAM_NAME])
 
                 if Input.quit
                     State.set(State::QUIT)
