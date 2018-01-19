@@ -278,14 +278,14 @@ module SpoilerFreeSoccerPlayByPlayReports
             while !State.touched
                 Printer.puts([TEAMS_LIST_HEADER, teams_list, Error.text])
 
-                input = get_input "[team #] | (M)atches | (Q)uit: "
+                Input.get("[team #] | (M)atches | (Q)uit: ")
 
-                if input.match(REGEX_QUIT)
+                if Input.quit
                     State.id = State::QUIT
-                elsif input.to_i > 0
-                    handle_teams_index_input(input.to_i)
-                elsif input.match(REGEX_MATCHES)
-                    handle_matches_input(nil)
+                elsif Input.integer
+                    handle_teams_index_input(Input.value)
+                elsif Input.matches
+                    handle_matches_input
                 end
             end
         end
