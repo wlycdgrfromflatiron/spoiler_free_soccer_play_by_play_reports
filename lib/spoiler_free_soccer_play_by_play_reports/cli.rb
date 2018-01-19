@@ -4,9 +4,9 @@ module SpoilerFreeSoccerPlayByPlayReports
     class CLI
 
 
-        ######################
-        # CLI HELPER CLASSES #
-        ######################
+        ####################
+        # CLI HELPER CLASS #
+        ####################
         class State
 
 
@@ -49,14 +49,30 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
 
+        ####################
+        # CLI HELPER CLASS #
+        ####################
         class Input
+
+
+            #########################
+            # Input CLASS CONSTANTS #
+            #########################
             REGEX_MATCHES = /^m(atches)?\s*?/
             REGEX_NEXT_BLURB = / /
             REGEX_QUIT = /^q(uit)?\s*$/
             REGEX_TEAMS = /^t(eams)?\s*?/
 
+
+            #########################
+            # Input CLASS VARIABLES #
+            #########################
             @@value = nil
 
+
+            ##############################
+            # Input PUBLIC CLASS METHODS #
+            ##############################
             def self.get(prompt)
                 print Formatter.indent(prompt)
                 @@value = gets.strip
