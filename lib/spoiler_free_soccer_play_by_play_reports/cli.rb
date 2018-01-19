@@ -374,12 +374,8 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.handle_next_blurb_input
             blurb = Report.next_blurb
-
-            puts ""
-            puts Formatter.indent("#{blurb.label}")
-            blurb.paragraphs.each do |paragraph|
-                puts Formatter.indent(paragraph)
-            end 
+            Printer.puts(blurb.label)
+            Printer.puts(blurb.paragraphs) 
         end
 
         def self.handle_report_index_input(input_number)
