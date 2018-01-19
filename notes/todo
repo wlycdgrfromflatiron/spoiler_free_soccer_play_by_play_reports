@@ -1,6 +1,9 @@
 __________________________________
 TODO TODO TODO TODO TODO TODO TODO
 
+* DESIGN: store currently selected report in CLI, not in Report. It doesn't make sense for the Report data model to know so much
+about the specific context it's being plugged into (the CLI)
+
 * UI: print each paragraph with each line indented
 * UI: add appropriate line breaks
 
@@ -13,7 +16,6 @@ TODO TODO TODO TODO TODO TODO TODO
 * UI: upcase the OTHER teams in the team report list
 
 * REFACTOR: Report.preamble and Report.conclusion; they should not get involved in building output strings
-* REFACTOR: add a decorator that accepts an array of string to puts out and puts an empty line before the first and after the last
 
 __________________________________
 DONE DONE DONE DONE DONE DONE DONE
@@ -51,6 +53,8 @@ DONE DONE DONE DONE DONE DONE DONE
 * DONE let user know when a team name has not been found
 
 * DONE add correct preamble code
+
+* DONE REFACTOR: add a decorator that accepts an array of string to puts out and puts an empty line before the first and after the last
 
 * DONE UI: clear terminal at launch
 * DONE UI: print app title at launch, before "loading" message
