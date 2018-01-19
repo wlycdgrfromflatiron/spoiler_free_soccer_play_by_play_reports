@@ -59,7 +59,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             # Input CLASS CONSTANTS #
             #########################
             REGEX_MATCHES = /^m(atches)?\s*?/
-            REGEX_NEXT_BLURB = / /
+            REGEX_NEXT = / /
             REGEX_QUIT = /^q(uit)?\s*$/
             REGEX_TEAMS = /^t(eams)?\s*?/
 
@@ -87,12 +87,16 @@ module SpoilerFreeSoccerPlayByPlayReports
                 @@value.to_i > 0
             end
 
-            def self.quit
-                @@value.match(REGEX_QUIT)
-            end
-
             def self.matches
                 @@value.match(REGEX_MATCHES)
+            end
+
+            def self.next
+                @@value.match(REGEX_NEXT)
+            end
+
+            def self.quit
+                @@value.match(REGEX_QUIT)
             end
 
             def self.teams
@@ -318,13 +322,13 @@ module SpoilerFreeSoccerPlayByPlayReports
             while !State.touched && !Report.done
                 Input.get_unbuffered
 
-                if input.match(REGEX_QUIT)
+                if Input.quit
                     State.id = State::QUIT
-                elsif ' ' == input
+                elsif Input.next
                     handle_next_blurb_input()
-                elsif input.match(REGEX_MATCHES)
+                elsif Input.matches
                     handle_matches_input(nil)
-                elsif input.match(REGEX_TEAMS)
+                elsif Input.teams
                     handle_teams_input()
                 end
             end
