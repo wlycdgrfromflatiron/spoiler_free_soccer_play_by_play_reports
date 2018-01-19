@@ -323,7 +323,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 Input.get_unbuffered
 
                 if Input.quit
-                    State.id = State::QUIT
+                    State.set(State::QUIT)
                 elsif Input.next
                     handle_next_blurb_input()
                 elsif Input.matches
