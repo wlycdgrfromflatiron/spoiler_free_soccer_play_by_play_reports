@@ -267,7 +267,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.teams_list
-            Printer.columnize(
+            Formatter.columnize(
                 Report.teams.collect.with_index(1) do |team_name, index|
                     "#{index}. #{team_name}"
                 end
