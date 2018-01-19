@@ -26,7 +26,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.indent(string)
-            return if !string
+            return if !string.is_a?(String)
 
             string.prepend(INDENT) # STUB, need to account for multi-line strings
         end
