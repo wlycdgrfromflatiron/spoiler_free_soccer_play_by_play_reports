@@ -334,8 +334,8 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
 
             if Report.done
-                Printer.indented_puts(Report.conclusion)
-                STDIN.getch
+                Printer.puts(Report.conclusion)
+                Input.get_unbuffered
             end
         end
 
