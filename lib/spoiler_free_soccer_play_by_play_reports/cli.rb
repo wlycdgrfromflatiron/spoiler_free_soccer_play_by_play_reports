@@ -270,6 +270,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                     "#{index}. #{match.team1} vs. #{match.team2}"
                 end
             )
+        end
 
         def self.matches_list_loop(matches_list_header, matches_list)
             while !State.touched
