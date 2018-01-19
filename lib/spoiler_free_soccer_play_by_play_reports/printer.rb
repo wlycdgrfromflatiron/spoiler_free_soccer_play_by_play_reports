@@ -16,6 +16,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         ########################
         def self.clear_screen
             system "clear" or system "cls"
+            STDOUT.puts ""
         end
 
         def self.print(string)
