@@ -137,6 +137,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             #########################
             # Error CLASS CONSTANTS #
             #########################
+            LABEL = "ERROR: "
             INVALID_LIST_INDEX = "Invalid list index - please try again."
             NO_MATCH_REPORTS_FOR_TEAM = "No match reports are available for that team :(\n" \
                 "...However, the parser is not the brightest.\n" \
@@ -154,7 +155,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             # Error PUBLIC CLASS METHODS #
             ##############################
             def self.text
-                @@text ? @@text.prepend("ERROR: ") : @@text
+                @@text ? LABEL + @@text : @@text
             end
 
             def self.code=(code)
@@ -287,11 +288,6 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 if Input.quit
                     State.set(State::QUIT)
-
-                elsif 'r' == Input.value 
-                    State.set(State::MAIN_MENU)
-
-                    
                 elsif Input.integer
                     self.handle_report_index_input(Input.value)
                 elsif Input.matches
