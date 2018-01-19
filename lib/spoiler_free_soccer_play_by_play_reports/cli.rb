@@ -78,6 +78,10 @@ module SpoilerFreeSoccerPlayByPlayReports
                 @@value = gets.strip
             end
 
+            def self.integer
+                @@value.to_i > 0
+            end
+
             def self.quit
                 @@value.match(REGEX_QUIT)
             end
@@ -88,6 +92,10 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             def self.teams
                 @@value.match(REGEX_TEAMS)
+            end
+
+            def self.value
+                self.integer ? @@value.to_i : @@value
             end
         end
 
@@ -207,6 +215,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.main_menu_loop
             while !State.touched
+                Printer.clear_screen
                 Printer.puts([DESCRIPTION, INSTRUCTIONS, Error.text])
 
                 Input.get("(M)atches | (T)eams | [team name] | (Q)uit: ")
@@ -238,20 +247,21 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.matches_list_loop(matches_list_header, matches_list)
             while !State.touched
-                Printer.puts_output(matches_list_header, matches_list, Error.text)
+                Printer.clear_screen
+                Printer.puts([matches_list_header, matches_list, Error.text])
 
-                input = get_input("[match #] | (M)atches | (T)eams | [team name] | (Q)uit: ")
+                Input.get("[match #] | (M)atches | (T)eams | [team name] | (Q)uit: ")
 
-                if input.match(REGEX_QUIT)
-                    State.id = State::QUIT
-                elsif input.to_i > 0
-                    handle_report_index_input(input.to_i)
-                elsif input.match(REGEX_MATCHES)
-                    handle_matches_input(nil)
-                elsif input.match(REGEX_TEAMS)
-                    handle_teams_input()
+                if Input.quit
+                    State.set(State::QUIT)
+                elsif Input.integer
+                    self.handle_report_index_input(Input.value)
+                elsif Input.matches
+                    self.handle_matches_input
+                elsif Input.teams
+                    self.handle_teams_input
                 else
-                    handle_matches_input(input)
+                    self.handle_matches_input(Input.value)
                 end
             end
         end
