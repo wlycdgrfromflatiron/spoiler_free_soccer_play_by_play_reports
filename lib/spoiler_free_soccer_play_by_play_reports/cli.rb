@@ -153,7 +153,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             # Error PUBLIC CLASS METHODS #
             ##############################
             def self.text
-                @@text.prepend("ERROR: ")
+                @@text ? @@text.prepend("ERROR: ") : @@text
             end
 
             def self.code=(code)
