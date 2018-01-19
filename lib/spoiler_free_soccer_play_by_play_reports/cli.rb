@@ -294,12 +294,12 @@ module SpoilerFreeSoccerPlayByPlayReports
             report = Report.selected
 
             title_and_byline = 
-                "#{INDENT}MATCH REPORT\n" \
-                "#{INDENT}#{report.team1} VS. #{report.team2}\n" \
+                "MATCH REPORT\n" \
+                "#{report.team1} VS. #{report.team2}\n" \
                 "\n" \
-                "#{INDENT}Author: #{report.byline.author}\n" \
-                "#{INDENT}Filed: #{report.byline.filed}\n" \
-                "#{INDENT}#{report.byline.updated}\n"
+                "Author: #{report.byline.author}\n" \
+                "Filed: #{report.byline.filed}\n" \
+                "#{report.byline.updated}\n"
         end
 
         def self.report_loop(title_and_byline)
