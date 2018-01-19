@@ -78,7 +78,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 @@value = gets.strip
             end
 
-            def self.get_unbuffered(prompt=nil)
+            def self.get_unbuffered(prompt = nil)
                 Printer.print(prompt) if prompt
                 @@value = STDIN.getch
             end
