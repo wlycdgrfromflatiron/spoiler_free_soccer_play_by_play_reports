@@ -15,11 +15,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             #########################
             # State CLASS CONSTANTS #
             #########################
-            MAIN_MENU = 0
-            MATCHES_LIST = 1
-            TEAMS_LIST = 2
-            REPORT = 3
-            QUIT = 4
+            MAIN_MENU, REPORT, REPORTS_LIST, TEAMS_LIST = 0, 1, 2, 3
 
 
             ##################################
