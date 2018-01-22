@@ -43,8 +43,9 @@ module SpoilerFreeSoccerPlayByPlayReports
             REGEX_QUIT = /^q(uit)?$/
             REGEX_TEAMS = /^t(eams)?$/
 
-            SEPARATOR = " | "
+            QUIT = "(Q)uit"
             REPORTS = "(M)atches"
+            SEPARATOR = " | "
             TEAM_NAME = "[team name]"
             TEAMS = "(T)eams"
             TERMINATOR = ": "
