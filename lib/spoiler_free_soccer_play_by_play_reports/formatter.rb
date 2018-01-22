@@ -1,20 +1,10 @@
 module SpoilerFreeSoccerPlayByPlayReports
-
-    
     class Formatter
-
-
-        ###################
-        # CLASS CONSTANTS #
-        ###################
         COLUMN_WIDTH = 50
         INDENT = "     "
         MINIMUM_COLUMNN_GAP = 2
 
-
-        ########################
-        # PUBLIC CLASS METHODS #
-        ########################
+        # PUBLIC CLASS METHODS 
         def self.columnize(string_array, column_width = COLUMN_WIDTH)
             column_width = validate_column_width(string_array, column_width)
 
@@ -31,14 +21,12 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.indent(string)
             return if !string.is_a?(String)
 
-            indented_string = INDENT + string # string.prepend modifies the string itself rather than returning a new string
-            indented_string.gsub(/(\n)/, "\\1#{INDENT}") # STUB, need to account for strings that are not pre-formatted into lines
+            indented_string = INDENT + string
+            indented_string.gsub(/(\n)/, "\\1#{INDENT}")
         end
 
-
-        #########################
-        # PRIVATE CLASS METHODS #
-        #########################
+    
+        # PRIVATE CLASS METHODS
         def self.row(column_width, left_string, right_string)
             row = ""
             row << left_string
@@ -59,9 +47,5 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         private_class_method :row, :validate_column_width
-
-
     end # class Formatter
-
-
 end # module SpoilerFreeSoccerPlayByPlayReports

@@ -3,12 +3,12 @@ module SpoilerFreeSoccerPlayByPlayReports
         class Details
             class Blurb
                 attr_reader :label, :paragraphs
-        
+
                 def initialize(hash)
                     @label = hash[:label] || "[UNTITLED]"
                     @paragraphs = hash[:paragraphs] || ["[No text]"]
                 end
-            end
+            end # class Blurb
 
             class Byline
                 attr_accessor :author, :filed, :updated
@@ -18,7 +18,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                     @filed = preamble_hash[:filed] || "FILING DATE UNKNOWN"
                     @updated = preamble_hash[:updated] || "LAST UPDATED DATE UNKNOWN"
                 end
-            end
+            end # class Byline
 
             attr_accessor :blurbs, :byline
 
@@ -29,27 +29,32 @@ module SpoilerFreeSoccerPlayByPlayReports
                 end
                 @byline = Byline.new(details_hash[:byline])
             end
-        end 
+        end # class Details
 
         attr_accessor :details, :details_url, :team1, :team2
 
         @@all = []
 
+        # CONSTRUCTOR & INSTANCE METHODS
         def initialize(report_hash)
             @team1 = report_hash[:team1]
             @team2 = report_hash[:team2]
             @details_url = report_hash[:details_url]
-
             @details = nil
         end
 
+        def blurb(index)
+            blurb = nil
+            if index < @details.blurbs.length
+                blurb = @details.blurbs[@blurb_index]
+            end
+        end
+
+        # CLASS METHODS
         def self.all
             @@all
         end
 
-        # We use our Scraper class here since we are loading the data from the website
-        # Separating Report data model from Scraper gives us the flexibility to also do things like
-        # Report.load_abstracts_from_database, ....from_API, etc, in the future
         def self.load_abstracts_from_website
             Scraper.report_list.each {|report_hash| self.all < Report.new(report_hash)}
         end
@@ -62,6 +67,11 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end
 
+        def self.retrieve_detailed_report_from_website(report)
+            report.details = Details.new(Scraper.report_details(report.details_url)) if !report.details
+            report
+        end
+
         def self.retrieve_teams
             teams = []
             self.all.each do |report|
@@ -71,17 +81,5 @@ module SpoilerFreeSoccerPlayByPlayReports
             teams.uniq!
             teams.sort!
         end
-
-        def self.retrieve_detailed_report_from_website(report)
-            report.details = Details.new(Scraper.report_details(report.details_url)) if !report.details
-            report
-        end
-
-        def blurb(index)
-            blurb = nil
-            if index < @details.blurbs.length
-                blurb = @details.blurbs[@blurb_index]
-            end
-        end
-    end
-end
+    end # class Report
+end # module SpoilerFreeSoccerPlayByPlayReports

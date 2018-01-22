@@ -1,12 +1,5 @@
 module SpoilerFreeSoccerPlayByPlayReports
-
-
     class Printer
-
-
-        ########################
-        # PUBLIC CLASS METHODS #
-        ########################
         def self.clear_screen
             system "clear" or system "cls"
             STDOUT.puts ""
@@ -23,9 +16,5 @@ module SpoilerFreeSoccerPlayByPlayReports
                 STDOUT.puts ""
             end 
         end
-
-
     end # class Printer
-
-
 end # module SpoilerFreeSoccerPlayByPlayReports
