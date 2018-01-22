@@ -145,14 +145,14 @@ class CLI
             elsif Input.positive_integer? && State::TEAMS_LIST == State.id
                 Input.valid_index?(Selection.team_names) ?
                     self.load_report_abstracts(Selection.team_names[Input.as_index]) :
-                    Error.code = INVALID_INDEX
+                    Error.code = Error::INVALID_INDEX
             
             elsif Input.positive_integer? && State::MATCHES_LIST == state.id
                 if Input.valid_index?(Selection.report_abstracts)
                     self.load_report(Selection.report_abstracts[Input.as_index])
                     self.report_loop
                 else
-                    Error.code = INVALID_INDEX
+                    Error.code = Error::INVALID_INDEX
                 end
 
             else
@@ -165,7 +165,7 @@ class CLI
         Selection.matches_list = Report.matches(team_name)
 
         if Selection.matches_list.empty?
-            Error.code = team_name ? NO_REPORTS_FOR TEAM : NO_REPORTS 
+            Error.code = team_name ? Error::NO_REPORTS_FOR TEAM : Error::NO_REPORTS 
         else
             Output.header = team_name ? 
                 Output::TEAM_REPORTS_HEADER + team_name :
