@@ -1,408 +1,244 @@
-module SpoilerFreeSoccerPlayByPlayReports
+class CLI
+    class State
+        MAIN_MENU, TEAMS_LIST, REPORT, MATCHES_LIST = 0, 1, 2, 3
 
-
-    class CLI
-
-
-        #########################################
-        # CLI HELPER CLASS                      #
-        # Keeps track of which screen we are on #
-        # and whether we need to change it      #
-        #########################################
-        class State
-
-
-            #########################
-            # State CLASS CONSTANTS #
-            #########################
-            MAIN_MENU, REPORT, REPORTS_LIST, TEAMS_LIST = 0, 1, 2, 3
-
-
-            ##################################
-            # State CLASS INSTANCE VARIABLES #
-            ##################################
-            class << self
-                attr_accessor :touched
-                attr_reader :id
-            end
-
-            @id = MAIN_MENU
-            @touched = false 
-
-
-            ##############################
-            # State PUBLIC CLASS METHODS #
-            ##############################
-            def self.set(id)
-                @id = id
-                @touched = true
-            end
+        class << self
+            attr_accessor :id
         end
+    end 
 
-
-        #####################################################
-        # CLI HELPER CLASS                                  #
-        # Asks for, captures, parses, and stores user input #
-        #####################################################
-        class Input
-
-
-            #########################
-            # Input CLASS CONSTANTS #
-            #########################
-            REGEX_MATCHES = /^m(atches)?\s*?/
-            REGEX_NEXT = / /
-            REGEX_QUIT = /^q(uit)?\s*$/
-            REGEX_TEAMS = /^t(eams)?\s*?/
-
-            DIVIDER = " | "
-            MATCH_INDEX = "[match #]"
-            MATCHES = "(M)atches"
-            QUIT = "(Q)uit"
-            TEAM_INDEX = "[team #]"
-            TEAM_NAME = "[team name]"
-            TEAMS = "(T)eams"
-            TERMINAL = " : "
-
-
-            #########################
-            # Input CLASS VARIABLES #
-            #########################
-            @@value = nil
-
-
-            ##############################
-            # Input PUBLIC CLASS METHODS #
-            ##############################
-            def self.get(options)
-                Printer.print(prompt(options))
-                @@value = gets.strip
-            end
-
-            def self.get_unbuffered(prompt = nil)
-                Printer.print(prompt) if prompt
-                @@value = STDIN.getch
-            end
-
-            def self.integer
-                @@value.to_i > 0
-            end
-
-            def self.matches
-                @@value.match(REGEX_MATCHES)
-            end
-
-            def self.next
-                @@value.match(REGEX_NEXT)
-            end
-
-            def self.quit
-                @@value.match(REGEX_QUIT)
-            end
-
-            def self.teams
-                @@value.match(REGEX_TEAMS)
-            end
-
-            def self.value
-                self.integer ? @@value.to_i : @@value
-            end
-
-
-            ###############################
-            # Input PRIVATE CLASS METHODS #
-            ###############################
-            def self.prompt(options)
-                prompt = ""
-                options.each {|option| prompt << option << DIVIDER}
-                prompt << QUIT << TERMINAL
-            end
-
-            private_class_method :prompt
-        end
-
-
-        ########################################
-        # CLI HELPER CLASS                     #
-        # Keeps error messages organized and   #
-        # keeps track of current error, if any #
-        ########################################
-        class Error
-
-
-            #########################
-            # Error CLASS CONSTANTS #
-            #########################
-            LABEL = "ERROR: "
-            INVALID_LIST_INDEX = "Invalid list index - please try again."
-            NO_MATCH_REPORTS_FOR_TEAM = "No match reports are available for that team :(\n" \
-                "...However, the parser is not the brightest.\n" \
-                "You may want to double-check your spelling and/or try (T)eams just in case."
-            NO_MATCH_REPORTS = "No match reports are currently available :("
-
-
-            #########################
-            # Error CLASS VARIABLES #
-            #########################
-            @@text = nil
-
-
-            ##############################
-            # Error PUBLIC CLASS METHODS #
-            ##############################
-            def self.text
-                @@text ? LABEL + @@text : @@text
-            end
-
-            def self.code=(code)
-                @@text = code
-            end
-        end
-
-
-        #######################
-        # CLI CLASS CONSTANTS #
-        #######################
+    class Output
         DESCRIPTION = "" \
             "~ SPOILER-FREE PLAY-BY-PLAY SOCCER MATCH REPORTS ~\n" \
             "A service for reading live commentaries for completed soccer matches\n" \
             "in chronological order and without spoilers.\n" \
             "(data source: SPORTSMOLE.CO.UK)"
-        LOADING_MESSAGE = "Loading report list..."
-        INSTRUCTIONS = "" \
+        LOADING_MESSAGE = "Loading list of available reports..."
+        MAIN_MENU_CONTROLS = "" \
             "MAIN MENU CONTROLS:\n" \
             "(M)atches:        List all matches for which reports are available.\n" \
             "(T)eams:          List all teams for which reports are available.\n" \
             "[team name]:      List all available reports for [team name].\n" \
             "(Q)uit:           Quit the program."
-        TEAMS_LIST_HEADER = "TEAMS THAT HAVE REPORTS AVAILABLE"
+        TEAM_REPORTS_HEADER = "MATCH REPORTS FOR "
+        ALL_REPORTS_HEADER = "ALL AVAILABLE MATCH REPORTS"
         REPORT_CONTROLS = "" \
             "Controls:\n" \
-            "[Spacebar]:      Show next report item.\n" \
+            "Spacebar, n:     Show next report item.\n" \
             "m:               List all available match reports.\n" \
             "t:               List all teams for which reports are available.\n" \
             "q:               Quit the program."
-        GOODBYE_MESSAGE = "Thanks for using this app. Goodbye!"
-
-
-        #######################
-        # CLI CLASS VARIABLES #
-        #######################
-        @@selected = {
-            report_list: nil,
-            report: nil,
-            team: nil
-        }
-
-
-###########################
-# CLI MAIN SEQUENCE START #
-###########################
-        # ENTRY POINT
-        def self.start
-            Printer.clear_screen
-            Printer.puts([DESCRIPTION, LOADING_MESSAGE])
-            Report.list('all')
-            State.set(State::MAIN_MENU)
-            self.main_loop
-        end
-
-        def self.main_loop
-            while State::QUIT != State.id
-                self.wash
-                case State.id
-                when State::MAIN_MENU
-                    self.main_menu_loop
-                when State::MATCHES_LIST
-                    self.matches_list_loop(self.matches_list_header, self.matches_list)
-                when State::TEAMS_LIST
-                    self.teams_list_loop(self.teams_list)
-                when State::REPORT
-                    self.report_loop(self.report_title, self.report_byline)
-                end
-            end
-            self.quit
-        end
-
-        def self.quit
-            Printer.puts(GOODBYE_MESSAGE)
-        end
-        # EXIT POINT
-#########################
-# CLI MAIN SEQUENCE END #
-#########################
-
+        GOODBYE = "Thanks for using this app. Goodbye!"
         
-        # #######################################################
-        # CLI PUBLIC CLASS METHODS                              #
-        # FIRST LEVEL: METHODS CALLED DIRECTLY BY MAIN SEQUENCE #
-        #########################################################
-        def self.wash
-            State.touched = false
-            Error.code = nil
+        class << self
+            attr_accessor :header, :body
+        end
+    end
+
+    class Input
+        REGEX_MATCHES = /^m(atches)?\s*?/
+        REGEX_NEXT_BLURB = /^[ n]$/
+        REGEX_QUIT = /^q(uit)?\s*$/
+        REGEX_TEAMS = /^t(eams)?\s*?/
+
+        SEPARATOR = " | "
+        MATCHES = "(M)atches"
+        TEAM_NAME = "[team name]"
+        TEAMS = "(T)eams"
+        TERMINATOR = ": "
+
+        class << self
+            attr_reader :value, :prompt
         end
 
-        def self.main_menu_loop
-            while !State.touched
-                Printer.clear_screen
-                Printer.puts([DESCRIPTION, INSTRUCTIONS, Error.text])
+        def self.as_index
+            @value.to_i - 1
+        end
 
-                Input.get([Input::MATCHES, Input::TEAMS, Input::TEAM_NAME])
+        def self.as_string
+            @value
+        end
 
-                if Input.quit
-                    State.set(State::QUIT)
-                elsif Input.matches
-                    self.handle_matches_input
-                elsif Input.teams
-                    self.handle_teams_input
+        def self.get_buffered
+            Printer.print(@prompt)
+            @value = gets.strip.downcase
+        end
+
+        def self.get_unbuffered
+            Printer.print(@prompt)
+            @value = STDIN.getch.downcase
+        end
+
+        def self.positive_integer?
+            @value.to_i > 0
+        end
+
+        def self.prompt=(options)
+            @prompt = ""
+            options.each do {|option| @prompt << option << SEPARATOR}
+            @prompt << QUIT << TERMINATOR
+        end
+
+        def self.match(regex)
+            @value.match(regex)
+        end
+
+        def self.valid_index?(list)
+            self.positive_integer? && @value.to_i <= list.size
+        end
+    end
+
+    class Error
+        INVALID_INDEX = "Invalid index - please try again."
+        NO_REPORTS_FOR_TEAM = "No match reports are available for that team :("
+        NO_REPORTS = "No match reports are available"
+
+        @@text = nil
+
+        def self.text
+            @@text
+        end
+
+        def self.code=(code)
+            @@text = code
+        end
+    end
+
+    class Selection
+        class << self
+            attr_accessor :report_abstracts, :report, :team_name, :team_names
+        end
+    end
+
+    def self.start
+        Printer.clear_screen
+        Printer.puts(Output::DESCRIPTION)
+        Printer.puts(Output::LOADING_MESSAGE)
+        Report.load_abstracts
+
+        self.load_main_menu
+        self.menus_loop
+
+        Printer.puts(Output::GOODBYE)
+    end
+
+    def self.load_main_menu
+        Output.body = Output::DESCRIPTION
+        Output.header = Output::MAIN_MENU_CONTROLS
+        Input.prompt = [Input::MATCHES, Input::TEAMS, Input::TEAM_NAME]
+        State.id = State::MAIN_MENU
+    end
+
+    def self.menus_loop
+        while !Input.match(Input::QUIT)
+            Printer.clear_screen
+            Printer.puts([Output.header, Output.body, Error.text])
+
+            Input.get_buffered
+
+            if Input.match(Input::REGEX_MATCHES)
+                self.load_report_abstracts
+
+            elsif Input.match(Input::REGEX_TEAMS)
+                self.load_team_names
+            
+            elsif Input.positive_integer? && State::TEAMS_LIST == State.id
+                Input.valid_index?(Selection.team_names) ?
+                    self.load_report_abstracts(Selection.team_names[Input.as_index]) :
+                    Error.code = INVALID_INDEX :
+            
+            elsif Input.positive_integer? && State::MATCHES_LIST == state.id
+                if Input.valid_index?(Selection.report_abstracts)
+                    self.load_report(Selection.report_abstracts[Input.as_index])
+                    self.report_loop
                 else
-                    self.handle_matches_input(Input.value)
+                    Error.code = INVALID_INDEX
                 end
+
+            else
+                self.load_matches_list(Input.as_string)
             end
-        end
+        end 
+    end
 
-        def self.matches_list_header
-            @@team_filter ?
-                "AVAILABLE REPORT FOR #{@@team_filter}" :
-                "ALL AVAILABLE REPORTS"
-        end
+    def self.load_matches_list(team_name = nil)
+        Selection.matches_list = Report.matches(team_name)
 
-        def self.matches_list
-            Formatter.columnize(
-                Report.matches(@@team_filter).collect.with_index(1) do |match, index|
+        if Selection.matches_list.empty?
+            Error.code = team_name ? NO_REPORTS_FOR TEAM : NO_REPORTS 
+        else
+            Output.header = team_name ? 
+                Output::TEAM_REPORTS_HEADER + team_name :
+                Output::ALL_REPORTS_HEADER
+            Output.body = Formatter.columnize(
+                Selection.matches_list.collect.with_index(1) do |match, index|
                     "#{index}. #{match.team1} vs. #{match.team2}"
                 end
             )
-        end
-
-        def self.matches_list_loop(matches_list_header, matches_list)
-            while !State.touched
-                Printer.clear_screen
-                Printer.puts([matches_list_header, matches_list, Error.text])
-
-                Input.get([Input::MATCH_INDEX, Input::MATCHES, Input::TEAMS, Input::TEAM_NAME])
-
-                if Input.quit
-                    State.set(State::QUIT)
-                elsif Input.integer
-                    self.handle_report_index_input(Input.value)
-                elsif Input.matches
-                    self.handle_matches_input
-                elsif Input.teams
-                    self.handle_teams_input
-                else
-                    self.handle_matches_input(Input.value)
-                end
-            end
-        end
-
-        def self.teams_list
-            Formatter.columnize(
-                Report.teams.collect.with_index(1) do |team_name, index|
-                    "#{index}. #{team_name}"
-                end
-            )
-        end
-
-        def self.teams_list_loop(teams_list)
-            while !State.touched
-                Printer.clear_screen
-                Printer.puts([TEAMS_LIST_HEADER, teams_list, Error.text])
-
-                Input.get([Input::TEAM_INDEX, Input::MATCHES])
-
-                if Input.quit
-                    State.set(State::QUIT)
-                elsif Input.integer
-                    self.handle_teams_index_input(Input.value)
-                elsif Input.matches
-                    self.handle_matches_input
-                end
-            end
-        end
-
-        def self.report_title
-            report = Report.selected
-
-            "MATCH REPORT\n"
-            "#{report.team1} VS. #{report.team2}"
-        end
-
-        def self.report_byline
-            report = Report.selected
-
-            "Author: #{report.byline.author}\n" \
-            "Filed: #{report.byline.filed}\n" \
-            "#{report.byline.updated}"
-        end
-
-        def self.report_loop(report_title, report_byline)
-            Printer.clear_screen
-            Printer.puts([report_title, report_byline, REPORT_CONTROLS])
-
-            while !State.touched && !Report.done
-                Input.get_unbuffered
-
-                if Input.quit
-                    State.set(State::QUIT)
-                elsif Input.next
-                    self.handle_next_blurb_input
-                elsif Input.matches
-                    self.handle_matches_input
-                elsif Input.teams
-                    self.handle_teams_input
-                end
-            end
-
-            if Report.done
-                Printer.puts(Report.conclusion)
-                Input.get_unbuffered
-            end
-        end
-
-
-        # #####################################################
-        # CLI PUBLIC CLASS METHODS                            #
-        # SECOND LEVEL: METHODS CALLED BY FIRST LEVEL METHODS #
-        #######################################################
-        def self.handle_matches_input(team_name)
-            if !Report.matches(@@team_filter = team_name).empty?
-                State.set(State::MATCHES_LIST)
-            else
-                Error.code = @@team_filter ? 
-                    Error::NO_MATCH_REPORTS_FOR_TEAM : 
-                    Error::NO_MATCH_REPORTS
-            end
-        end
-
-        def self.handle_next_blurb_input
-            blurb = Report.next_blurb
-            Printer.puts(blurb.label)
-            Printer.puts(blurb.paragraphs) 
-        end
-
-        def self.handle_report_index_input(input_number)
-            if input_number > Report.current_list.size
-                Error.code = Error::INVALID_LIST_INDEX
-            else
-                Report.select(input_number)
-                State.id = State::REPORT
-            end
-        end
-
-        def self.handle_team_index_input(input_number)
-            if input_number > Report.teams.size
-                Error.code = Error::INVALID_LIST_INDEX
-            else
-                @@team_filter = Reports.team[input_number - 1]
-                State.id = State::MATCHES_LIST
-            end
-        end
-
-        def self.handle_teams_input
-            Report.teams.empty? ? 
-                Error.code = Error::NO_MATCH_REPORTS : 
-                State.id = State::TEAMS_LIST
+            Error.code = nil
+            State.id = State::MATCHES_LIST
         end
     end
-end
+
+    def self.load_teams_list
+        @@teams_list = Report.teams
+
+        @@header = "Reports are available for these teams:"
+        @@body = Formatter.columnize(
+            @@teams_list.collect.with_index(1) do |team, index|
+                "#{index}. #{team}"
+            end
+        )
+        @@error = nil
+
+        State.set(State::TEAMS_LIST)
+    end
+
+    def self.load_report(report_abstract)
+        Selection.report = Report.full(report_abstract)
+        report = Selection.report
+
+        Output.report_title = 
+            "MATCH REPORT\n" \
+            "#{report.team1} VS. #{report.team2}"
+            
+        byline = report.byline
+        Output.report_byline = 
+            "Author: #{byline.author}\n" \
+            "Filed: #{byline.filed}\n" \
+            "#{byline.updated}"
+    end
+
+    def self.report_loop
+        Printer.clear_screen
+        Printer.puts([Output::header, Output::body, Output::REPORT_CONTROLS])
+
+        while State::REPORT == State.id && !Selection.report.done
+            Input.get_unbuffered
+
+            if Input.match(REGEX_QUIT)
+                State.id = State::QUIT
+
+            elsif Input.match(REGEX_NEXT_BLURB)
+                self.print_next_blurb
+
+            elsif Input.matches
+                self.load_matches_list
+
+            elsif Input.teams
+                self.load_teams_list
+
+            end
+        end
+
+        if Selection.report.done
+            Printer.puts(Selection.report.conclusion)
+            Input.get_unbuffered
+        end
+    end
+
+    def self.print_next_blurb
+        blurb = Selection.report.next_blurb
+        Printer.puts(blurb.label)
+        Printer.puts(blurb.paragraphs)
+    end

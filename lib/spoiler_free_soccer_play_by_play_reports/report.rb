@@ -29,6 +29,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             
             @byline = nil
             @blurbs = []
+            @blurb_index = 0
             @details_loaded = false
         end
 
@@ -40,37 +41,21 @@ module SpoilerFreeSoccerPlayByPlayReports
             @@current_team_name
         end
 
-        def self.get_report_abstracts
+        def self.load_abstracts
             SpoilerFreeSoccerPlayByPlayReports::Scraper.report_list.each do |report_hash|
                 self.all << Report.new(report_hash)
             end
-        end
-
-        def self.load_current_report_details
-            report_details = SpoilerFreeSoccerPlayByPlayReports::Scraper.report_details(@@current_report.details_url)
-
-            @@current_report.byline = SpoilerFreeSoccerPlayByPlayReports::Report::Byline.new(report_details[:byline])
-
-            report_details[:blurbs].each do |blurb_hash|
-                @@current_report.blurbs << SpoilerFreeSoccerPlayByPlayReports::Blurb.new(blurb_hash)
-            end
-
-            @@current_report.details_loaded = true
         end
 
         def self.reset
             self.all.clear
         end
 
-        def self.list(team_name)
+        def self.get_list(team_name = nil)
             @@current_list.clear 
 
-            if self.all.empty?
-                self.get_report_abstracts
-            end
-
             @@current_list = self.all.select do |report|
-                'all' == team_name ||
+                !team_name ||
                 0 == team_name.casecmp(report.team1) ||
                 0 == team_name.casecmp(report.team2)
             end
@@ -115,15 +100,17 @@ module SpoilerFreeSoccerPlayByPlayReports
             @@teams
         end
 
-        def self.report(report_index)
-            @@current_report = @@current_list[report_index - 1]
-            @@next_blurb_index = 0
-
-            if !@@current_report.details_loaded
-                self.load_current_report_details
+        def self.full(report)
+            if !report.details_loaded
+                details = SpoilerFreeSoccerPlayByPlayReports::Scraper.report_details(report.details_url)
+                report.byline = Byline.new(details[:byline])
+                details[:blurbs].each do |blurb_hash|
+                    report.blurbs << Blurb.new(blurb_hash)
+                end
+                report.details_loaded = true
             end
 
-            @@current_report
+            report
         end
 
         def self.next_blurb
