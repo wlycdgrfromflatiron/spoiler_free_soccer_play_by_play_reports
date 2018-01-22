@@ -92,6 +92,7 @@ class CLI
         INVALID_INDEX = "Invalid index - please try again."
         NO_REPORTS_FOR_TEAM = "No match reports are available for that team :("
         NO_REPORTS = "No match reports are available"
+        NO_MORE_BLURBS = "~ THE END ~ || (M)atches | (T)eams | (Q)uit: "
 
         @@text = nil
 
@@ -114,7 +115,7 @@ class CLI
         Printer.clear_screen
         Printer.puts(Output::DESCRIPTION)
         Printer.puts(Output::LOADING_MESSAGE)
-        Report.load_abstracts
+        Report.load_abstracts_from_website
 
         self.load_main_menu
         self.menus_loop
@@ -213,7 +214,7 @@ class CLI
         Printer.clear_screen
         Printer.puts([Output::header, Output::body, Output::REPORT_CONTROLS])
 
-        while State::REPORT == State.id && !Selection.report.done
+        while State::REPORT == State.id
             Input.get_unbuffered
 
             if Input.match(REGEX_QUIT)
@@ -230,15 +231,13 @@ class CLI
 
             end
         end
-
-        if Selection.report.done
-            Printer.puts(Selection.report.conclusion)
-            Input.get_unbuffered
-        end
     end
 
     def self.print_next_blurb
-        blurb = Selection.report.next_blurb
-        Printer.puts(blurb.label)
-        Printer.puts(blurb.paragraphs)
+        if blurb = Selection.report.next_blurb
+            Printer.puts(blurb.label)
+            Printer.puts(blurb.paragraphs)
+        else
+            Printer.puts(Error::NO_MORE_BLURBS)
+        end
     end
