@@ -107,7 +107,7 @@ class CLI
 
     class Selection
         class << self
-            attr_accessor :report_abstracts, :report, :team_name, :team_names
+            attr_accessor :report_abstracts, :detailed_report, :team_name, :team_names
         end
     end
 
@@ -196,8 +196,8 @@ class CLI
     end
 
     def self.load_report(report_abstract)
-        Selection.report = Report.full(report_abstract)
-        report = Selection.report
+        Selection.detailed_report = Report.full(report_abstract)
+        report = Selection.detailed_report
 
         Output.report_title = 
             "MATCH REPORT\n" \
@@ -236,7 +236,7 @@ class CLI
     end
 
     def self.print_next_blurb
-        if blurb = Selection.report.blurb(State.blurb_index)
+        if blurb = Selection.detailed_report.blurb(State.blurb_index)
             Printer.puts(blurb.label)
             Printer.puts(blurb.paragraphs)
             State.blurb_index += 1
