@@ -51,10 +51,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         #########################
         # PRIVATE CLASS METHODS #
         #########################
-        def self.scrape_team_names(link)
-            title = link.at(".list_rep_title div").text
-            title.strip!
-
+        def self.scrape_team_names(title)
             title = strip_standard_bits(title)
 
             # having stripped the non-team-name bits from the front and end, we split on the score in the middle
@@ -134,7 +131,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             "twitter-tweet" == blurb.at("span.post").children[0].attr("class")
         end
 
-        private_class_method :scrape_summary, :completed_match_report?, :strip_standard_bits,
+        private_class_method :scrape_team_names, :completed_match_report?, :strip_standard_bits,
             :scrape_byline, :scrape_paragraphs, :blurb_is_tweet?
     end
 end
