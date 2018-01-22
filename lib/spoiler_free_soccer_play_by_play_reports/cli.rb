@@ -116,7 +116,6 @@ class CLI
         Printer.puts(Output::DESCRIPTION)
         Printer.puts(Output::LOADING_MESSAGE)
         Scrape.report_abstracts
-        Report.load_abstracts_from_website
 
         self.load_main_menu
         self.menus_loop
