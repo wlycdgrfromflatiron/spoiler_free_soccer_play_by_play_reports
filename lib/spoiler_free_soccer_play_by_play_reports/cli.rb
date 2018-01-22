@@ -210,7 +210,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 "MATCH REPORT\n" \
                 "#{report.team1} VS. #{report.team2}"
                 
-            byline = report.byline
+            byline = report.details.byline
             Output.body =
                 "Author: #{byline.author}\n" \
                 "Filed: #{byline.filed}\n" \
