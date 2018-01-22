@@ -145,7 +145,7 @@ class CLI
             elsif Input.positive_integer? && State::TEAMS_LIST == State.id
                 Input.valid_index?(Selection.team_names) ?
                     self.load_report_abstracts(Selection.team_names[Input.as_index]) :
-                    Error.code = INVALID_INDEX :
+                    Error.code = INVALID_INDEX
             
             elsif Input.positive_integer? && State::MATCHES_LIST == state.id
                 if Input.valid_index?(Selection.report_abstracts)
