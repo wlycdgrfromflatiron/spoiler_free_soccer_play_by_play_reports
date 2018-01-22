@@ -134,7 +134,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.menus_loop
-            while State.QUIT != State.id
+            while State::QUIT != State.id
                 Printer.clear_screen
                 Printer.puts([Output.header, Output.body, Error.text])
 
