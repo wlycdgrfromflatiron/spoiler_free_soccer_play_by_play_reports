@@ -123,12 +123,13 @@ module SpoilerFreeSoccerPlayByPlayReports
             self.load_main_menu
             self.menus_loop
 
+            puts ""
             Printer.puts(Output::GOODBYE)
         end
 
         def self.load_main_menu
-            Output.body = Output::DESCRIPTION
-            Output.header = Output::MAIN_MENU_CONTROLS
+            Output.header = Output::DESCRIPTION
+            Output.body = Output::MAIN_MENU_CONTROLS
             Input.prompt = [Input::REPORTS, Input::TEAMS, Input::TEAM_NAME]
             State.id = State::MAIN_MENU
         end
@@ -141,7 +142,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 Input.get_buffered
 
                 if Input.match(Input::REGEX_QUIT)
-                    State.id == State.QUIT
+                    State.id = State::QUIT
                 elsif Input.match(Input::REGEX_REPORTS) 
                     self.show_report_list
                 elsif Input.match(Input::REGEX_TEAMS) 
