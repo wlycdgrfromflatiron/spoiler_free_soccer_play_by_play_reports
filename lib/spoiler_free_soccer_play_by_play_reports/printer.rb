@@ -4,13 +4,6 @@ module SpoilerFreeSoccerPlayByPlayReports
     class Printer
 
 
-        ###################
-        # CLASS CONSTANTS #
-        ###################
-        COLUMN_WIDTH = 50
-        INDENT = "     "
-
-
         ########################
         # PUBLIC CLASS METHODS #
         ########################
