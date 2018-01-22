@@ -217,6 +217,8 @@ module SpoilerFreeSoccerPlayByPlayReports
                 "#{byline.updated}"
 
             State.blurb_index = 0
+
+            State.id = State::REPORT
         end
 
         def self.report_loop
@@ -226,7 +228,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             while State::REPORT == State.id
                 Input.get_unbuffered
 
-                if Input.match(REGEX_QUIT)
+                if Input.match(Input::REGEX_QUIT)
                     State.id = State::QUIT
 
                 elsif Input.match(REGEX_NEXT_BLURB)
