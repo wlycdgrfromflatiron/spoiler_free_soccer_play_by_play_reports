@@ -40,7 +40,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             scraped_blurbs.each do |scraped_blurb|
                 report_details[:blurbs] << {
                     :label =>scraped_blurb.at("a.period").text,
-                    :paragraphs => scrape_blurb_paragraphs(scraped_blurb)
+                    :paragraphs => scrape_paragraphs(scraped_blurb)
                 }
             end
 
