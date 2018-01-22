@@ -69,7 +69,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             self.all << Report.new(hash)
         end
 
-        def self.retrieve_basic_reports(team_name = nil)
+        def self.list(team_name = nil)
             self.all.collect do |report|
                 !team_name ||
                 0 == team_name.casecmp(report.team1) ||
@@ -82,7 +82,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             report
         end
 
-        def self.retrieve_teams
+        def self.teams
             teams = []
             self.all.each do |report|
                 teams << report.team1

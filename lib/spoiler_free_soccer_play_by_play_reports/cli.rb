@@ -1,6 +1,6 @@
 class CLI
     class State
-        MAIN_MENU, TEAMS_LIST, REPORT, MATCHES_LIST = 0, 1, 2, 3
+        MAIN_MENU, TEAM_LIST, REPORT, REPORT_LIST = 0, 1, 2, 3
 
         class << self
             attr_accessor :id, :blurb_index
@@ -20,8 +20,9 @@ class CLI
             "(T)eams:          List all teams for which reports are available.\n" \
             "[team name]:      List all available reports for [team name].\n" \
             "(Q)uit:           Quit the program."
-        TEAM_REPORTS_HEADER = "MATCH REPORTS FOR "
-        ALL_REPORTS_HEADER = "ALL AVAILABLE MATCH REPORTS"
+        TEAM_LIST_HEADER = "Reports are available for these teams:"
+        REPORT_LIST_FOR_HEADER = "MATCH REPORTS FOR "
+        REPORT_LIST_HEADER = "ALL AVAILABLE MATCH REPORTS"
         REPORT_CONTROLS = "" \
             "Controls:\n" \
             "Spacebar, n:     Show next report item.\n" \
@@ -36,13 +37,13 @@ class CLI
     end
 
     class Input
-        REGEX_MATCHES = /^m(atches)?$/
+        REGEX_REPORTS = /^m(atches)?$/
         REGEX_NEXT_BLURB = /^[ n]$/
         REGEX_QUIT = /^q(uit)?$/
         REGEX_TEAMS = /^t(eams)?$/
 
         SEPARATOR = " | "
-        MATCHES = "(M)atches"
+        REPORTS = "(M)atches"
         TEAM_NAME = "[team name]"
         TEAMS = "(T)eams"
         TERMINATOR = ": "
@@ -91,7 +92,7 @@ class CLI
     class Error
         INVALID_INDEX = "Invalid index - please try again."
         NO_REPORTS_FOR_TEAM = "No match reports are available for that team :("
-        NO_REPORTS = "No match reports are available"
+        NO_REPORTS = "No match reports are available :( :( :("
         NO_MORE_BLURBS = "~ THE END ~ || (M)atches | (T)eams | (Q)uit: "
 
         @@text = nil
@@ -107,7 +108,7 @@ class CLI
 
     class Selection
         class << self
-            attr_accessor :report_abstracts, :detailed_report, :team_name, :team_names
+            attr_accessor :report_list, :report, :team_name, :team_names
         end
     end
 
@@ -126,7 +127,7 @@ class CLI
     def self.load_main_menu
         Output.body = Output::DESCRIPTION
         Output.header = Output::MAIN_MENU_CONTROLS
-        Input.prompt = [Input::MATCHES, Input::TEAMS, Input::TEAM_NAME]
+        Input.prompt = [Input::REPORTS, Input::TEAMS, Input::TEAM_NAME]
         State.id = State::MAIN_MENU
     end
 
@@ -137,43 +138,43 @@ class CLI
 
             Input.get_buffered
 
-            if Input.match(Input::REGEX_MATCHES)
-                self.load_report_abstracts
+            if Input.match(Input::REGEX_REPORTS) 
+                self.show_report_list
 
-            elsif Input.match(Input::REGEX_TEAMS)
-                self.load_team_names
-            
-            elsif Input.positive_integer? && State::TEAMS_LIST == State.id
-                Input.valid_index?(Selection.team_names) ?
-                    self.load_report_abstracts(Selection.team_names[Input.as_index]) :
-                    Error.code = Error::INVALID_INDEX
-            
-            elsif Input.positive_integer? && State::MATCHES_LIST == state.id
-                if Input.valid_index?(Selection.report_abstracts)
-                    self.load_report(Selection.report_abstracts[Input.as_index])
-                    self.report_loop
-                else
-                    Error.code = Error::INVALID_INDEX
+            elsif Input.match(Input::REGEX_TEAMS) 
+                self.show_team_list
+
+            elsif Input.positive_integer?
+                if State.id == State::TEAM_LIST
+                    Input.valid_index?(Selection.team_names) ?
+                        self.show_match_list(Selection.team_names[Input.as_index]) :
+                        Error.code = Error::INVALID_INDEX
+
+                elsif State.id == State::MATCH_LIST
+                    Input.valid_index?(Selection.report_abstracts) ?
+                        (self.load_report(Selection.report_abstracts[Input.as_index])
+                        self.report_loop) :
+                        Error.code = Error::INVALID_INDEX
                 end
 
             else
-                self.load_matches_list(Input.as_string)
+                self.show_report_list(Input.as_string)
             end
         end 
     end
 
-    def self.load_report_abstracts(team_name = nil)
-        Selection.report_abstracts = Report.matches(team_name)
+    def self.show_report_list(team_name = nil)
+        Selection.report_list = Report.list(team_name)
 
-        if Selection.matches_list.empty?
+        if Selection.report_list.empty?
             Error.code = team_name ? Error::NO_REPORTS_FOR TEAM : Error::NO_REPORTS 
         else
             Output.header = team_name ? 
-                Output::TEAM_REPORTS_HEADER + team_name :
-                Output::ALL_REPORTS_HEADER
+                Output::REPORT_LIST_FOR_HEADER + team_name :
+                Output::REPORT_LIST_HEADER
             Output.body = Formatter.columnize(
-                Selection.matches_list.collect.with_index(1) do |match, index|
-                    "#{index}. #{match.team1} vs. #{match.team2}"
+                Selection.report_list.collect.with_index(1) do |report, index|
+                    "#{index}. #{report.team1} vs. #{report.team2}"
                 end
             )
             Error.code = nil
@@ -181,18 +182,21 @@ class CLI
         end
     end
 
-    def self.load_teams_list
-        @@teams_list = Report.teams
+    def self.show_team_list
+        Selection.team_names = Report.teams
 
-        @@header = "Reports are available for these teams:"
-        @@body = Formatter.columnize(
-            @@teams_list.collect.with_index(1) do |team, index|
-                "#{index}. #{team}"
-            end
-        )
-        @@error = nil
-
-        State.set(State::TEAMS_LIST)
+        if Selection.team_names.empty?
+            Error.code = NO_REPORTS
+        else
+            Output.header = Output::TEAM_LIST_HEADER
+            Output.body = Formatter.columnize(
+                Selection.team_names.collect.with_index(1) do |team_name, index|
+                    "#{index}. #{team_name}"
+                end
+            )
+            Error.code = nil
+            State.id = State::TEAM_LIST
+        end
     end
 
     def self.load_report(report_abstract)
