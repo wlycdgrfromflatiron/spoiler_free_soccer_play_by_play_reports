@@ -142,7 +142,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 if Input.match(Input::REGEX_QUIT)
                     State.id == State.QUIT
-                if Input.match(Input::REGEX_REPORTS) 
+                elsif Input.match(Input::REGEX_REPORTS) 
                     self.show_report_list
                 elsif Input.match(Input::REGEX_TEAMS) 
                     self.show_team_list
