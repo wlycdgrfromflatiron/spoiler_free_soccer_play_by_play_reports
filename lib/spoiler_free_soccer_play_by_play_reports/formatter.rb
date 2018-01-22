@@ -8,7 +8,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         def self.columnize(string_array, column_width = COLUMN_WIDTH)
             column_width = validate_column_width(string_array, column_width)
 
-            odd_end = nil # string_array.size.even? ? nil : string_array.pop
+            odd_end = string_array.size.even? ? nil : string_array.pop
 
             columnized_string = ""
             for i in 0...half_way = string_array.size / 2
@@ -16,6 +16,8 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
 
             columnized_string << odd_end if odd_end
+
+            columnized_string
         end
 
         def self.indent(string)
