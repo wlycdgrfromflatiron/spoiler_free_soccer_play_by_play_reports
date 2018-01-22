@@ -14,7 +14,13 @@ module SpoilerFreeSoccerPlayByPlayReports
             # from a title formatted like so:
             # "Live Commentary: Celta Vigo 2-2 Real Madrid - as it happened"
             report_links.each do |link|
-                team_names = scrape_team_names(link)
+                title = link.at(".list_rep_title div").text
+                title.strip!
+
+                next if !completed_match_report?(title)
+
+                team_names = scrape_team_names(title)
+
                 Report.create({
                     :team1 => team_names[0],
                     :team2 => team_names[1],
@@ -49,8 +55,6 @@ module SpoilerFreeSoccerPlayByPlayReports
             title = link.at(".list_rep_title div").text
             title.strip!
 
-            next if !title_valid?(title)
-
             title = strip_standard_bits(title)
 
             # having stripped the non-team-name bits from the front and end, we split on the score in the middle
@@ -69,7 +73,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             team_names
         end
 
-        def self.title_valid?(title)
+        def self.completed_match_report?(title)
              # there are some items that are not live commentary; they have a different title format, e.g.
             # "Manchester United Newsdesk Live: Antoine Griezmann, David de Gea, Basel build-up, more"
             title.include?("Live Commentary: ") &&
@@ -130,7 +134,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             "twitter-tweet" == blurb.at("span.post").children[0].attr("class")
         end
 
-        private_class_method :scrape_summary, :title_valid?, :strip_standard_bits,
+        private_class_method :scrape_summary, :completed_match_report?, :strip_standard_bits,
             :scrape_byline, :scrape_paragraphs, :blurb_is_tweet?
     end
 end
