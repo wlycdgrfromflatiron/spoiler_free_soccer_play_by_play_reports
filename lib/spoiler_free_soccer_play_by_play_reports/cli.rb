@@ -231,7 +231,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 if Input.match(Input::REGEX_QUIT)
                     State.id = State::QUIT
 
-                elsif Input.match(REGEX_NEXT_BLURB)
+                elsif Input.match(Input::REGEX_NEXT_BLURB)
                     self.print_next_blurb
 
                 elsif Input.matches
