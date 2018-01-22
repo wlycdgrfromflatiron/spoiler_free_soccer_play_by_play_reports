@@ -56,7 +56,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.load_abstracts_from_website
-            Scraper.report_list.each {|report_hash| self.all < Report.new(report_hash)}
+            Scrape.report_abstracts.each {|report_hash| self.all < Report.new(report_hash)}
         end
 
         def self.retrieve_basic_reports(team_name = nil)
@@ -68,7 +68,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.retrieve_detailed_report_from_website(report)
-            report.details = Details.new(Scraper.report_details(report.details_url)) if !report.details
+            report.details = Details.new(Scrape.report_details(report.details_url)) if !report.details
             report
         end
 
