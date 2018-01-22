@@ -12,7 +12,7 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             columnized_string = ""
             for i in 0...half_way = string_array.size / 2
-                columnized_string << row(column_width, strings[i], strings[i+half_way])
+                columnized_string << row(column_width, string_array[i], string_array[i+half_way])
             end
 
             columnized_string << odd_end if odd_end
