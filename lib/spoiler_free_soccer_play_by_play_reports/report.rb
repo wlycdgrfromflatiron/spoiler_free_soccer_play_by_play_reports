@@ -35,7 +35,10 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         @@all = []
 
-        # CONSTRUCTOR & INSTANCE METHODS
+        
+        ######################
+        # Report CONSTRUCTOR #
+        ######################
         def initialize(report_hash)
             @team1 = report_hash[:team1]
             @team2 = report_hash[:team2]
@@ -43,6 +46,10 @@ module SpoilerFreeSoccerPlayByPlayReports
             @details = nil
         end
 
+
+        ###########################
+        # Report INSTANCE METHODS #
+        ###########################
         def blurb(index)
             blurb = nil
             if index < @details.blurbs.length
@@ -50,13 +57,16 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end
 
-        # CLASS METHODS
+        
+        ########################
+        # Report CLASS METHODS #
+        ########################
         def self.all
             @@all
         end
 
-        def self.load_abstracts_from_website
-            Scrape.report_abstracts.each {|report_hash| self.all < Report.new(report_hash)}
+        def self.create(hash)
+            self.all << Report.new(hash)
         end
 
         def self.retrieve_basic_reports(team_name = nil)
@@ -81,5 +91,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             teams.uniq!
             teams.sort!
         end
+
     end # class Report
+
 end # module SpoilerFreeSoccerPlayByPlayReports

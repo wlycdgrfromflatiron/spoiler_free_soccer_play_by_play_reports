@@ -13,26 +13,14 @@ module SpoilerFreeSoccerPlayByPlayReports
             # For each report summary thumbnail link, we must extract the names of the two teams
             # from a title formatted like so:
             # "Live Commentary: Celta Vigo 2-2 Real Madrid - as it happened"
-            hash_array = []
             report_links.each do |link|
                 team_names = scrape_team_names(link)
-                hash_array << {
+                Report.create({
                     :team1 => team_names[0],
                     :team2 => team_names[1],
                     :details_url => link.attribute("href").value
-                }
+                })
             end
-
-            # When testploring this code with Pry, check multiple pages at the live commentary URL
-            # to find examples of the irregularities described in the implementation comments, 
-            # and keep an eye out for any others that may need to be accounted for, 
-            # as well as any changes to the standard format
-            # this code works as of January 2018
-            if WLY_DEBUG
-                binding.pry
-            end
- 
-            hash_array
         end 
 
         def self.report_details(details_url)
@@ -48,10 +36,6 @@ module SpoilerFreeSoccerPlayByPlayReports
                     :label =>scraped_blurb.at("a.period").text,
                     :paragraphs => scrape_blurb_paragraphs(scraped_blurb)
                 }
-            end
-
-            if WLY_DEBUG
-                binding.pry
             end
 
             report_details

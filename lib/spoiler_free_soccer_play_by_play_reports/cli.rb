@@ -13,7 +13,7 @@ class CLI
             "A service for reading live commentaries for completed soccer matches\n" \
             "in chronological order and without spoilers.\n" \
             "(data source: SPORTSMOLE.CO.UK)"
-        LOADING_MESSAGE = "Loading list of available reports..."
+        LOADING_MESSAGE = "Scraping list of available reports..."
         MAIN_MENU_CONTROLS = "" \
             "MAIN MENU CONTROLS:\n" \
             "(M)atches:        List all matches for which reports are available.\n" \
@@ -115,6 +115,7 @@ class CLI
         Printer.clear_screen
         Printer.puts(Output::DESCRIPTION)
         Printer.puts(Output::LOADING_MESSAGE)
+        Scrape.report_abstracts
         Report.load_abstracts_from_website
 
         self.load_main_menu
