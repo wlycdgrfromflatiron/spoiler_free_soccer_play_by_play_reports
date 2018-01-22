@@ -37,51 +37,16 @@ module SpoilerFreeSoccerPlayByPlayReports
 
         def self.report_details(details_url)
             doc = Nokogiri::HTML(open(SOURCE_BASE_URL + details_url))
-
             report_details = {}
 
-            report_details[:byline] = {
-                :author => doc.at(".article_byline a").text || nil,
-                :filed => doc.at(".article_byline span").text || nil,
-                :updated => doc.at(".article_byline div.last_updated").text || nil
-            }
-
-            scraped_blurbs = doc.search(".livecomm")
+            report_details[:byline] = scrape_byline(doc)
 
             report_details[:blurbs] = []
+            scraped_blurbs = doc.search(".livecomm")
             scraped_blurbs.each do |scraped_blurb|
-                blurb_text_span = scraped_blurb.at("span.post")
-                blurb_paragraphs = []
-
-                # handle blurbs that are TWEETS
-                if blurb_text_span.children[0].attr("class") == "twitter-tweet"
-                    blurb_paragraphs << "~ A Tweet was here ~"
-                else
-                    span_kids_index = 0 
-                    blurb_paragraphs_index = 0
-                    span_kid = nil
-
-                    blurb_paragraphs[blurb_paragraphs_index] = ""
-                    while (span_kid = blurb_text_span.children[span_kids_index])
-                        span_kids_index += 1
-
-                        if ("p" == span_kid.name)
-                            blurb_paragraphs_index += 1
-                            blurb_paragraphs[blurb_paragraphs_index] = ""
-
-                            blurb_paragraphs[blurb_paragraphs_index] << span_kid.text
-
-                            blurb_paragraphs_index += 1
-                            blurb_paragraphs[blurb_paragraphs_index] = ""
-                        else
-                            blurb_paragraphs[blurb_paragraphs_index] << span_kid.text
-                        end
-                    end
-                end
-
                 report_details[:blurbs] << {
-                    :label => scraped_blurb.at("a.period").text,
-                    :paragraphs => blurb_paragraphs
+                    :label =>scraped_blurb.at("a.period").text,
+                    :paragraphs => scrape_blurb_paragraphs(scraped_blurb)
                 }
             end
 
@@ -139,6 +104,49 @@ module SpoilerFreeSoccerPlayByPlayReports
             title.gsub!(" - as it happened", "")
         end
 
-        private_class_method :scrape_summary, :title_valid?, :strip_standard_bits
+        def self.scrape_byline(doc)
+            {
+                :author => doc.at(".article_byline a").text || nil,
+                :filed => doc.at(".article_byline span").text || nil,
+                :updated => doc.at(".article_byline div.last_updated").text || nil
+            }
+        end
+
+        def self.scrape_paragraphs(blurb)
+            paragraphs = []
+
+            # handle blurbs that are TWEETS
+            if blurb_is_tweet?(blurb)
+                paragraphs << "~ A Tweet was here ~"
+
+            else 
+                text_span = blurb.at("span.post")
+                span_kids_index = 0 
+                index = 0
+                span_kid = nil
+
+                paragraphs[paragraphs_index] = ""
+                while (span_kid = text_span.children[span_kids_index])
+                    span_kids_index += 1
+
+                    if ("p" == span_kid.name)
+                        index += 1; paragraphs[index] = ""
+                        paragraphs[index] << span_kid.text
+                        index += 1; paragraphs[index] = ""
+                    else
+                        paragraphs[index] << span_kid.text
+                    end
+                end
+            end
+
+            paragraphs
+        end
+
+        def self.blurb_is_tweet?(blurb)
+            "twitter-tweet" == blurb.at("span.post").children[0].attr("class")
+        end
+
+        private_class_method :scrape_summary, :title_valid?, :strip_standard_bits,
+            :scrape_byline, :scrape_paragraphs, :blurb_is_tweet?
     end
 end
