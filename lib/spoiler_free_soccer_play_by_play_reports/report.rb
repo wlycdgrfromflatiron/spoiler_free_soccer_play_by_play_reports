@@ -23,8 +23,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             attr_accessor :blurbs, :byline
 
             def initialize(details_hash)
-                @blurb_index = 0
-                @blubs = []
+                @blurbs = []
                 details_hash[:blurbs].each do |blurb_hash|
                     @blurbs << Blurb.new(blurb_hash)
                 end
@@ -32,7 +31,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end 
 
-        attr_accessor :blurb_index, :details, :details_url, :team1, :team2
+        attr_accessor :details, :details_url, :team1, :team2
 
         @@all = []
 
@@ -40,8 +39,6 @@ module SpoilerFreeSoccerPlayByPlayReports
             @team1 = report_hash[:team1]
             @team2 = report_hash[:team2]
             @details_url = report_hash[:details_url]
-
-            @blurb_index = 0
 
             @details = nil
         end
@@ -80,11 +77,10 @@ module SpoilerFreeSoccerPlayByPlayReports
             report
         end
 
-        def next_blurb
-            next_blurb = nil
-            if @blurb_index < @details.blurbs.length
-                next_blurb = @details.blurbs[@blurb_index]
-                @blurb_index += 1
+        def blurb(index)
+            blurb = nil
+            if index < @details.blurbs.length
+                blurb = @details.blurbs[@blurb_index]
             end
         end
     end

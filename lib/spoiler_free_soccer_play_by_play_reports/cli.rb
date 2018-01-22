@@ -3,7 +3,7 @@ class CLI
         MAIN_MENU, TEAMS_LIST, REPORT, MATCHES_LIST = 0, 1, 2, 3
 
         class << self
-            attr_accessor :id
+            attr_accessor :id, :blurb_index
         end
     end 
 
@@ -208,6 +208,8 @@ class CLI
             "Author: #{byline.author}\n" \
             "Filed: #{byline.filed}\n" \
             "#{byline.updated}"
+
+        State.blurb_index = 0
     end
 
     def self.report_loop
@@ -234,9 +236,10 @@ class CLI
     end
 
     def self.print_next_blurb
-        if blurb = Selection.report.next_blurb
+        if blurb = Selection.report.blurb(State.blurb_index)
             Printer.puts(blurb.label)
             Printer.puts(blurb.paragraphs)
+            State.blurb_index += 1
         else
             Printer.puts(Error::NO_MORE_BLURBS)
         end
