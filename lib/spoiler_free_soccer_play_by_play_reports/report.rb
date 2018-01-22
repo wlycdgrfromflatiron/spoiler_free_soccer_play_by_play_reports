@@ -70,7 +70,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.list(team_name = nil)
-            self.all.collect do |report|
+            self.all.select do |report|
                 !team_name ||
                 0 == team_name.casecmp(report.team1) ||
                 0 == team_name.casecmp(report.team2)
