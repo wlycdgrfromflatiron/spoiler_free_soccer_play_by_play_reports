@@ -157,7 +157,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                             Error.code = Error::INVALID_INDEX
                         end
                     end
-                else
+                elsif Input.as_string
                     self.show_report_list(Input.as_string)
                 end
             end 
