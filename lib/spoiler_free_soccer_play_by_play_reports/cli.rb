@@ -1,7 +1,7 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class CLI
         class State
-            MAIN_MENU, TEAM_LIST, REPORT, REPORT_LIST = 0, 1, 2, 3
+            MAIN_MENU, QUIT, REPORT, REPORT_LIST, TEAM_LIST = 0, 1, 2, 3, 4
 
             class << self
                 attr_accessor :id, :blurb_index
@@ -134,14 +134,14 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.menus_loop
-            while true
+            while State.QUIT != State.id
                 Printer.clear_screen
                 Printer.puts([Output.header, Output.body, Error.text])
 
                 Input.get_buffered
 
                 if Input.match(Input::REGEX_QUIT)
-                    break
+                    State.id == State.QUIT
                 if Input.match(Input::REGEX_REPORTS) 
                     self.show_report_list
                 elsif Input.match(Input::REGEX_TEAMS) 
