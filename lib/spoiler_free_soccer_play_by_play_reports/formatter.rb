@@ -2,7 +2,7 @@ module SpoilerFreeSoccerPlayByPlayReports
     class Formatter
         COLUMN_WIDTH = 50
         INDENT = "     "
-        MINIMUM_COLUMNN_GAP = 2
+        MINIMUM_COLUMN_GAP = 2
 
         # PUBLIC CLASS METHODS 
         def self.columnize(string_array, column_width = COLUMN_WIDTH)
