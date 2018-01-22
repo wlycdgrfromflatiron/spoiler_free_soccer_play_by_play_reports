@@ -23,5 +23,9 @@ module SpoilerFreeSoccerPlayByPlayReports
                 STDOUT.puts ""
             end 
         end
-    end
-end
+
+
+    end # class Printer
+
+
+end # module SpoilerFreeSoccerPlayByPlayReports

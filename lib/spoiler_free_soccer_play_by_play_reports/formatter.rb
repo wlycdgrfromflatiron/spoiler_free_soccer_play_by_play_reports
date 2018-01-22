@@ -47,7 +47,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         private_class_method :row
 
 
-    end # class Printer
+    end # class Formatter
 
 
 end # module SpoilerFreeSoccerPlayByPlayReports
