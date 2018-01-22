@@ -83,7 +83,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
 
             def self.match(regex)
-                @value.match(regex)
+                @value? @value.match(regex) : false
             end
 
             def self.valid_index?(list)
