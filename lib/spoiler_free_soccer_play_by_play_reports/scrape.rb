@@ -110,7 +110,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                 index = 0
                 span_kid = nil
 
-                paragraphs[paragraphs_index] = ""
+                paragraphs[index] = ""
                 while (span_kid = text_span.children[span_kids_index])
                     span_kids_index += 1
 
