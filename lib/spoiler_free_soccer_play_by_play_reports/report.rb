@@ -53,7 +53,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         def blurb(index)
             blurb = nil
             if index < @details.blurbs.length
-                blurb = @details.blurbs[@blurb_index]
+                blurb = @details.blurbs[index]
             end
         end
 
