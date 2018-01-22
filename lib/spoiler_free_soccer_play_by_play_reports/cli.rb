@@ -161,8 +161,8 @@ class CLI
         end 
     end
 
-    def self.load_matches_list(team_name = nil)
-        Selection.matches_list = Report.matches(team_name)
+    def self.load_report_abstracts(team_name = nil)
+        Selection.report_abstracts = Report.matches(team_name)
 
         if Selection.matches_list.empty?
             Error.code = team_name ? Error::NO_REPORTS_FOR TEAM : Error::NO_REPORTS 

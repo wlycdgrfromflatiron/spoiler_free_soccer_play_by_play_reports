@@ -1,7 +1,14 @@
 module SpoilerFreeSoccerPlayByPlayReports
     class Report
-        # I am aware that this is not a true inner class but is rather merely namespaced,
-        # but it still feels cleaner than a hash or a non-namespaced class
+        class Blurb
+            attr_reader :label, :paragraphs
+    
+            def initialize(hash)
+                @label = hash[:label] || "[UNTITLED]"
+                @paragraphs = hash[:paragraphs] || ["[No text]"]
+            end
+        end
+        
         class Byline
             attr_accessor :author, :filed, :updated
 
