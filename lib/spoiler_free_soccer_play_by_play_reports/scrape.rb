@@ -2,15 +2,18 @@ module SpoilerFreeSoccerPlayByPlayReports
     class Scrape
         SOURCE_BASE_URL = "https://www.sportsmole.co.uk"
 
+
+        ########################
+        # PUBLIC CLASS METHODS #
+        ########################
         def self.report_abstracts
             doc = Nokogiri::HTML(open(SOURCE_BASE_URL + "/football/live-commentary"))
-            
             report_links = doc.search(".list_rep")
-            hash_array = []
-
+            
             # For each report summary thumbnail link, we must extract the names of the two teams
             # from a title formatted like so:
             # "Live Commentary: Celta Vigo 2-2 Real Madrid - as it happened"
+            hash_array = []
             report_links.each do |link|
                 team_names = scrape_team_names(link)
                 hash_array << {
@@ -20,6 +23,11 @@ module SpoilerFreeSoccerPlayByPlayReports
                 }
             end
 
+            # When testploring this code with Pry, check multiple pages at the live commentary URL
+            # to find examples of the irregularities described in the implementation comments, 
+            # and keep an eye out for any others that may need to be accounted for, 
+            # as well as any changes to the standard format
+            # this code works as of January 2018
             if WLY_DEBUG
                 binding.pry
             end
@@ -85,6 +93,9 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
 
+        #########################
+        # PRIVATE CLASS METHODS #
+        #########################
         def self.scrape_team_names(link)
             title = link.at(".list_rep_title div").text
             title.strip!
@@ -100,21 +111,13 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             # games that go to extra time or are resolved by penalties may have notes in parentheses
             # either after or before the name of the second team; 
-            # these need to be stripped further to extract the correct team name
-            # e.g.
+            # these need to be stripped further to extract the correct team name. e.g.:
             # "Live Commentary: Manchester City 0-0 (4-1 on penalties) Wolverhampton Wanderers - as it happened"
             # "Live Commentary: Leicester 1-1 Manchester City (Man City win 4-3 on penalties) - as it happened"
             team_names[1] = team_names[1].gsub(/\s\(.*$/, "") # trailing parentheses
             team_names[1] = team_names[1].gsub(/^\(.*\)\s/, "") # leading parentheses
 
-            # When testploring this code with Pry, check multiple pages at the live commentary URL
-            # to find examples of the above irregularities, and keep an eye out for any others that may
-            # need to be accounted for, as well as any changes to the standard format
-            # this code works as of January 2018
-            {
-                :team1 => team_names[0], 
-                :team2 => team_names[1]
-            }
+            team_names
         end
 
         def self.title_valid?(title)
