@@ -140,23 +140,21 @@ class CLI
 
             if Input.match(Input::REGEX_REPORTS) 
                 self.show_report_list
-
             elsif Input.match(Input::REGEX_TEAMS) 
                 self.show_team_list
-
             elsif Input.positive_integer?
                 if State.id == State::TEAM_LIST
                     Input.valid_index?(Selection.team_names) ?
                         self.show_match_list(Selection.team_names[Input.as_index]) :
                         Error.code = Error::INVALID_INDEX
-
                 elsif State.id == State::MATCH_LIST
-                    Input.valid_index?(Selection.report_abstracts) ?
-                        (self.load_report(Selection.report_abstracts[Input.as_index])
-                        self.report_loop) :
+                    if Input.valid_index?(Selection.report_abstracts)
+                        self.load_report_details(Selection.report_list[Input.as_index])
+                        self.report_loop
+                    else
                         Error.code = Error::INVALID_INDEX
+                    end
                 end
-
             else
                 self.show_report_list(Input.as_string)
             end
@@ -199,16 +197,16 @@ class CLI
         end
     end
 
-    def self.load_report(report_abstract)
-        Selection.detailed_report = Report.full(report_abstract)
-        report = Selection.detailed_report
+    def self.load_report_details(report)
+        Selection.report = Report.retrieve_details_from_website(report)
+        report = Selection.report
 
-        Output.report_title = 
+        Output.header = 
             "MATCH REPORT\n" \
             "#{report.team1} VS. #{report.team2}"
             
         byline = report.byline
-        Output.report_byline = 
+        Output.body =
             "Author: #{byline.author}\n" \
             "Filed: #{byline.filed}\n" \
             "#{byline.updated}"
@@ -218,7 +216,7 @@ class CLI
 
     def self.report_loop
         Printer.clear_screen
-        Printer.puts([Output::header, Output::body, Output::REPORT_CONTROLS])
+        Printer.puts([Output.header, Output.body, Output::REPORT_CONTROLS])
 
         while State::REPORT == State.id
             Input.get_unbuffered
@@ -240,7 +238,7 @@ class CLI
     end
 
     def self.print_next_blurb
-        if blurb = Selection.detailed_report.blurb(State.blurb_index)
+        if blurb = Selection.report.blurb(State.blurb_index)
             Printer.puts(blurb.label)
             Printer.puts(blurb.paragraphs)
             State.blurb_index += 1

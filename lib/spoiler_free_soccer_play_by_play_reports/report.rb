@@ -77,7 +77,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end
 
-        def self.retrieve_detailed_report_from_website(report)
+        def self.retrieve_details_from_website(report)
             report.details = Details.new(Scrape.report_details(report.details_url)) if !report.details
             report
         end
