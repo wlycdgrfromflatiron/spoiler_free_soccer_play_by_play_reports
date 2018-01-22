@@ -165,7 +165,7 @@ class CLI
         Selection.report_list = Report.list(team_name)
 
         if Selection.report_list.empty?
-            Error.code = team_name ? Error::NO_REPORTS_FOR TEAM : Error::NO_REPORTS 
+            Error.code = team_name ? Error::NO_REPORTS_FOR_TEAM : Error::NO_REPORTS 
         else
             Output.header = team_name ? 
                 Output::REPORT_LIST_FOR_HEADER + team_name :
