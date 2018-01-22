@@ -36,10 +36,10 @@ class CLI
     end
 
     class Input
-        REGEX_MATCHES = /^m(atches)?\s*?/
+        REGEX_MATCHES = /^m(atches)?$/
         REGEX_NEXT_BLURB = /^[ n]$/
-        REGEX_QUIT = /^q(uit)?\s*$/
-        REGEX_TEAMS = /^t(eams)?\s*?/
+        REGEX_QUIT = /^q(uit)?$/
+        REGEX_TEAMS = /^t(eams)?$/
 
         SEPARATOR = " | "
         MATCHES = "(M)atches"
