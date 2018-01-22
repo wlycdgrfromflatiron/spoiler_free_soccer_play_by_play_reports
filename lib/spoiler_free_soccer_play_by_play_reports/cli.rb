@@ -38,14 +38,16 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         class Input
-            REGEX_REPORTS = /^m(atches)?$/
+            REGEX_REPORT_LIST = /^m(atches)?$/
             REGEX_NEXT_BLURB = /^[ n]$/
             REGEX_QUIT = /^q(uit)?$/
-            REGEX_TEAMS = /^t(eams)?$/
+            REGEX_TEAM_LIST = /^t(eams)?$/
 
             QUIT = "(Q)uit"
+            REPORT_INDEX = "[match #]"
             REPORTS = "(M)atches"
             SEPARATOR = " | "
+            TEAM_INDEX = "[team #]"
             TEAM_NAME = "[team name]"
             TEAMS = "(T)eams"
             TERMINATOR = ": "
@@ -78,8 +80,10 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             def self.prompt=(options)
                 @prompt = ""
-                options.each {|option| @prompt << option << SEPARATOR}
-                @prompt << QUIT << TERMINATOR
+                if options
+                    options.each {|option| @prompt << option << SEPARATOR}
+                    @prompt << QUIT << TERMINATOR
+                end
             end
 
             def self.match(regex)
@@ -143,9 +147,9 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 if Input.match(Input::REGEX_QUIT)
                     State.id = State::QUIT
-                elsif Input.match(Input::REGEX_REPORTS) 
+                elsif Input.match(Input::REGEX_REPORT_LIST) 
                     self.show_report_list
-                elsif Input.match(Input::REGEX_TEAMS) 
+                elsif Input.match(Input::REGEX_TEAM_LIST) 
                     self.show_team_list
                 elsif Input.positive_integer?
                     if State.id == State::TEAM_LIST
@@ -181,6 +185,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                     end
                 )
                 Error.code = nil
+                Input.prompt = [Input::REPORT_INDEX, Input::REPORTS, Input::TEAMS, Input::TEAM_NAME]
                 State.id = State::REPORT_LIST
             end
         end
@@ -198,6 +203,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                     end
                 )
                 Error.code = nil
+                Input.prompt = [Input::REPORTS, Input::TEAM_INDEX]
                 State.id = State::TEAM_LIST
             end
         end
@@ -216,8 +222,9 @@ module SpoilerFreeSoccerPlayByPlayReports
                 "Filed: #{byline.filed}\n" \
                 "#{byline.updated}"
 
-            State.blurb_index = 0
+            Input.prompt = nil
 
+            State.blurb_index = 0
             State.id = State::REPORT
         end
 
@@ -230,16 +237,12 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 if Input.match(Input::REGEX_QUIT)
                     State.id = State::QUIT
-
                 elsif Input.match(Input::REGEX_NEXT_BLURB)
                     self.print_next_blurb
-
-                elsif Input.matches
-                    self.load_matches_list
-
-                elsif Input.teams
-                    self.load_teams_list
-
+                elsif Input.match(Input::REGEX_REPORT_LIST)
+                    self.show_report_list
+                elsif Input.match(Input::REGEX_TEAM_LIST)
+                    self.show_team_list
                 end
             end
         end
