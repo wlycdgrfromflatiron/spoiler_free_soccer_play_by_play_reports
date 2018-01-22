@@ -75,7 +75,7 @@ class CLI
 
         def self.prompt=(options)
             @prompt = ""
-            options.each do {|option| @prompt << option << SEPARATOR}
+            options.each {|option| @prompt << option << SEPARATOR}
             @prompt << QUIT << TERMINATOR
         end
 
