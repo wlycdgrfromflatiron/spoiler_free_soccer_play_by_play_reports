@@ -152,7 +152,7 @@ module SpoilerFreeSoccerPlayByPlayReports
                             self.show_report_list(Selection.team_names[Input.as_index]) :
                             Error.code = Error::INVALID_INDEX
                     elsif State.id == State::REPORT_LIST
-                        if Input.valid_index?(Selection.report_abstracts)
+                        if Input.valid_index?(Selection.report_list)
                             self.load_report_details(Selection.report_list[Input.as_index])
                             self.report_loop
                         else
