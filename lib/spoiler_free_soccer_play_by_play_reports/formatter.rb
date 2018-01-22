@@ -36,7 +36,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.validate_column_width(string_array, column_width)
-            half_way = string_array.size.even ? string_array.size / 2 : (string_array.size + 1) / 2
+            half_way = string_array.size.even? ? string_array.size / 2 : (string_array.size + 1) / 2
 
             for i in 0...half_way
                 min_required_width = string_array[i].length + MINIMUM_COLUMN_GAP
