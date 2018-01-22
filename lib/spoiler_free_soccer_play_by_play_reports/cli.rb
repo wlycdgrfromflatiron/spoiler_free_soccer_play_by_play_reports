@@ -134,12 +134,14 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.menus_loop
-            while !Input.match(Input::QUIT)
+            while true
                 Printer.clear_screen
                 Printer.puts([Output.header, Output.body, Error.text])
 
                 Input.get_buffered
 
+                if Input.match(Input::REGEX_QUIT)
+                    break
                 if Input.match(Input::REGEX_REPORTS) 
                     self.show_report_list
                 elsif Input.match(Input::REGEX_TEAMS) 
