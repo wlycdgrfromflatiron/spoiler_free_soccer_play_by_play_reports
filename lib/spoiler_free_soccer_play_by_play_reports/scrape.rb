@@ -13,8 +13,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             # For each report summary thumbnail link, we must extract the names of the two teams
             # from a title formatted like so:
             # "Live Commentary: Celta Vigo 2-2 Real Madrid - as it happened"
-            abstract_hashes = []
-            report_links.each do |link|
+            report_links.collect do |link|
                 title = link.at(".list_rep_title div").text
                 title.strip!
 
@@ -22,14 +21,12 @@ module SpoilerFreeSoccerPlayByPlayReports
 
                 team_names = scrape_team_names(title)
 
-                abstract_hashes << {
+                {
                     :team1 => team_names[0],
                     :team2 => team_names[1],
                     :details_url => link.attribute("href").value
                 }
             end
-            
-            abstract_hashes
         end 
 
         def self.report_details(details_url)
