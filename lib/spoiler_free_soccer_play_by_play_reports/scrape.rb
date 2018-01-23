@@ -35,10 +35,8 @@ module SpoilerFreeSoccerPlayByPlayReports
 
             report_details[:byline] = scrape_byline(doc)
 
-            report_details[:blurbs] = []
-            scraped_blurbs = doc.search(".livecomm")
-            scraped_blurbs.each do |scraped_blurb|
-                report_details[:blurbs] << {
+            report_details[:blurbs] = doc.search(".livecomm").collect do |scraped_blurb|
+                {
                     :label =>scraped_blurb.at("a.period").text,
                     :paragraphs => scrape_paragraphs(scraped_blurb)
                 }
