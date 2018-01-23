@@ -1,34 +1,17 @@
 # SpoilerFreeSoccerPlayByPlayReports
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/spoiler_free_soccer_play_by_play_reports`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+A Ruby CLI app to view spoiler-free versions of live commentary play-by-play reports for completed soccer matches. Data source: SPORTSMOLE.CO.UK
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'spoiler_free_soccer_play_by_play_reports'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install spoiler_free_soccer_play_by_play_reports
+To install, clone this repository. (No gem version is currently available)
 
 ## Usage
 
-TODO: Write usage instructions here
+1. Check whether Ruby is installed on your system by typing "ruby -v" at the command line. Install Ruby if necessary, following the instructions at https://www.ruby-lang.org/en/downloads/.
+2. Open a command prompt, navigate to the app directory, and run bin/spoiler_free_soccer_play_by_play_reports. You may be prompted to run bundle install in order to install required dependencies.
 
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+This app has been developed and tested on Windows Subsystem Linux / Ubuntu, but should also work on Mac and Linux.
 
 ## Contributing
 
