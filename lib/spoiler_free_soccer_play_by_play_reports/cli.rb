@@ -122,7 +122,7 @@ module SpoilerFreeSoccerPlayByPlayReports
             Printer.clear_screen
             Printer.puts(Output::DESCRIPTION)
             Printer.puts(Output::LOADING_MESSAGE)
-            Scrape.report_abstracts
+            Report.load_abstracts
 
             self.load_main_menu
             self.menus_loop
@@ -209,7 +209,7 @@ module SpoilerFreeSoccerPlayByPlayReports
         end
 
         def self.load_report_details(report)
-            Selection.report = Report.retrieve_details_from_website(report)
+            Selection.report = report.load_details
             report = Selection.report
 
             Output.header = 

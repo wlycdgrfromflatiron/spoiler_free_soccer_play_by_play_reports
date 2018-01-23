@@ -57,6 +57,10 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end
 
+        def load_details
+            @details = Details.new(Scrape.report_details(@details_url)) if !@details
+            self
+        end
         
         ########################
         # Report CLASS METHODS #
@@ -77,9 +81,8 @@ module SpoilerFreeSoccerPlayByPlayReports
             end
         end
 
-        def self.retrieve_details_from_website(report)
-            report.details = Details.new(Scrape.report_details(report.details_url)) if !report.details
-            report
+        def self.load_abstracts
+            Scrape.report_abstracts.each {|abstract_hash| self.create(abstract_hash)}
         end
 
         def self.teams
