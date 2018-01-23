@@ -8,5 +8,4 @@ require "nokogiri" # HTML parsing support library
 require "open-uri" # HTML retrieval support library
 require "io/console" # unbuffered input handling
 
-WLY_DEBUG = true
 require "pry" if WLY_DEBUG # interactive debugging
